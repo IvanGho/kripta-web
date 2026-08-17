@@ -1,0 +1,303 @@
+import Link from "next/link";
+import { Cabecera } from "./componentes/cabecera";
+import { Pie } from "./componentes/pie";
+import { Contador } from "./componentes/contador";
+import { Lobo } from "./componentes/marca";
+import { URL_DISCORD } from "./lib/enlaces";
+import { obtenerDatos, formatoARS, fechaLinda } from "./lib/datos";
+
+/** Se regenera cada minuto: el ranking se ve fresco sin recalcular en cada visita. */
+export const revalidate = 60;
+
+export default async function Inicio() {
+  const datos = await obtenerDatos();
+  const { proximoTorneo, ranking, torneos, campeones, temporada } = datos;
+
+  return (
+    <>
+      <Cabecera />
+
+      {/* ============================ HERO ============================ */}
+      <section className="grilla relative overflow-hidden">
+        {/* Resplandores: son lo que le saca lo plano al fondo. */}
+        <div className="resplandor left-1/2 top-[-160px] h-[380px] w-[680px] -translate-x-1/2 bg-acento/20" />
+        <div className="resplandor right-[-140px] top-[180px] h-[300px] w-[300px] bg-acento-2/10" />
+
+        <div className="relative z-10 mx-auto max-w-6xl px-5 pb-20 pt-16 sm:pt-24">
+          <div className="flex flex-col items-center text-center">
+            <span className="pastilla">
+              <span className="latido h-1.5 w-1.5 rounded-full bg-acento" />
+              {temporada ? temporada.nombre : "Comunidad activa"} · en vivo
+            </span>
+
+            <h1 className="mt-6 max-w-3xl text-4xl font-extrabold uppercase leading-[1.05] tracking-tight sm:text-6xl">
+              Torneos de <span className="neon">Valorant</span> y{" "}
+              <span className="neon">Truco</span> todas las semanas
+            </h1>
+
+            <p className="mt-5 max-w-xl text-base text-tenue sm:text-lg">
+              Comunidad argentina, de 20 a 05. Premios fijos anunciados antes de abrir la
+              inscripción, ranking de temporada y mesas gratis todos los días.
+            </p>
+
+            {proximoTorneo && (
+              <div className="mt-10 flex w-full flex-col items-center">
+                <p className="mb-3 text-xs uppercase tracking-[0.16em] text-tenue">
+                  Próximo torneo · {proximoTorneo.nombre}
+                </p>
+                <Contador hasta={proximoTorneo.empiezaEn} />
+              </div>
+            )}
+
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <a href={URL_DISCORD} target="_blank" rel="noopener" className="boton text-base">
+                Entrar al Discord
+              </a>
+              <a href="#torneos" className="boton-sec text-base">
+                Ver los torneos
+              </a>
+            </div>
+
+            {/* Números: prueba social. Es lo que decide al que entra por primera vez. */}
+            <dl className="mt-14 grid w-full max-w-2xl grid-cols-3 gap-3">
+              {[
+                [`${datos.jugadoresActivos}+`, "miembros"],
+                ["2", "torneos por semana"],
+                [
+                  temporada ? formatoARS(temporada.premioFinalCentavos) : "—",
+                  "premio de temporada",
+                ],
+              ].map(([valor, etiqueta]) => (
+                <div key={etiqueta} className="tarjeta px-3 py-4">
+                  <dt className="texto-degradado text-xl font-extrabold sm:text-3xl">{valor}</dt>
+                  <dd className="mt-1 text-[11px] uppercase tracking-[0.1em] text-tenue sm:text-xs">
+                    {etiqueta}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================ RANKING ============================ */}
+      <section id="ranking" className="relative mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
+        <Titulo alto="Ranking" resaltado="en vivo" bajada="Se actualiza con cada torneo. La temporada se reinicia cada seis semanas, así que siempre podés arrancar de cero." />
+
+        <div className="tarjeta overflow-hidden p-0">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-borde text-[11px] uppercase tracking-[0.1em] text-tenue">
+                <th className="px-4 py-3 sm:px-5">#</th>
+                <th className="px-4 py-3 sm:px-5">Jugador</th>
+                <th className="px-4 py-3 text-right sm:px-5">Puntos</th>
+                <th className="hidden px-5 py-3 text-right sm:table-cell">Torneos</th>
+                <th className="hidden px-5 py-3 text-right sm:table-cell">Títulos</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ranking.map((f) => (
+                <tr key={f.puesto} className="border-b border-borde/50 last:border-0">
+                  <td className="px-4 py-3 sm:px-5">
+                    <Medalla puesto={f.puesto} />
+                  </td>
+                  <td className="px-4 py-3 font-semibold sm:px-5">{f.nombre}</td>
+                  <td className="px-4 py-3 text-right font-bold text-acento-2 sm:px-5">{f.puntos}</td>
+                  <td className="hidden px-5 py-3 text-right text-tenue sm:table-cell">{f.torneos}</td>
+                  <td className="hidden px-5 py-3 text-right text-tenue sm:table-cell">{f.titulos}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* ============================ CÓMO FUNCIONA ============================ */}
+      <section className="relative overflow-hidden py-16">
+        <div className="resplandor left-[-120px] top-1/2 h-[280px] w-[280px] bg-acento/10" />
+        <div className="relative z-10 mx-auto max-w-6xl px-5">
+          <Titulo alto="Cómo" resaltado="funciona" bajada="Tres pasos. No hace falta ser bueno para arrancar: se puntúa también por participar." />
+
+          <ol className="grid gap-4 sm:grid-cols-3">
+            {[
+              { n: "01", t: "Entrás al Discord", d: "Te presentás en el canal de bienvenida y elegís tus juegos. Gratis y sin compromiso." },
+              { n: "02", t: "Te anotás a un torneo", d: "Hay pagos con premio fijo y mesas de Pista Libre gratuitas. Reaccionás al anuncio y listo." },
+              { n: "03", t: "Sumás puntos", d: "Ganes o pierdas, participar suma. El ranking define el podio y el premio de temporada." },
+            ].map((p) => (
+              <li key={p.n} className="tarjeta tarjeta-viva p-6">
+                <span className="text-3xl font-extrabold text-acento/30">{p.n}</span>
+                <h3 className="mt-2 text-lg font-bold">{p.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-tenue">{p.d}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ============================ TORNEOS ============================ */}
+      <section id="torneos" className="relative mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
+        <Titulo alto="Torneos de" resaltado="la semana" bajada="El premio se anuncia antes de abrir la inscripción y es el mismo con 4 o con 16 anotados." />
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {torneos.map((t) => {
+            const gratis = t.inscripcionCentavos === 0 && t.premioCentavos === 0;
+            const lleno = t.inscriptos >= t.cupo;
+            return (
+              <article key={t.id} className="tarjeta tarjeta-viva flex flex-col p-5">
+                <div className="flex items-center gap-2">
+                  <span className="pastilla">{t.juego} {t.formato}</span>
+                  {gratis && (
+                    <span className="pastilla border-acento/40 text-acento-2">Pista Libre</span>
+                  )}
+                </div>
+
+                <h3 className="mt-3 text-lg font-bold leading-snug">{t.nombre}</h3>
+                <p className="mt-1 text-sm text-tenue">{fechaLinda(t.empiezaEn)}</p>
+
+                <dl className="mt-4 space-y-1.5 text-sm">
+                  <div className="flex justify-between">
+                    <dt className="text-tenue">Inscripción</dt>
+                    <dd className="font-semibold">
+                      {t.inscripcionCentavos === 0 ? "Gratis" : formatoARS(t.inscripcionCentavos)}
+                    </dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-tenue">Premio</dt>
+                    <dd className="font-semibold text-acento-2">
+                      {t.premioCentavos === 0 ? "Rol + puntos" : formatoARS(t.premioCentavos)}
+                    </dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-tenue">Lugares</dt>
+                    <dd className="font-semibold">{t.inscriptos}/{t.cupo}</dd>
+                  </div>
+                </dl>
+
+                {/* Barra de cupo: comunica urgencia sin decir nada. */}
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-panel-2">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-acento to-acento-2"
+                    style={{ width: `${Math.min(100, (t.inscriptos / t.cupo) * 100)}%` }}
+                  />
+                </div>
+
+                <a
+                  href={URL_DISCORD}
+                  target="_blank"
+                  rel="noopener"
+                  className={`mt-5 ${lleno ? "boton-sec" : "boton"} w-full text-sm`}
+                >
+                  {lleno ? "Anotarme a la lista de espera" : "Anotarme"}
+                </a>
+
+                {!gratis && (
+                  <p className="mt-2 text-center text-[11px] text-tenue">Sólo mayores de 18</p>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ============================ CAMPEONES ============================ */}
+      <section className="relative mx-auto max-w-6xl px-5 py-16">
+        <Titulo alto="Salón de" resaltado="campeones" bajada="Los que ya se llevaron un torneo de la Kripta." />
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {campeones.map((c, i) => (
+            <div key={`${c.nombre}-${i}`} className="tarjeta tarjeta-viva flex items-center gap-3 p-4">
+              <Lobo tamano={34} />
+              <div className="min-w-0">
+                <p className="truncate font-bold">{c.nombre}</p>
+                <p className="truncate text-xs text-tenue">{c.torneo}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ============================ HERRAMIENTAS ============================ */}
+      <section className="relative mx-auto max-w-6xl px-5 py-16">
+        <Titulo alto="Herramientas" resaltado="gratis" bajada="Sin registro y sin vueltas. Las hicimos para la comunidad y las dejamos abiertas." />
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Herramienta
+            href="/anotador"
+            titulo="Anotador de Truco"
+            texto="Malas y buenas hasta 30, con fósforos como en la mesa. Andá sumando desde el celular."
+          />
+          <Herramienta
+            href="/sensibilidad"
+            titulo="Convertidor de sensibilidad"
+            texto="Pasá tu sensibilidad entre Valorant, CS2 y Apex sin perder la mira."
+          />
+        </div>
+      </section>
+
+      {/* ============================ REFERIDOS + CTA ============================ */}
+      <section className="relative overflow-hidden py-16">
+        <div className="resplandor left-1/2 top-1/2 h-[320px] w-[620px] -translate-x-1/2 -translate-y-1/2 bg-acento/15" />
+        <div className="relative z-10 mx-auto max-w-3xl px-5 text-center">
+          <div className="tarjeta p-8 sm:p-12">
+            <Lobo tamano={54} className="mx-auto" />
+            <h2 className="mt-5 text-2xl font-extrabold uppercase leading-tight sm:text-4xl">
+              Traé un amigo y <span className="neon">los dos suman</span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-tenue">
+              Si el que invitás se queda y juega su primer torneo, los dos ganan puntos de
+              temporada. Se pide el nombre de quien te invitó al entrar al Discord.
+            </p>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <a href={URL_DISCORD} target="_blank" rel="noopener" className="boton text-base">
+                Entrar al Discord
+              </a>
+              <a href="#ranking" className="boton-sec text-base">
+                Ver el ranking
+              </a>
+            </div>
+            <p className="mt-5 text-xs text-tenue">
+              Gratis. Las mesas de Pista Libre son abiertas a todos.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <Pie />
+    </>
+  );
+}
+
+/* ---------------------------------- piezas ---------------------------------- */
+
+function Titulo({ alto, resaltado, bajada }: { alto: string; resaltado: string; bajada: string }) {
+  return (
+    <div className="mb-8 max-w-2xl">
+      <h2 className="text-2xl font-extrabold uppercase leading-tight sm:text-4xl">
+        {alto} <span className="neon">{resaltado}</span>
+      </h2>
+      <p className="mt-3 text-sm text-tenue sm:text-base">{bajada}</p>
+    </div>
+  );
+}
+
+function Medalla({ puesto }: { puesto: number }) {
+  if (puesto <= 3) {
+    const colores = ["text-acento-2", "text-texto", "text-alerta"];
+    return (
+      <span className={`text-base font-extrabold ${colores[puesto - 1]}`}>
+        {puesto}°
+      </span>
+    );
+  }
+  return <span className="text-tenue">{puesto}</span>;
+}
+
+function Herramienta({ href, titulo, texto }: { href: string; titulo: string; texto: string }) {
+  return (
+    <Link href={href} className="tarjeta tarjeta-viva block p-6">
+      <h3 className="text-lg font-bold">{titulo}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-tenue">{texto}</p>
+      <span className="mt-4 inline-block text-sm font-semibold text-acento-2">Abrir →</span>
+    </Link>
+  );
+}
