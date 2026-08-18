@@ -3,7 +3,7 @@ import { Cabecera } from "./componentes/cabecera";
 import { Pie } from "./componentes/pie";
 import { Contador } from "./componentes/contador";
 import { Lobo } from "./componentes/marca";
-import { URL_DISCORD } from "./lib/enlaces";
+import { BotonDiscord } from "./componentes/boton-discord";
 import { obtenerDatos, formatoARS, fechaLinda } from "./lib/datos";
 
 /** Se regenera cada minuto: el ranking se ve fresco sin recalcular en cada visita. */
@@ -11,7 +11,7 @@ export const revalidate = 60;
 
 export default async function Inicio() {
   const datos = await obtenerDatos();
-  const { proximoTorneo, ranking, torneos, campeones, temporada } = datos;
+  const { proximoTorneo, ranking, torneos, campeones, temporada, esEjemplo } = datos;
 
   return (
     <>
@@ -25,9 +25,15 @@ export default async function Inicio() {
 
         <div className="relative z-10 mx-auto max-w-6xl px-5 pb-20 pt-16 sm:pt-24">
           <div className="flex flex-col items-center text-center">
+            {/*
+              El "en vivo" sólo se dice cuando de verdad lo es. Con datos de ejemplo la pastilla
+              cambia y el puntito deja de latir: no se anuncia como temporada real algo que no lo
+              es. Es el aviso más barato posible, sin romper el diseño.
+            */}
             <span className="pastilla">
-              <span className="latido h-1.5 w-1.5 rounded-full bg-acento" />
-              {temporada ? temporada.nombre : "Comunidad activa"} · en vivo
+              {!esEjemplo && <span className="latido h-1.5 w-1.5 rounded-full bg-acento" />}
+              {temporada ? temporada.nombre : "Comunidad activa"}
+              {esEjemplo ? " · vista previa" : " · en vivo"}
             </span>
 
             <h1 className="mt-6 max-w-3xl text-4xl font-extrabold uppercase leading-[1.05] tracking-tight sm:text-6xl">
@@ -50,9 +56,7 @@ export default async function Inicio() {
             )}
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <a href={URL_DISCORD} target="_blank" rel="noopener" className="boton text-base">
-                Entrar al Discord
-              </a>
+              <BotonDiscord className="text-base">Entrar al Discord</BotonDiscord>
               <a href="#torneos" className="boton-sec text-base">
                 Ver los torneos
               </a>
@@ -82,8 +86,19 @@ export default async function Inicio() {
 
       {/* ============================ RANKING ============================ */}
       <section id="ranking" className="relative mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
-        <Titulo alto="Ranking" resaltado="en vivo" bajada="Se actualiza con cada torneo. La temporada se reinicia cada seis semanas, así que siempre podés arrancar de cero." />
+        <Titulo
+          alto="Ranking"
+          resaltado={esEjemplo ? "de muestra" : "en vivo"}
+          bajada={
+            esEjemplo
+              ? "Estos nombres son de ejemplo: la temporada real todavía no está conectada. Sirve para ver cómo se va a ver el ranking cuando arranque."
+              : "Se actualiza con cada torneo. La temporada se reinicia cada seis semanas, así que siempre podés arrancar de cero."
+          }
+        />
 
+        {ranking.length === 0 ? (
+          <Vacio texto="Todavía no se jugó ningún torneo de esta temporada. El primero que se anote arranca primero." />
+        ) : (
         <div className="tarjeta overflow-hidden p-0">
           <table className="w-full text-left text-sm">
             <thead>
@@ -110,6 +125,7 @@ export default async function Inicio() {
             </tbody>
           </table>
         </div>
+        )}
       </section>
 
       {/* ============================ CÓMO FUNCIONA ============================ */}
@@ -137,6 +153,10 @@ export default async function Inicio() {
       {/* ============================ TORNEOS ============================ */}
       <section id="torneos" className="relative mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
         <Titulo alto="Torneos de" resaltado="la semana" bajada="El premio se anuncia antes de abrir la inscripción y es el mismo con 4 o con 16 anotados." />
+
+        {torneos.length === 0 && (
+          <Vacio texto="No hay torneos abiertos en este momento. Entrá al Discord y te avisamos en cuanto se anuncie el próximo." />
+        )}
 
         <div className="grid gap-4 md:grid-cols-3">
           {torneos.map((t) => {
@@ -181,14 +201,12 @@ export default async function Inicio() {
                   />
                 </div>
 
-                <a
-                  href={URL_DISCORD}
-                  target="_blank"
-                  rel="noopener"
-                  className={`mt-5 ${lleno ? "boton-sec" : "boton"} w-full text-sm`}
+                <BotonDiscord
+                  variante={lleno ? "secundario" : "primario"}
+                  className="mt-5 w-full text-sm"
                 >
                   {lleno ? "Anotarme a la lista de espera" : "Anotarme"}
-                </a>
+                </BotonDiscord>
 
                 {!gratis && (
                   <p className="mt-2 text-center text-[11px] text-tenue">Sólo mayores de 18</p>
@@ -201,7 +219,19 @@ export default async function Inicio() {
 
       {/* ============================ CAMPEONES ============================ */}
       <section className="relative mx-auto max-w-6xl px-5 py-16">
-        <Titulo alto="Salón de" resaltado="campeones" bajada="Los que ya se llevaron un torneo de la Kripta." />
+        <Titulo
+          alto="Salón de"
+          resaltado="campeones"
+          bajada={
+            esEjemplo
+              ? "Ejemplo de cómo se va a ver el salón. Los primeros campeones reales salen del próximo torneo."
+              : "Los que ya se llevaron un torneo de la Kripta."
+          }
+        />
+
+        {campeones.length === 0 && (
+          <Vacio texto="El salón está vacío y alguien lo tiene que estrenar. Puede ser en el próximo torneo." />
+        )}
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {campeones.map((c, i) => (
@@ -248,9 +278,7 @@ export default async function Inicio() {
               temporada. Se pide el nombre de quien te invitó al entrar al Discord.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <a href={URL_DISCORD} target="_blank" rel="noopener" className="boton text-base">
-                Entrar al Discord
-              </a>
+              <BotonDiscord className="text-base">Entrar al Discord</BotonDiscord>
               <a href="#ranking" className="boton-sec text-base">
                 Ver el ranking
               </a>
@@ -276,6 +304,19 @@ function Titulo({ alto, resaltado, bajada }: { alto: string; resaltado: string; 
         {alto} <span className="neon">{resaltado}</span>
       </h2>
       <p className="mt-3 text-sm text-tenue sm:text-base">{bajada}</p>
+    </div>
+  );
+}
+
+/**
+ * Estado vacío. Con datos reales las listas pueden venir sin nada (temporada recién abierta,
+ * ningún torneo anunciado todavía), y una sección con el título puesto y la grilla vacía abajo
+ * se lee como que la página está rota. Siempre hay que decir algo, y si se puede, invitar.
+ */
+function Vacio({ texto }: { texto: string }) {
+  return (
+    <div className="tarjeta p-6 text-center">
+      <p className="text-sm text-tenue">{texto}</p>
     </div>
   );
 }
