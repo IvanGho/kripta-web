@@ -1,413 +1,434 @@
-# Imágenes del sitio: qué hace falta y cómo pedirlas
+# Dirección de arte y prompts para GPT Image
 
-El sitio no tiene ninguna imagen: todo lo que se ve es tipografía y CSS (las cuatro capas de
-profundidad explicadas en el README). Funciona, pero es lo que lo mantiene lejos de una referencia
-como `trucochon.com`, que apoya todo en imaginería.
+Este documento no es una lista de “imágenes lindas”. Es un plan para construir una **familia visual
+coherente** para Monsterland / Kripta y llevarla después al sitio sin perder calidad, legibilidad ni
+rendimiento.
 
-## El concepto: la Kripta como lugar
+## 1. La decisión visual
 
-Antes de los prompts, la decisión que los ordena a todos.
+### Qué es la Kripta
 
-La primera versión de este documento pedía cartas españolas para casi todo, copiando la referencia.
-Estaba mal por dos razones:
+La Kripta es un **santuario gamer subterráneo moderno**: un punto de encuentro nocturno construido
+en basalto negro, metal oscuro y vidrio ahumado, atravesado por líneas de energía verde. Combina la
+solidez de una arquitectura monumental con la comodidad de un club de esports.
 
-1. **Las proporciones no eran las del sitio.** El truco es una de las dos herramientas y uno de los
-   tres juegos. No puede ocupar el 80% de la imaginería.
-2. **Copiar el abanico de cartas nos deja pareciéndonos a trucochon.** De la referencia hay que
-   tomar el *nivel de acabado* —que haya imágenes de verdad, que la página no sea sólo texto—, no
-   los motivos.
+No es una cripta medieval. No es un cementerio. No es una mazmorra. No es un escenario de terror.
+Tampoco es el cyberpunk genérico lleno de carteles, cables y luces de todos los colores.
 
-La marca ya tiene un concepto propio y más fuerte, y estaba sin usar: **"Kripta"**. Una cripta
-subterránea donde la comunidad se junta de noche. Piedra oscura, arcos y columnas, iluminada
-únicamente por luz verde neón, con un lobo como guardián. Ahí encajan solos el nombre del server
-(Monsterland), la jerarquía (Panteón / Guardianes / Combatientes), la moneda interna (Colmillos), la
-paleta verde sobre negro que ya está aplicada, y el horario real de la comunidad, que es de noche.
+La sensación debe ser:
 
-**La clave del tono: acogedor, no terrorífico.** La sensación que se busca es "entrá y quedate", como
-un sótano propio o un club privado. Nunca terror, sangre, calaveras, telarañas ni cementerio. Eso es
-lo que hace que alguien se sienta cómodo en la Kripta en lugar de querer irse.
+- “Este lugar tiene identidad propia”.
+- “Acá se compite en serio, pero también puedo quedarme con amigos”.
+- “Es nocturno y misterioso, pero seguro y acogedor”.
+- “Pertenezco a una comunidad, no estoy entrando a un casino ni a una página de apuestas”.
 
-Los prompts van en dos bloques: **A** es la identidad de la Kripta y es la prioridad; **B** es el
-truco, contenido a los dos lugares donde de verdad corresponde.
+### Lenguaje material
 
-## Tres cosas que arruinan el resultado
+- Basalto negro, piedra volcánica de cortes limpios y metal grafito cepillado.
+- Vidrio ahumado y superficies mate; muy pocos reflejos pulidos.
+- Luz integrada en ranuras arquitectónicas, nunca tubos de neón flotando sin sentido.
+- Verde principal `#2fc94f` y verde de alta luz `#5dff86`.
+- Fondo negro verdoso `#050806`.
+- Geometría angular inspirada en colmillos y orejas de lobo, sin repetir lobos literales en todos lados.
+- Una marca abstracta de tres cortes diagonales puede aparecer en la arquitectura como motivo propio.
 
-1. **Nunca pedir texto.** Los generadores escriben mal, y peor en español. Los títulos los pone el
-   sitio con tipografía real, que se puede leer, indexar en Google y traducir.
-2. **Nunca pedir logos de juegos.** "Valorant" o "CS2" son marcas registradas de Riot y Valve. Los
-   prompts piden objetos genéricos.
-3. **Pedir siempre el fondo negro `#050806`.** Es exactamente el fondo del sitio, así que la imagen
-   se integra sin recortar. Un fondo blanco o con degradado obliga a recortar y se ve el borde.
+### Qué NO debe aparecer
 
-## El mensaje de contexto (pegar una sola vez, al principio del chat)
+- Calaveras, huesos, cruces, tumbas, sangre, cadenas, telarañas, velas o símbolos religiosos.
+- Castillos medievales, gótico ornamental, runas mágicas o fantasía demoníaca.
+- Ciudad cyberpunk, lluvia, callejones, carteles luminosos o luces azules/violetas.
+- Casinos, fichas, ruletas, dinero, apuestas o premios representados como efectivo.
+- Logos de juegos, marcas comerciales, armas protagonistas ni personajes reconocibles.
+- Texto generado dentro de la imagen.
 
-```
-Vas a ayudarme a generar imágenes para el sitio de una comunidad argentina de gaming
-llamada Monsterland. Su identidad visual se llama "la Kripta".
+---
 
-EL MUNDO VISUAL, que es lo más importante:
-Una cripta subterránea donde la comunidad se junta de noche. Piedra oscura y maciza,
-arcos y columnas con grabados geométricos, iluminada únicamente por luz verde neón:
-vetas que brillan dentro de la piedra, tubos de luz, cristales encendidos. Niebla muy
-baja a la altura del piso. Un lobo estilizado y geométrico como guardián del lugar.
-Es un refugio nocturno de gamers, mitad cripta antigua y mitad sala de computadoras.
+## 2. Método de trabajo: una imagen maestra primero
 
-EL TONO, que es la parte que más se falla: acogedor y misterioso, NO terrorífico.
-La sensación buscada es "entrá y quedate acá", como un sótano propio o un club
-nocturno privado. Nada de terror, sangre, calaveras, esqueletos, telarañas, ratas,
-cementerio ni nada macabro.
+**No generar todo en una tanda.** Incluso si ChatGPT lo permite, las imágenes salen con estilos,
+materiales y tonos distintos. La coherencia profesional se obtiene así:
 
-REGLAS FIJAS para todas las imágenes que te pida:
-- Paleta estricta: fondo negro verdoso muy oscuro #050806; verde #2fc94f y verde neón
-  brillante #5dff86 para las luces, los filos y los detalles. Nada de azul, celeste,
-  turquesa, violeta, rojo ni naranja. Si dudás, más verde y más oscuro.
-- La única fuente de luz de la escena es el verde. Todo lo demás en penumbra.
-- Alto contraste, cinematográfico, tipo concept art de videojuego.
-- SIN NINGÚN TEXTO: ni letras, ni números, ni palabras, ni firmas, ni marcas de agua.
-  El texto lo agrego yo después con tipografía real.
-- Sin logos, personajes ni elementos de juegos o marcas que existan.
-- Fondo negro liso y parejo (#050806), sin degradado fuerte ni viñeta, porque es el
-  mismo fondo de mi sitio y necesito que la imagen se integre.
-- PNG, en la máxima resolución y calidad que puedas.
+1. Generar únicamente **G1 — Hero / imagen maestra**.
+2. Evaluarla con la lista de control de este documento.
+3. Corregirla en el mismo chat hasta aprobarla.
+4. Descargar el PNG original, sin captura de pantalla ni compresión adicional.
+5. Para cada imagen siguiente, **adjuntar nuevamente la G1 aprobada** y pegar primero el bloque
+   “Continuidad obligatoria”.
+6. Generar una imagen por mensaje.
+7. Si una generación sale mal, corregir esa misma imagen; no iniciar otra conversación desde cero.
 
-Te voy a pedir las imágenes de a una. Confirmame que entendiste y esperá el primer pedido.
+La G1 es al mismo tiempo una imagen utilizable en el hero y la **biblia visual** del resto del sitio.
+
+### Continuidad obligatoria para G2–G5
+
+Pegar esto antes del prompt de cada imagen posterior y adjuntar la G1 aprobada:
+
+```text
+Usá la imagen adjunta como referencia visual obligatoria para construir otra escena del MISMO
+lugar y del MISMO universo. No copies su composición; copiá con precisión su dirección de arte:
+la arquitectura, el basalto negro, el metal grafito, la forma de las ranuras de luz verde, la
+paleta, el nivel de realismo, la iluminación, la atmósfera y el tratamiento cinematográfico.
+
+La nueva imagen debe parecer fotografiada dentro del mismo complejo subterráneo, por el mismo
+equipo creativo y con la misma cámara. No cambies a fantasía medieval, terror, cyberpunk urbano,
+ilustración, dibujo animado ni otro color de iluminación.
 ```
 
 ---
 
-# BLOQUE A — La identidad de la Kripta
+# 3. Imágenes que SÍ se generan con GPT Image
 
-Es la prioridad. Estas son las que hacen que el sitio sea reconocible y propio.
+Sólo cinco. Son escenas donde el generador aporta volumen, atmósfera y acabado cinematográfico.
 
-## A1. El hero: la entrada a la Kripta — **la más importante**
+## G1 — Hero e imagen maestra: “La entrada”
 
-Lo primero que se ve al entrar. Reemplaza al bloque de texto solo que hay hoy arriba.
+**Nombre:** `hero-kripta.png`
+**Prioridad:** imprescindible
+**Formato solicitado:** horizontal 3:2, máxima resolución disponible
+**Uso:** hero de escritorio; también será la referencia visual de todas las demás imágenes
 
-Guardala como **`hero-kripta.png`**
+### Prompt
 
-```
-Imagen horizontal panorámica, relación 3:2, la más grande que puedas.
+```text
+Creá una imagen de key art premium para el hero de un sitio web de una comunidad argentina de
+gaming y torneos llamada Monsterland. El concepto visual se llama “la Kripta”. No incluyas el
+nombre ni ningún texto dentro de la imagen.
 
-El interior de una cripta subterránea, vista de frente. En el centro, un arco de piedra
-oscura y maciza que hace de portal, con escalones anchos de piedra que bajan hacia el que
-mira. Dentro del arco hay oscuridad profunda y niebla baja, y desde el fondo sale una luz
-verde neón intensa, como si adentro hubiera algo encendido esperando.
+ESCENA
+Un santuario gamer subterráneo moderno excavado en basalto negro. No es una cripta medieval ni
+un cementerio: es una arquitectura contemporánea, monumental y habitable. A la derecha de la
+escena hay un gran portal angular construido con bloques de piedra volcánica negra y metal
+grafito. El portal conduce a una sala de esports cálida y activa, visible parcialmente al fondo:
+mesas oscuras, varias estaciones de juego y pequeños puntos de luz verde, sin interfaces legibles.
+No hay personas visibles en primer plano.
 
-En las paredes de piedra hay vetas y grietas que brillan en verde neón (#5dff86), como si
-la piedra tuviera luz por dentro. A los costados del arco, dos columnas macizas con
-grabados geométricos angulares que también brillan tenuemente en verde. Sobre la clave del
-arco, tallada en la piedra en bajorrelieve, una cabeza de lobo estilizada y geométrica,
-apenas iluminada por el resplandor que viene de abajo.
+La estructura del portal sugiere sutilmente la cabeza de un lobo mediante dos planos superiores
+que recuerdan orejas y una abertura central en forma de hocico, pero NO debe ser una estatua ni
+un lobo literal. En una pared aparece, tallado muy discretamente, un motivo abstracto de tres
+cortes diagonales como marca recurrente del lugar.
 
-El suelo es de piedra pulida y refleja levemente el verde. El resto de la escena es negro
-verdoso muy oscuro (#050806). La única fuente de luz de toda la imagen es el verde.
+MATERIALES Y COLOR
+Basalto negro mate de grano fino, piedra volcánica de cortes limpios, metal grafito cepillado y
+vidrio ahumado. Ranuras delgadas integradas en la arquitectura emiten luz verde #2fc94f; sólo los
+puntos de máxima intensidad llegan a #5dff86. Fondo y sombras con dominante negro verdoso
+#050806. El verde es la única luz de color. No usar azul, cian, turquesa, violeta, rojo ni naranja.
 
-Composición simétrica y centrada, con el arco como punto de fuga. Dejá la zona superior
-más oscura y despejada.
+ILUMINACIÓN Y ATMÓSFERA
+Iluminación cinematográfica realista y controlada: luz verde indirecta rebotando sobre piedra
+negra, niebla atmosférica muy sutil únicamente cerca del suelo, sombras profundas pero con detalle
+en los materiales. La luz que sale de la sala interior debe sentirse acogedora y generar curiosidad:
+“quiero entrar y ver qué hay”, nunca miedo.
 
-Atmósfera acogedora y misteriosa, que dé ganas de entrar. NO terrorífica: nada de terror,
-calaveras, esqueletos, sangre, telarañas ni cementerio.
+COMPOSICIÓN PARA WEB — MUY IMPORTANTE
+Lienzo horizontal 3:2. La arquitectura y el foco visual principal ocupan el 55% derecho. El 42%
+izquierdo debe quedar deliberadamente oscuro, limpio y con poco detalle para colocar encima un
+título grande y dos botones sin perder legibilidad. No pongas objetos importantes en el borde.
+El portal debe seguir entendiéndose si luego recorto la imagen a 16:9. El centro geométrico no debe
+estar saturado, porque en teléfonos el recorte será más estrecho.
 
-Estilo: render 3D cinematográfico, iluminación volumétrica, alto contraste, concept art de
-videojuego.
+CÁMARA Y ACABADO
+Vista a la altura de los ojos, lente cinematográfica equivalente a 28–35 mm, perspectiva natural,
+profundidad realista, materiales físicamente plausibles, render 3D fotorrealista de calidad AAA,
+acabado editorial premium, detalle nítido sin sobreenfoque. No ilustración, no concept sketch, no
+low-poly visible, no caricatura.
 
-Sin texto, sin letras, sin números.
-```
-
-## A2. La imagen para compartir el link
-
-Lo que se ve cuando pegás el link en Discord o WhatsApp. **Hoy no existe, así que el link aparece
-pelado.** Siendo Discord tu canal principal, es de las que más rinde.
-
-Guardala como **`compartir.png`**
-
-```
-Imagen horizontal, relación 3:2.
-
-Portada para un sitio de torneos de gaming. En el centro-izquierda, la cabeza de un lobo
-estilizado y geométrico, de perfil tres cuartos, construida con planos angulares y facetas,
-hecha de luz verde neón (#5dff86) sobre negro, con los ojos brillando con luz propia. El
-lobo emerge de una niebla baja y verdosa.
-
-Detrás, muy oscuro y apenas sugerido, el arco de piedra de una cripta con vetas verdes
-luminosas en las paredes, y una grilla de líneas verdes finas casi imperceptible.
-
-Fondo negro verdoso liso (#050806), con un resplandor verde difuso detrás de la cabeza del
-lobo.
-
-Importante para la composición: dejá la mitad derecha y toda la franja inferior mucho más
-despejadas, oscuras y vacías, porque ahí voy a escribir un título encima.
-
-Estilo: emblema de esports, oscuro, neón, alto contraste, cinematográfico.
-
-Sin texto, sin letras, sin números, sin logos.
+EXCLUSIONES OBLIGATORIAS
+Sin texto, letras, números, carteles, marcas de agua ni logotipos. Sin cartas de truco. Sin armas
+como objeto principal. Sin calaveras, tumbas, velas, cadenas, sangre, telarañas, símbolos religiosos,
+runas mágicas ni decoración gótica. Sin ciudad cyberpunk, lluvia, callejón ni exceso de cables.
+Sin luz azul o violeta. Sin estética de casino, apuestas o dinero.
 ```
 
-## A3. La textura de piedra de fondo
+### Qué aprobar antes de seguir
 
-Un patrón repetible muy tenue. Es de las más baratas de integrar y se nota en **todas** las páginas
-a la vez: es lo que le saca lo plano al fondo sin competir con el contenido.
+- Se siente como **un club gamer subterráneo**, no como una tumba.
+- La mitad izquierda permite leer texto blanco sin tapar nada importante.
+- El verde es puro y controlado; no se volvió turquesa.
+- El portal tiene personalidad propia sin ser un lobo gigante literal.
+- Hay profundidad y materiales creíbles, no una ilustración fantástica genérica.
+- Da curiosidad y comodidad, no miedo.
 
-Guardala como **`textura-piedra.png`**
+Si falla alguno, no generar G2: corregir G1 primero.
 
-```
-Imagen cuadrada. Patrón repetible sin costuras (seamless tileable pattern).
+---
 
-Textura de una pared de piedra oscura con grabados geométricos angulares muy finos,
-dibujados con líneas en verde (#2fc94f) sobre negro verdoso (#050806). Los grabados son
-formas simples y rectas: triángulos, colmillos estilizados, rombos y líneas que se cruzan,
-distribuidos de forma regular y bien espaciada.
+## G2 — Comunidad: “La mesa de la Kripta”
 
-Extremadamente sutil y de bajo contraste: los grabados casi se pierden en la oscuridad,
-como una marca de agua o un empapelado apenas visible. Que sean chicos y que haya mucho
-espacio negro entre uno y otro.
+**Nombre:** `comunidad-kripta.png`
+**Formato:** horizontal 3:2
+**Uso:** sección “Cómo funciona” o presentación de la comunidad
+**Requisito:** adjuntar G1 aprobada + bloque de continuidad
 
-Estilo plano y minimalista, sólo líneas finas, sin volumen, sin sombras, sin brillo neón
-fuerte.
+### Prompt
 
-Tiene que poder repetirse en mosaico sin que se noten los bordes ni las uniones.
-Sin texto ni números.
-```
+```text
+Creá una escena horizontal 3:2 dentro del mismo santuario gamer subterráneo de la imagen de
+referencia.
 
-## A4. El ambiente: el refugio nocturno
+ESCENA
+Una mesa comunitaria amplia de basalto negro y metal grafito, ubicada en una sala cómoda de la
+Kripta. Alrededor hay cuatro gamers adultos compartiendo una sesión nocturna; se ven únicamente
+de espaldas o en silueta de tres cuartos, sin rostros identificables y sin que una persona sea la
+“estrella”. La imagen debe comunicar grupo, pertenencia y colaboración, no aislamiento.
 
-Esta es la que hace que un gamer que entra se sienta identificado, y la que mejor comunica "acá te
-podés quedar". Va en la sección de cómo funciona o de torneos.
+Sobre la mesa hay periféricos oscuros de diseño limpio: monitores delgados, teclados y auriculares.
+Las pantallas muestran solamente formas abstractas verdes desenfocadas, sin interfaces, texto,
+logos ni videojuegos reconocibles. En el fondo hay bancos acolchados oscuros, una pequeña zona de
+descanso y el portal angular característico de la Kripta. Todo debe verse ordenado, cuidado y
+habitable, no como un sótano abandonado.
 
-Guardala como **`refugio.png`**
+COMPOSICIÓN
+El grupo y la mesa ocupan el centro-derecha. Dejá aire oscuro alrededor, especialmente en la parte
+superior izquierda, para que la escena respire y pueda convivir con contenido web. Plano general
+íntimo a la altura de los ojos, lente equivalente a 35 mm. No primer plano de personas.
 
-```
-Imagen horizontal, relación 3:2.
+INTENCIÓN EMOCIONAL
+Una comunidad argentina que se reúne de noche para competir, conversar y quedarse. Energía
+tranquila antes de un torneo. Acogedor, inclusivo y premium, sin parecer una oficina corporativa,
+un cibercafé barato ni una discoteca.
 
-Un escritorio de gaming dentro de una cripta de piedra oscura, de noche. Sobre el
-escritorio, dos monitores encendidos vistos de costado y desde atrás, que bañan la escena
-con luz verde; un teclado mecánico con las teclas iluminadas en verde; un mouse con una
-franja de luz verde. Los cables cuelgan ordenados por el borde del escritorio. La silla
-está vacía: no hay ninguna persona en la escena.
+Mantené exactamente los materiales, verdes, luces arquitectónicas, realismo y atmósfera de la
+referencia adjunta.
 
-Alrededor, paredes de piedra maciza con vetas que brillan en verde neón (#5dff86), y al
-fondo un arco de piedra en penumbra. Niebla muy baja a la altura del piso. En un rincón,
-un cristal verde encendido apoyado en el suelo.
-
-Toda la iluminación viene del verde de las pantallas y de las vetas de la piedra. El resto
-es negro verdoso muy oscuro (#050806).
-
-Atmósfera acogedora, cálida a pesar del frío del verde, de refugio nocturno: tiene que dar
-ganas de sentarse ahí. Nada de terror ni abandono.
-
-Estilo: render 3D cinematográfico, iluminación volumétrica, alto contraste.
-
-Sin texto, sin letras, sin números. Los monitores están encendidos pero no muestran ninguna
-interfaz ni logo: sólo un brillo verde difuso.
-```
-
-## A5. Las tres insignias de rango — **tres piezas en una imagen**
-
-Combatientes, Guardianes y Panteón. Van las tres en una sola imagen y yo las recorto: gastás **una**
-generación en lugar de tres, que sin Plus importa.
-
-Guardala como **`rangos.png`**
-
-```
-Imagen horizontal, relación 3:2. Una sola imagen con tres insignias alineadas en fila, cada
-una centrada en su tercio, todas del mismo tamaño y el mismo estilo, bien separadas entre sí
-y sin superponerse.
-
-Son insignias de rango de una comunidad de gaming, hechas de piedra oscura y metal negro con
-filos y detalles de luz verde neón, sobre fondo negro verdoso liso (#050806). Van de menor a
-mayor jerarquía y la diferencia entre ellas tiene que ser evidente:
-
-- Izquierda, la más simple: un escudo angular con un solo colmillo apuntando hacia arriba.
-  Luz verde tenue, casi sin detalle.
-- Centro, intermedia: un escudo más elaborado con dos colmillos cruzados y una cabeza de
-  lobo chica en la parte de arriba. Más detalle y más brillo.
-- Derecha, la más imponente: un escudo con dos columnas de templo a los costados, una cabeza
-  de lobo completa en el centro y una corona de puntas arriba. Mucho brillo verde y rayos de
-  luz saliendo del borde.
-
-Estilo: iconos de rango de videojuego, render 3D, piedra y metal oscuros con neón verde,
-alto contraste, vista frontal.
-
-Sin texto, sin números, sin letras.
-```
-
-## A6. El lobo emblema
-
-**Salteala si conseguís el logo real del servidor.** Hoy hay un lobo provisorio dibujado a mano en
-SVG (`app/componentes/marca.tsx`) que funciona bien y se ve nítido; cuando esté el definitivo se
-reemplaza sólo ese archivo.
-
-Guardala como **`lobo.png`**
-
-```
-Imagen cuadrada.
-
-Emblema de una cabeza de lobo estilizada y geométrica, de frente, con las orejas en punta
-hacia arriba, construida con planos angulares y facetas, estilo low poly. Hecha de verde
-neón brillante (#5dff86) con degradado hacia un verde más oscuro (#2fc94f), sobre fondo
-negro verdoso liso (#050806).
-
-Los ojos son dos cuñas afiladas e inclinadas que brillan con luz propia. El contorno emite
-un resplandor verde suave.
-
-Aspecto de logo de equipo de esports: simétrico, limpio, de formas simples y decididas, que
-se siga entendiendo cuando se ve en tamaño chico.
-
-Centrado, con margen libre alrededor. Sin texto, sin letras, sin marco, sin fondo con
-degradado.
-```
-
-## A7. El Colmillo: la moneda interna
-
-Para cuando se lance la moneda de lealtad. Sirve además como ícono de "puntos" en el ranking.
-
-Guardala como **`colmillo.png`**
-
-```
-Imagen cuadrada.
-
-Un colmillo de lobo estilizado, visto de frente, flotando y levemente inclinado. Está hecho
-de un material oscuro translúcido, como obsidiana o vidrio negro, con una veta de luz verde
-neón (#5dff86) que lo recorre por dentro y lo hace brillar desde el interior. La punta es
-afilada; la base tiene un engarce de metal negro con grabados geométricos finos que brillan
-en verde.
-
-Emite un resplandor verde suave a su alrededor. Fondo negro verdoso liso (#050806),
-centrado, con margen libre.
-
-Estilo: ícono de objeto de videojuego, render 3D, alto contraste, brillo neón. Tiene que
-leerse como un objeto valioso y coleccionable, tipo trofeo o amuleto.
-
-Sin texto, sin letras, sin números.
-```
-
-## A8. El marco de los campeones (opcional)
-
-Hoy las cuatro tarjetas del salón de campeones muestran el mismo lobo repetido. Con este marco, cada
-campeón puede llevar su avatar de Discord adentro.
-
-Guardala como **`marco-campeon.png`**
-
-```
-Imagen cuadrada.
-
-Un marco circular ornamentado y VACÍO, para poner adentro la foto de perfil de un jugador.
-El marco es de piedra oscura y metal negro con filos de luz verde neón (#5dff86), con dos
-colmillos chicos enfrentados en la parte de abajo y una corona de puntas en la parte de
-arriba.
-
-El interior del círculo está completamente vacío, de un negro plano y parejo (#050806), sin
-absolutamente nada dibujado adentro: ni cara, ni personaje, ni figura, ni textura, ni
-reflejo.
-
-El fondo alrededor del marco también es negro verdoso liso. Centrado, simétrico, con margen
-libre.
-
-Estilo: marco de avatar de videojuego, render 3D, alto contraste.
-Sin texto, sin letras, sin números, sin ninguna persona.
+Sin texto, letras, números, logos, marcas de agua, armas, cartas, dinero, bebidas alcohólicas,
+terror, decoración gótica, luz azul, violeta o roja.
 ```
 
 ---
 
-# BLOQUE B — Truco
+## G3 — Torneos: “El núcleo competitivo”
 
-Sólo los dos lugares donde el truco de verdad corresponde: la tarjeta de los torneos de truco y la
-herramienta del anotador. Generalas al final, cuando el bloque A esté cubierto.
+**Nombre:** `torneos-kripta.png`
+**Formato:** horizontal 3:2
+**Uso:** sección de torneos y competencia
+**Requisito:** adjuntar G1 aprobada + bloque de continuidad
 
-## B1. Los íconos de los tipos de torneo — **dos piezas en una imagen**
+### Prompt
 
-Cubre las dos clases de torneo que corrés: shooter y truco. Una sola generación para las dos, y deja
-el truco en la proporción que tiene en el sitio.
+```text
+Creá una escena horizontal 3:2 dentro del mismo complejo subterráneo de esports de la imagen de
+referencia.
 
-Guardala como **`tipos-torneo.png`**
+ESCENA
+El núcleo competitivo de la Kripta: una arena de esports íntima y elegante, no un estadio gigante.
+Dos filas cortas de estaciones de juego oscuras se enfrentan a ambos lados de un pasillo central.
+En el piso de basalto, líneas verdes integradas forman una estructura geométrica de eliminación:
+ramas simétricas que avanzan hacia un único círculo luminoso al fondo, una alusión abstracta a una
+llave de torneo, sin texto, nombres ni números.
 
-```
-Imagen horizontal, relación 2:1. Una sola imagen dividida en dos mitades, con un objeto
-centrado en cada mitad, los dos del mismo tamaño y el mismo estilo, bien separados.
+Al final del pasillo hay una pieza central pequeña con forma de colmillo de obsidiana suspendido,
+iluminado desde dentro por verde, como símbolo de victoria. Puede haber competidores adultos como
+siluetas secundarias sentadas en las estaciones, pero sin rostros identificables, poses agresivas ni
+armas visibles. El protagonismo es del espacio y de la estructura competitiva.
 
-Fondo negro verdoso liso (#050806) en las dos mitades. Los objetos son oscuros, de piedra y
-metal negro, iluminados por luz verde neón (#5dff86 y #2fc94f).
+COMPOSICIÓN
+Perspectiva frontal con punto de fuga central. Sensación de orden, reglas claras y tensión previa al
+inicio. El pasillo luminoso guía la mirada. Dejá sombras suficientes en los laterales para que las
+tarjetas y textos del sitio puedan convivir cerca de la imagen. Plano general, lente equivalente a
+28 mm, sin gran angular extremo.
 
-- Mitad izquierda: una mira de puntería circular de líneas finas y luminosas flotando sobre
-  un casco táctico oscuro visto de tres cuartos, con una franja de luz verde.
-- Mitad derecha: tres cartas de baraja española apoyadas en abanico cerrado, oscuras, con
-  los símbolos de los palos (espada, bastón y copa) dibujados en verde luminoso. Las cartas
-  NO llevan ningún número ni letra: sólo el símbolo del palo.
+INTENCIÓN
+Competencia de habilidad organizada por una comunidad, no apuestas. Profesional pero alcanzable:
+una arena donde cualquier miembro puede anotarse, no una final mundial inaccesible.
 
-Estilo: iconos de videojuego, render 3D limpio, objetos oscuros sobre negro iluminados por
-neón verde, alto contraste.
+Mantené exactamente los materiales, verdes, luces arquitectónicas, realismo y atmósfera de la
+referencia adjunta.
 
-Sin texto, sin números, sin marcas ni logos.
-```
-
-## B2. Los fósforos del anotador de Truco
-
-Para la tarjeta de la herramienta. Es el único lugar del sitio donde el truco es el protagonista.
-
-Guardala como **`anotador.png`**
-
-```
-Imagen cuadrada.
-
-Cinco fósforos de madera apoyados sobre una superficie de piedra oscura, puestos formando un
-cuadrado con una diagonal que lo cruza, que es como se anotan los puntos en el truco
-argentino. Vista desde arriba y ligeramente en perspectiva.
-
-Los fósforos son de madera oscura y las cabezas brillan encendidas en verde neón (#5dff86),
-iluminando la piedra alrededor con un resplandor verde suave.
-
-Fondo negro verdoso liso (#050806), composición centrada, con margen libre.
-
-Estilo: render 3D, primer plano, alto contraste, objetos oscuros con luz verde neón.
-
-Sin texto, sin letras, sin números.
+Sin texto, letras, números, logos, trofeos con inscripciones, dinero, fichas, ruletas, casinos,
+armas protagonistas, violencia, cartas, terror, decoración medieval, luz azul, violeta o roja.
 ```
 
 ---
 
-## En qué orden generarlas
+## G4 — Herramienta gamer: “Precisión”
 
-Sin Plus alcanzan pocas por día. El orden está pensado por cuánto cambia la página cada una:
+**Nombre:** `herramienta-sensibilidad.png`
+**Formato:** cuadrado 1:1
+**Uso:** tarjeta del convertidor de sensibilidad
+**Requisito:** adjuntar G1 aprobada + bloque de continuidad
 
-| Orden | Imagen | Por qué |
+### Prompt
+
+```text
+Creá una imagen cuadrada 1:1, como fotografía editorial de producto tomada dentro de la misma
+Kripta de la referencia.
+
+ESCENA
+Primer plano de un mouse gamer de diseño original, sin marca, apoyado sobre una superficie de
+basalto negro. El mouse es de metal grafito mate y tiene una única ranura lateral con luz verde
+#2fc94f. Detrás del mouse, fuera de foco, una pantalla oscura proyecta una retícula geométrica verde
+muy simple y abstracta: dos círculos finos concéntricos y cuatro marcas cortas, sin números, letras,
+mediciones ni interfaz.
+
+Un cable trenzado oscuro traza una curva limpia sobre la piedra. Pequeñas partículas de polvo
+iluminadas por el verde aportan profundidad, sin parecer chispas ni magia.
+
+COMPOSICIÓN
+Objeto completo, centrado levemente hacia la derecha, mucho espacio negativo negro alrededor,
+ángulo de cámara bajo de tres cuartos, lente equivalente a 50 mm, profundidad de campo controlada.
+Debe seguir siendo legible cuando se muestre dentro de una tarjeta pequeña.
+
+ACABADO
+Fotografía de producto premium, materiales físicamente realistas, bordes limpios, contraste alto,
+luz verde controlada y fondo negro verdoso #050806. Misma dirección de arte que la referencia.
+
+Sin texto, números, logos, marcas, manos, armas, videojuegos reconocibles, colores azules o violetas,
+cyberpunk urbano ni decoración de truco.
+```
+
+---
+
+## G5 — Herramienta de Truco: “El anotador”
+
+**Nombre:** `herramienta-anotador.png`
+**Formato:** cuadrado 1:1
+**Uso:** únicamente la tarjeta del anotador de Truco
+**Requisito:** adjuntar G1 aprobada + bloque de continuidad
+**Nota:** ésta es la única imagen donde el Truco es protagonista.
+
+### Prompt
+
+```text
+Creá una imagen cuadrada 1:1, como fotografía editorial de producto tomada dentro de la misma
+Kripta de la referencia.
+
+ESCENA
+Cinco fósforos de madera oscura apoyados sobre una pequeña mesa de basalto negro, vistos desde
+arriba con una inclinación leve. Están dispuestos como el sistema tradicional de conteo: cuatro
+forman un cuadrado y el quinto cruza en diagonal. Las cabezas de los fósforos NO están prendidas:
+contienen una brasa verde suave y controlada que ilumina apenas la piedra alrededor.
+
+En el fondo, muy desenfocado y ocupando menos del 15% de la imagen, se insinúa el reverso de un
+mazo de baraja española oscuro, sin cartas abiertas, sin palos visibles, sin números ni letras. Es
+un detalle contextual secundario; el protagonista absoluto son los cinco fósforos.
+
+COMPOSICIÓN
+Los fósforos ocupan el centro y deben leerse con claridad incluso en una tarjeta pequeña. Mucho
+espacio negativo negro alrededor. Lente equivalente a 50 mm, macro editorial, profundidad de campo
+suave pero con los cinco fósforos nítidos.
+
+ACABADO
+Fotografía de producto premium, piedra y madera físicamente realistas, luz verde controlada, fondo
+negro verdoso #050806. Debe pertenecer al mismo universo visual de la referencia, sin copiar la
+estética colorida o ilustrada de otros sitios de Truco.
+
+Sin texto, letras, números, logos, manos, fuego real, humo excesivo, cartas abiertas, casino,
+dinero, estética gauchesca caricaturesca, colores azules, violetas o rojos.
+```
+
+---
+
+# 4. Recursos que NO conviene generar con IA
+
+Los siguientes se hacen con SVG, CSS o código. GPT Image puede producir algo visualmente atractivo,
+pero no ofrece la precisión, transparencia, repetición ni consistencia que estos recursos necesitan.
+
+| Recurso | Cómo se hará | Por qué no con IA |
 |---|---|---|
-| 1 | **A1** Entrada a la Kripta | Cambia la cara del sitio. Es la identidad propia, no la copiada |
-| 2 | **A2** Compartir | Hoy tus links en Discord se ven pelados, y Discord es tu canal |
-| 3 | **A3** Textura de piedra | La más barata de integrar y se nota en todas las páginas a la vez |
-| 4 | **A4** Refugio nocturno | Es la que hace que un gamer se sienta identificado |
-| 5 | **A5** Rangos | Tres piezas por una sola generación |
-| 6 | **A7** Colmillo | Sirve de ícono de puntos aunque la moneda no esté lanzada |
-| 7 | **B1** Tipos de torneo | Dos piezas por una generación |
-| 8 | **A6** Lobo | Salteala si tenés el logo real |
-| 9 | **B2** Anotador | La más prescindible: la tarjeta ya funciona con texto |
-| 10 | **A8** Marco de campeón | Sólo si traemos los avatares de Discord |
+| Logo / lobo | SVG vectorial | Debe ser nítido a 16 px, simétrico y reutilizable |
+| Patrón de fondo | SVG/CSS repetible | Un patrón de IA rara vez cierra realmente sin costuras |
+| Insignias de rango | Familia de SVG | Las tres deben compartir geometría exacta y escalar bien |
+| Colmillo / puntos | SVG o ícono 3D derivado | Debe leerse como ícono pequeño y mantener siempre la misma forma |
+| Marco de campeón | CSS/SVG sobre avatar | Necesita transparencia real y encajar exactamente sobre una foto |
+| Imagen Open Graph | Código con hero + texto real | El título debe escribirse perfecto y poder actualizarse sin regenerar |
+| Medallas 1°, 2°, 3° | CSS/SVG | Son elementos de interfaz, no ilustraciones |
 
-**Con A1, A2 y A3 el sitio ya cambia de categoría.** No hace falta esperar a tener todas.
+La imagen para compartir se compondrá con código usando un recorte de G1, el lobo SVG y texto real.
+Así el nombre “KRIPTA”, el título y las fechas nunca salen deformados y se pueden actualizar.
 
-## Si sale mal
+---
 
-Pedile la corrección en el mismo chat, sin reescribir el prompt entero:
+# 5. Correcciones profesionales para usar en el mismo chat
 
-| Qué pasó | Qué pedirle |
-|---|---|
-| Salió con letras o números | `Quitá todo el texto, las letras y los números. Que no haya ninguna palabra en la imagen.` |
-| Salió tétrico o de terror | `Menos terror: quitá lo macabro y hacelo acogedor, como un refugio nocturno donde da ganas de quedarse. Sin calaveras ni telarañas.` |
-| El verde salió azulado | `El verde está tirando a azul. Usá exactamente #2fc94f y #5dff86, un verde puro y brillante.` |
-| Quedó gris o lavado | `Más oscuro y con más contraste: el fondo casi negro y el verde brillando mucho más.` |
-| El fondo no es negro | `El fondo tiene que ser negro verdoso liso #050806, parejo, sin degradado ni viñeta.` |
-| Quedó cargado o confuso | `Simplificá: menos elementos, más espacio vacío, composición más limpia.` |
-| Metió cartas donde no van | `Sacá las cartas de baraja: esta imagen no es de truco.` |
-| Las cartas tienen números | `Las cartas no llevan ningún número ni letra: sólo el símbolo del palo.` |
+No pedir “hacela mejor”. Indicar qué conservar y qué cambiar.
 
-Si una queda casi bien: `generá tres variantes de esta misma imagen`.
+## Si quedó demasiado medieval o terrorífica
 
-## Cuando las tengas
+```text
+Conservá la composición, la cámara y la iluminación, pero reemplazá toda lectura medieval o de
+terror por arquitectura contemporánea de esports. Eliminá adornos góticos, ruinas, runas, velas,
+calaveras y piedra envejecida. Usá basalto negro de cortes limpios, metal grafito, vidrio ahumado y
+luz integrada. Tiene que sentirse como un club gamer premium y seguro, no como una tumba.
+```
 
-Mandámelas con el nombre de archivo de cada una y me ocupo de:
+## Si quedó cyberpunk genérica
 
-- Recortarlas a las medidas exactas de cada lugar del sitio.
-- Convertirlas a WebP y AVIF, que pesan mucho menos sin perder calidad visible. Importa: buena parte
-  de la comunidad entra desde el celular con datos.
-- Servirlas con `next/image`, que genera un tamaño por pantalla y evita que el texto salte mientras
-  la imagen carga.
-- Integrarlas y mostrarte una captura de cómo quedó antes de mergear nada.
+```text
+Conservá la composición y los materiales principales, pero reducí radicalmente el cyberpunk:
+eliminá ciudad, carteles, cables, lluvia, luces múltiples y detalles tecnológicos innecesarios.
+Dejá una arquitectura subterránea limpia, monumental y silenciosa. La única luz de color es verde y
+sale de ranuras integradas en la piedra.
+```
+
+## Si el verde salió azul o turquesa
+
+```text
+Conservá toda la imagen, pero corregí únicamente la gradación de color: el verde debe ser puro,
+cercano a #2fc94f, y las altas luces #5dff86. Eliminá por completo cian, turquesa, azul y violeta.
+Las sombras deben tender a negro verdoso #050806, no a azul.
+```
+
+## Si no dejó espacio para el texto del hero
+
+```text
+Conservá la escena y su estilo, pero reencuadrala para uso web: mové toda la arquitectura y el foco
+visual al 55% derecho. Dejá el 42% izquierdo oscuro, limpio y sin objetos importantes, con contraste
+uniforme suficiente para colocar un título blanco grande y dos botones.
+```
+
+## Si quedó sobrecargada
+
+```text
+Conservá el concepto, pero aplicá una edición más premium y minimalista: eliminá aproximadamente el
+40% de los objetos pequeños, partículas, luces y ornamentos. Priorizá una sola silueta arquitectónica,
+materiales creíbles, espacio negativo y jerarquía visual clara.
+```
+
+## Si agregó texto o logos
+
+```text
+Conservá exactamente la escena, pero eliminá todo texto, letras, números, carteles, símbolos de
+marcas, logos e interfaces legibles. No reemplaces el texto por otros signos; dejá esas superficies
+oscuras y limpias.
+```
+
+## Si querés variantes sin perder la dirección
+
+```text
+Generá tres variaciones de esta misma dirección de arte. Conservá de forma estricta la arquitectura,
+los materiales, la paleta, la iluminación, la cámara y las zonas de espacio negativo. Variá sólo
+detalles secundarios y la distribución sutil de las luces. No cambies de estilo.
+```
+
+---
+
+# 6. Orden recomendado
+
+1. **G1 Hero / imagen maestra.** No avanzar hasta aprobarla.
+2. **G2 Comunidad.** Comprueba si el mundo también funciona con personas y calidez.
+3. **G3 Torneos.** Le da identidad propia al sistema competitivo.
+4. **G4 Sensibilidad.** Primera herramienta; gaming puro.
+5. **G5 Anotador.** Truco contenido en el lugar correcto.
+
+Con G1 sola ya puedo rediseñar el hero y generar por código la primera imagen para compartir. No
+hace falta esperar las cinco.
+
+---
+
+# 7. Cómo entregar los archivos
+
+- Descargar siempre el **PNG original** generado por ChatGPT.
+- No mandar captura de pantalla, archivo reenviado por WhatsApp ni imagen pegada en un documento.
+- No recortar, comprimir ni borrar el fondo antes de enviarla.
+- Conservar nombres: `hero-kripta.png`, `comunidad-kripta.png`, `torneos-kripta.png`,
+  `herramienta-sensibilidad.png`, `herramienta-anotador.png`.
+- Si hay dos opciones, conservar ambas como `hero-kripta-a.png` y `hero-kripta-b.png`.
+
+Después se hará en el repo:
+
+- Recorte responsivo para escritorio y celular.
+- Conversión a WebP/AVIF.
+- Uso de `next/image` con medidas declaradas para evitar saltos de contenido.
+- Gradientes CSS para integrar los bordes al fondo `#050806`.
+- Open Graph generado con código, texto real y un recorte de G1.
+- Verificación visual a 390 px (celular) y 1440 px (escritorio) antes de mergear.
