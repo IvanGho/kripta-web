@@ -28,8 +28,17 @@ El ranking, los puestos y las llaves son lógica de negocio y viven en el domini
 Si el sitio los recalculara habría dos implementaciones de la misma regla, y tarde o temprano
 dirían cosas distintas: el panel mostraría un campeón y la web otro.
 
-Falta agregar en el panel una ruta pública que devuelva el tipo `DatosPublicos`. Hasta
-entonces, el sitio muestra datos de ejemplo y se ve completo igual.
+El panel ya expone esa ruta: **`GET {PANEL_API_URL}/publico/datos`** devuelve el tipo
+`DatosPublicos` de `app/lib/datos.ts`. Alcanza con cargar `PANEL_API_URL` para que el sitio pase
+de los datos de ejemplo a la temporada real.
+
+Sin `PANEL_API_URL`, o si el panel no responde, el sitio cae en los datos de ejemplo en lugar de
+mostrar un error: una caída del panel no puede tirar abajo la página de captación.
+
+Cuando lo que se muestra son datos de ejemplo, el sitio lo dice (la pastilla del hero pasa de
+"en vivo" a "vista previa" y el ranking aclara que los nombres son de muestra). El panel manda
+ese dato en `esEjemplo`, y es `true` cuando el panel corre en modo demo. **Si cambia el shape de
+un lado hay que cambiarlo del otro**: son dos repos y no hay nada que los sincronice solo.
 
 ## Cómo se logra que no se vea plano
 

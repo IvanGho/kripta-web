@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Marca } from "./marca";
-import { URL_DISCORD } from "../lib/enlaces";
+import { BotonDiscord } from "./boton-discord";
 
 export function Cabecera() {
   return (
@@ -11,15 +11,15 @@ export function Cabecera() {
         </Link>
 
         <nav className="ml-auto hidden items-center gap-6 text-sm text-tenue md:flex">
-          <a href="/#ranking" className="transition-colors hover:text-texto">Ranking</a>
-          <a href="/#torneos" className="transition-colors hover:text-texto">Torneos</a>
+          <Link href="/#ranking" className="transition-colors hover:text-texto">Ranking</Link>
+          <Link href="/#torneos" className="transition-colors hover:text-texto">Torneos</Link>
           <Link href="/anotador" className="transition-colors hover:text-texto">Anotador de Truco</Link>
           <Link href="/sensibilidad" className="transition-colors hover:text-texto">Sensibilidad</Link>
         </nav>
 
-        <a href={URL_DISCORD} className="boton ml-auto px-4 py-2 text-sm md:ml-0" target="_blank" rel="noopener">
+        <BotonDiscord className="ml-auto px-4 py-2 text-sm md:ml-0">
           Entrar al Discord
-        </a>
+        </BotonDiscord>
       </div>
     </header>
   );

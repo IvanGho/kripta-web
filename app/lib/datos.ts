@@ -163,7 +163,10 @@ export async function obtenerDatos(): Promise<DatosPublicos> {
     });
     if (!res.ok) return EJEMPLO;
     const datos = (await res.json()) as DatosPublicos;
-    return { ...datos, esEjemplo: false };
+    // Se respeta el `esEjemplo` que manda el panel. Antes se forzaba a `false`, y entonces un
+    // panel en modo demo (datos sembrados de prueba) se mostraba como si fuera la temporada
+    // real, sin ningún aviso. Que el panel diga la verdad y el sitio la muestre.
+    return { ...datos, esEjemplo: Boolean(datos.esEjemplo) };
   } catch {
     return EJEMPLO;
   }
@@ -176,10 +179,35 @@ export function formatoARS(centavos: number): string {
   return `${centavos < 0 ? "-" : ""}$${conPuntos}${dec === "00" ? "" : `,${dec}`}`;
 }
 
+/** La comunidad es argentina y los torneos son a la hora de acá, sea donde corra el servidor. */
+const ZONA = "America/Argentina/Buenos_Aires";
+
+/**
+ * Fecha en formato "martes 18/8 · 22:00 hs", siempre en hora argentina.
+ *
+ * Ojo con la zona: esto se renderiza en el servidor, y el servidor de Vercel corre en UTC.
+ * La versión anterior usaba `getHours()`/`getDay()`, que devuelven la hora local **del
+ * servidor**: un torneo a las 22:00 de Argentina se mostraba a las 01:00 del día siguiente.
+ * Tres horas de diferencia y un día corrido, en el dato que le dice a la gente cuándo jugar.
+ *
+ * Por eso la zona va declarada de forma explícita en lugar de confiar en el reloj del proceso.
+ */
 export function fechaLinda(iso: string): string {
   const f = new Date(iso);
-  const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-  const hora = String(f.getHours()).padStart(2, "0");
-  const min = String(f.getMinutes()).padStart(2, "0");
-  return `${dias[f.getDay()]} ${f.getDate()}/${f.getMonth() + 1} · ${hora}:${min} hs`;
+  if (Number.isNaN(f.getTime())) return "";
+
+  const partes = new Intl.DateTimeFormat("es-AR", {
+    timeZone: ZONA,
+    weekday: "long",
+    day: "numeric",
+    month: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(f);
+
+  const parte = (tipo: Intl.DateTimeFormatPartTypes) =>
+    partes.find((p) => p.type === tipo)?.value ?? "";
+
+  return `${parte("weekday")} ${parte("day")}/${parte("month")} · ${parte("hour")}:${parte("minute")} hs`;
 }

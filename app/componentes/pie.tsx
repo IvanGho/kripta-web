@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Lobo } from "./marca";
-import { URL_DISCORD } from "../lib/enlaces";
+import { BotonDiscord } from "./boton-discord";
 
 export function Pie() {
   return (
@@ -18,9 +18,9 @@ export function Pie() {
             <div>
               <p className="mb-3 text-xs uppercase tracking-[0.14em] text-tenue">Comunidad</p>
               <ul className="space-y-2">
-                <li><a href={URL_DISCORD} target="_blank" rel="noopener" className="text-texto hover:text-acento-2">Discord</a></li>
-                <li><a href="/#ranking" className="text-texto hover:text-acento-2">Ranking</a></li>
-                <li><a href="/#torneos" className="text-texto hover:text-acento-2">Torneos</a></li>
+                <li><BotonDiscord variante="enlace" className="text-texto hover:text-acento-2">Discord</BotonDiscord></li>
+                <li><Link href="/#ranking" className="text-texto hover:text-acento-2">Ranking</Link></li>
+                <li><Link href="/#torneos" className="text-texto hover:text-acento-2">Torneos</Link></li>
               </ul>
             </div>
             <div>
