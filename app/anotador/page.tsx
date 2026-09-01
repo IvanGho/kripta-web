@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Cabecera } from "../componentes/cabecera";
 import { Pie } from "../componentes/pie";
+import { DatosEstructurados } from "../componentes/datos-estructurados";
+import { herramienta, preguntas } from "../lib/datos-estructurados";
 import { Anotador } from "./anotador";
 
 /**
@@ -15,9 +17,37 @@ export const metadata: Metadata = {
   alternates: { canonical: "/anotador" },
 };
 
+/**
+ * Las respuestas van explícitas y resumidas, no extraídas del HTML: el texto de la página está
+ * escrito para leerse y estas tienen que ser cortas y fieles. Las preguntas son literalmente los
+ * `h2` de abajo, así que el contenido para esto ya existía.
+ */
+const PREGUNTAS = [
+  {
+    pregunta: "¿Cómo se anota el Truco?",
+    respuesta:
+      "Una partida de truco argentino se juega a 30 puntos divididos en dos mitades: las malas (1 al 15) y las buenas (16 al 30). Se anota de a fósforos y cada grupo de cinco se cierra formando un cuadrado con una diagonal. Gana quien primero cruza los 30.",
+  },
+  {
+    pregunta: "¿Se puede usar en el celular?",
+    respuesta:
+      "Sí. Está pensado para el celular apoyado en la mesa, con botones grandes, y se puede instalar como app desde el menú del navegador. La partida queda guardada, así que no se pierde si cerrás la pestaña.",
+  },
+];
+
 export default function Pagina() {
   return (
     <>
+      <DatosEstructurados
+        datos={herramienta({
+          nombre: "Anotador de Truco online",
+          descripcion:
+            "Anotador de Truco argentino gratis y sin registro: malas y buenas hasta 30 puntos, con fósforos como en la mesa.",
+          ruta: "/anotador",
+        })}
+      />
+      <DatosEstructurados datos={preguntas(PREGUNTAS)} />
+
       <Cabecera />
       <main id="contenido" className="grilla relative mx-auto max-w-3xl px-5 pb-16 pt-12">
         <div className="resplandor left-1/2 top-[-120px] h-[260px] w-[520px] -translate-x-1/2 bg-acento/15" />

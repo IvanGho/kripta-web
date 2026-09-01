@@ -251,6 +251,75 @@ with sync_playwright() as p:
         f'destino={pagina.locator("select").nth(1).input_value()} sens={pagina.locator("input").nth(0).input_value()}',
     )
 
+    # ---------------- SEO ----------------
+    print("\nSEO")
+
+    robots = pagina.request.get(f"{BASE}/robots.txt")
+    chequear("robots.txt responde 200", robots.status == 200, f"status {robots.status}")
+    cuerpo_robots = robots.text()
+    chequear("robots.txt declara el sitemap", "Sitemap:" in cuerpo_robots, cuerpo_robots[:120])
+
+    mapa = pagina.request.get(f"{BASE}/sitemap.xml")
+    chequear("sitemap.xml responde 200", mapa.status == 200, f"status {mapa.status}")
+    cuerpo_mapa = mapa.text()
+    for ruta in ["/anotador", "/sensibilidad"]:
+        chequear(f"el sitemap incluye {ruta}", ruta in cuerpo_mapa)
+    chequear("el sitemap tiene las tres paginas", cuerpo_mapa.count("<loc>") == 3, f'{cuerpo_mapa.count("<loc>")} urls')
+
+    # La imagen para compartir. Declarar summary_large_image sin imagen deja la tarjeta vacia,
+    # que es peor que no declararla.
+    og = pagina.request.get(f"{BASE}/opengraph-image")
+    chequear("la imagen para compartir responde 200", og.status == 200, f"status {og.status}")
+    chequear(
+        "la imagen para compartir es un PNG con contenido",
+        og.headers.get("content-type", "").startswith("image/png") and len(og.body()) > 10000,
+        f'{og.headers.get("content-type")} / {len(og.body())} bytes',
+    )
+
+    # Los iconos PNG del manifiesto: sin ellos Android recorta el logo.
+    manifiesto = pagina.request.get(f"{BASE}/manifest.webmanifest").json()
+    proposito = [i.get("purpose") for i in manifiesto.get("icons", [])]
+    chequear("el manifiesto declara un icono maskable", "maskable" in proposito, str(proposito))
+    for tamano in ["192", "512"]:
+        icono = pagina.request.get(f"{BASE}/icono/{tamano}")
+        chequear(
+            f"el icono de {tamano}px se genera",
+            icono.status == 200 and icono.headers.get("content-type", "").startswith("image/png"),
+            f'status {icono.status} / {icono.headers.get("content-type")}',
+        )
+
+    # Canonical en las tres paginas. La home era la unica que no lo tenia.
+    for ruta in RUTAS:
+        pagina.goto(BASE + ruta, wait_until="networkidle")
+        canonical = pagina.locator('link[rel="canonical"]')
+        chequear(
+            f"{ruta} declara canonical",
+            canonical.count() == 1,
+            f"encontrados {canonical.count()}",
+        )
+
+    # JSON-LD: que exista y que sea JSON valido. Un bloque roto no da error visible en la
+    # pagina, simplemente lo ignoran los buscadores y nadie se entera.
+    import json as _json
+
+    for ruta in RUTAS:
+        pagina.goto(BASE + ruta, wait_until="networkidle")
+        bloques = pagina.locator('script[type="application/ld+json"]')
+        cantidad = bloques.count()
+        chequear(f"{ruta} tiene datos estructurados", cantidad > 0, f"{cantidad} bloques")
+        todos_validos = True
+        tipos = []
+        for i in range(cantidad):
+            try:
+                datos = _json.loads(bloques.nth(i).inner_text())
+                if isinstance(datos, list):
+                    tipos += [d.get("@type") for d in datos]
+                else:
+                    tipos.append(datos.get("@type"))
+            except Exception:
+                todos_validos = False
+        chequear(f"{ruta} el JSON-LD es JSON valido", todos_validos, str(tipos))
+
     navegador.close()
 
 print("")

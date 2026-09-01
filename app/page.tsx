@@ -1,10 +1,23 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Cabecera } from "./componentes/cabecera";
 import { Pie } from "./componentes/pie";
 import { Contador } from "./componentes/contador";
 import { Lobo } from "./componentes/marca";
 import { BotonDiscord } from "./componentes/boton-discord";
+import { DatosEstructurados } from "./componentes/datos-estructurados";
 import { obtenerDatos, formatoARS, fechaLinda } from "./lib/datos";
+import { eventosDeTorneos, listaDeCampeones, organizacion } from "./lib/datos-estructurados";
+
+/**
+ * La home era la única página sin `metadata` propia: heredaba todo del layout y por lo tanto
+ * **no tenía canonical**, mientras que las dos herramientas sí. Es justo la página con más
+ * riesgo de duplicarse por variantes de URL (`/?utm_source=...`, con y sin `www`, el dominio de
+ * preview de Vercel), o sea la que más lo necesitaba.
+ */
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 /** Se regenera cada minuto: el ranking se ve fresco sin recalcular en cada visita. */
 export const revalidate = 60;
@@ -13,8 +26,17 @@ export default async function Inicio() {
   const datos = await obtenerDatos();
   const { proximoTorneo, ranking, torneos, campeones, temporada, esEjemplo } = datos;
 
+  // Los eventos y los campeones sólo se declaran con datos reales: ver el comentario de
+  // lib/datos-estructurados.ts sobre por qué anunciarle torneos inventados a Google es un riesgo.
+  const eventos = eventosDeTorneos(torneos, esEjemplo);
+  const campeonesEstructurados = listaDeCampeones(campeones, esEjemplo);
+
   return (
     <>
+      <DatosEstructurados datos={organizacion()} />
+      {eventos.length > 0 && <DatosEstructurados datos={eventos} />}
+      {campeonesEstructurados && <DatosEstructurados datos={campeonesEstructurados} />}
+
       <Cabecera />
 
       {/*

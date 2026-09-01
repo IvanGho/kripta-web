@@ -1,18 +1,53 @@
 import type { Metadata } from "next";
 import { Cabecera } from "../componentes/cabecera";
 import { Pie } from "../componentes/pie";
+import { DatosEstructurados } from "../componentes/datos-estructurados";
+import { herramienta, preguntas } from "../lib/datos-estructurados";
 import { Convertidor } from "./convertidor";
 
+/**
+ * El título quedaba en ~68 caracteres con el sufijo de la plantilla ("· Kripta"), por encima del
+ * corte habitual en la página de resultados. Se acorta sin perder los términos que la gente
+ * busca: los nombres de los juegos siguen estando en la descripción y en el texto de la página.
+ */
 export const metadata: Metadata = {
-  title: "Convertidor de sensibilidad: Valorant, CS2, Apex y Overwatch",
+  title: "Convertidor de sensibilidad Valorant, CS2 y Apex",
   description:
     "Convertí tu sensibilidad entre Valorant, CS2, Apex Legends y Overwatch 2 manteniendo el mismo cm/360. Gratis y sin registro.",
   alternates: { canonical: "/sensibilidad" },
 };
 
+const PREGUNTAS = [
+  {
+    pregunta: "¿Por qué no alcanza con copiar el número de sensibilidad?",
+    respuesta:
+      "Cada juego define cuántos grados gira la cámara por cada paso del mouse: ese valor es el yaw, y en CS2 es 0,022 mientras en Valorant es 0,07. Por eso el mismo número da un giro distinto en cada juego.",
+  },
+  {
+    pregunta: "¿Cómo paso mi sensibilidad de Valorant a CS2?",
+    respuesta:
+      "Multiplicá tu sensibilidad de Valorant por 3,18, que es 0,07 dividido 0,022. Para el otro lado, dividí por 3,18.",
+  },
+  {
+    pregunta: "¿Sirve el eDPI para comparar entre juegos?",
+    respuesta:
+      "No. El eDPI es el DPI multiplicado por la sensibilidad y sirve para comparar jugadores del mismo juego. Entre juegos distintos hay que mirar el cm/360, porque el yaw cambia.",
+  },
+];
+
 export default function Pagina() {
   return (
     <>
+      <DatosEstructurados
+        datos={herramienta({
+          nombre: "Convertidor de sensibilidad entre shooters",
+          descripcion:
+            "Convertí tu sensibilidad entre Valorant, CS2, Apex Legends y Overwatch 2 manteniendo el mismo cm/360.",
+          ruta: "/sensibilidad",
+        })}
+      />
+      <DatosEstructurados datos={preguntas(PREGUNTAS)} />
+
       <Cabecera />
       <main id="contenido" className="grilla relative mx-auto max-w-3xl px-5 pb-16 pt-12">
         <div className="resplandor left-1/2 top-[-120px] h-[260px] w-[520px] -translate-x-1/2 bg-acento/15" />

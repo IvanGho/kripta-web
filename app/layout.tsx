@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import { URL_SITIO } from "./lib/sitio";
 
 /**
  * Poppins, la misma familia que usa TrucoChón. La elección no es estética nada más:
@@ -16,38 +17,6 @@ const poppins = Poppins({
   variable: "--font-poppins",
   display: "swap",
 });
-
-const URL_POR_DEFECTO = "https://monsterland.gg";
-
-/**
- * La URL del sitio, tolerando que la variable venga mal escrita.
- *
- * `new URL()` tira si el valor no tiene protocolo, y `metadataBase` se evalúa al importar el
- * módulo: o sea que poner `NEXT_PUBLIC_URL_SITIO=monsterland.gg` (sin `https://`, que es
- * exactamente como uno escribe un dominio) **rompía el build entero**, con un error que no
- * menciona ni la variable ni el archivo.
- *
- * Como el dominio lo va a cargar a mano alguien que no programa, el caso no es hipotético. Se
- * le agrega el protocolo si falta, y si igual no se puede interpretar se cae al valor por
- * defecto avisando, en vez de tumbar el deploy.
- */
-function urlDelSitio(): URL {
-  const crudo = (process.env.NEXT_PUBLIC_URL_SITIO ?? "").trim();
-  if (!crudo) return new URL(URL_POR_DEFECTO);
-
-  const conProtocolo = /^https?:\/\//i.test(crudo) ? crudo : `https://${crudo}`;
-  try {
-    return new URL(conProtocolo);
-  } catch {
-    console.warn(
-      `[kripta-web] NEXT_PUBLIC_URL_SITIO no se entiende como URL ("${crudo}"), así que se usa ` +
-        `${URL_POR_DEFECTO}. Los links para compartir y el canonical van a apuntar ahí.`,
-    );
-    return new URL(URL_POR_DEFECTO);
-  }
-}
-
-const URL_SITIO = urlDelSitio().origin;
 
 export const metadata: Metadata = {
   metadataBase: new URL(URL_SITIO),
