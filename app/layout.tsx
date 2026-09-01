@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import { URL_SITIO } from "./lib/sitio";
 
 /**
  * Poppins, la misma familia que usa TrucoChón. La elección no es estética nada más:
@@ -16,8 +17,6 @@ const poppins = Poppins({
   variable: "--font-poppins",
   display: "swap",
 });
-
-const URL_SITIO = process.env.NEXT_PUBLIC_URL_SITIO ?? "https://monsterland.gg";
 
 export const metadata: Metadata = {
   metadataBase: new URL(URL_SITIO),
@@ -54,6 +53,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       {/* `grano` agrega la capa de ruido sobre todo el sitio: es lo que hace que el fondo
           oscuro no se vea plano. Ver globals.css. */}
       <body className="grano flex min-h-full flex-col bg-fondo font-sans text-texto">
+        {/*
+          Primer elemento tabulable de todas las páginas. Está fuera de la pantalla hasta que
+          recibe foco (ver `.salto-al-contenido` en globals.css), así que con el mouse no se ve.
+          Existe porque la cabecera es pegajosa y tiene seis paradas de teclado antes del
+          contenido. Cada página pone el destino con `<main id="contenido">`.
+        */}
+        <a href="#contenido" className="boton salto-al-contenido text-sm">
+          Saltar al contenido
+        </a>
         {children}
       </body>
     </html>

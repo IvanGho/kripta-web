@@ -57,12 +57,41 @@ export type DatosPublicos = {
   esEjemplo: boolean;
 };
 
-/** Fecha del próximo martes/jueves a las 22, para que el contador siempre tenga sentido. */
+/** La comunidad es argentina y los torneos son a la hora de acá, sea donde corra el servidor. */
+const ZONA = "America/Argentina/Buenos_Aires";
+
+/**
+ * Fecha de un torneo de ejemplo, a las 22:00 **de Argentina**.
+ *
+ * Tenía el mismo bug de zona que `fechaLinda` ya había corregido más abajo, y era peor porque
+ * pasaba desapercibido: `setHours(22, 0, 0, 0)` fija las 22 en la hora **local del proceso**. En
+ * Vercel el proceso corre en UTC, así que el dato quedaba a las 22:00 UTC y `fechaLinda`, que sí
+ * formatea bien en hora argentina, lo imprimía como **19:00 hs**.
+ *
+ * O sea: en tu máquina se veía bien y en producción mentía tres horas. Y el dato es justamente el
+ * que le dice a la gente a qué hora jugar.
+ *
+ * Cómo se resuelve sin sumar una librería de fechas: se pregunta qué día es hoy **en Argentina**,
+ * se suman los días sobre esa fecha en UTC (para no arrastrar la zona del servidor) y se arma la
+ * hora con el offset argentino escrito de forma explícita. Argentina no tiene horario de verano
+ * desde 2009, así que `-03:00` vale todo el año.
+ */
 function proximaFechaDeTorneo(diasAdelante: number): string {
-  const f = new Date();
-  f.setDate(f.getDate() + diasAdelante);
-  f.setHours(22, 0, 0, 0);
-  return f.toISOString();
+  const hoyEnArgentina = new Intl.DateTimeFormat("en-CA", {
+    timeZone: ZONA,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+
+  const [anio, mes, dia] = hoyEnArgentina.split("-").map(Number);
+  const objetivo = new Date(Date.UTC(anio, mes - 1, dia + diasAdelante));
+
+  const aa = objetivo.getUTCFullYear();
+  const mm = String(objetivo.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(objetivo.getUTCDate()).padStart(2, "0");
+
+  return new Date(`${aa}-${mm}-${dd}T22:00:00-03:00`).toISOString();
 }
 
 const EJEMPLO: DatosPublicos = {
@@ -146,10 +175,106 @@ const EJEMPLO: DatosPublicos = {
   esEjemplo: true,
 };
 
+/** Cuánto se espera al panel antes de mostrar los datos de ejemplo. */
+const TIMEOUT_MS = 5000;
+
+function esObjeto(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
+function esTorneo(v: unknown): v is Torneo {
+  if (!esObjeto(v)) return false;
+  return (
+    typeof v.id === "number" &&
+    typeof v.nombre === "string" &&
+    typeof v.juego === "string" &&
+    typeof v.formato === "string" &&
+    typeof v.empiezaEn === "string" &&
+    typeof v.inscripcionCentavos === "number" &&
+    typeof v.premioCentavos === "number" &&
+    typeof v.cupo === "number" &&
+    typeof v.inscriptos === "number" &&
+    typeof v.estado === "string"
+  );
+}
+
+function esFilaRanking(v: unknown): v is FilaRanking {
+  if (!esObjeto(v)) return false;
+  return (
+    typeof v.puesto === "number" &&
+    typeof v.nombre === "string" &&
+    typeof v.puntos === "number" &&
+    typeof v.torneos === "number" &&
+    typeof v.titulos === "number"
+  );
+}
+
+function esCampeon(v: unknown): v is Campeon {
+  if (!esObjeto(v)) return false;
+  return (
+    typeof v.nombre === "string" &&
+    typeof v.torneo === "string" &&
+    typeof v.juego === "string" &&
+    typeof v.fecha === "string"
+  );
+}
+
 /**
- * Trae los datos del panel. Si no hay panel configurado, o si no responde, devuelve los de
- * ejemplo: es preferible un sitio que se ve completo a un sitio roto. Un error de red del
- * panel no puede tirar abajo la página de captación.
+ * Valida la respuesta del panel antes de dársela a la página.
+ *
+ * Por qué hace falta: los tres guardas que había (`!url`, `!res.ok`, `catch`) cubren que el panel
+ * no esté configurado, que conteste un error y que se caiga la red. **No** cubren el caso de un
+ * panel que responde `200` con un JSON de forma distinta. Y ese caso es realista: son dos repos
+ * sin nada que sincronice el contrato, así que alcanza con renombrar un campo en el panel.
+ *
+ * Con la respuesta mal formada, `datos.ranking` quedaba `undefined` y la home explotaba con un
+ * `TypeError` en `ranking.map(...)`. O sea que el archivo prometía que "un error del panel no
+ * puede tirar abajo la página de captación" y un panel *funcionando pero cambiado* sí la tiraba.
+ *
+ * Devuelve `null` cuando no se puede confiar en la respuesta, y el llamador cae a los datos de
+ * ejemplo, que es la misma decisión que ya se había tomado para los otros fallos.
+ */
+function validar(crudo: unknown): DatosPublicos | null {
+  if (!esObjeto(crudo)) return null;
+
+  if (!Array.isArray(crudo.torneos) || !crudo.torneos.every(esTorneo)) return null;
+  if (!Array.isArray(crudo.ranking) || !crudo.ranking.every(esFilaRanking)) return null;
+  if (!Array.isArray(crudo.campeones) || !crudo.campeones.every(esCampeon)) return null;
+  if (typeof crudo.jugadoresActivos !== "number") return null;
+
+  // `temporada` y `proximoTorneo` sí pueden venir en null: es un estado normal, no un error.
+  const temporada = crudo.temporada;
+  if (temporada !== null) {
+    if (!esObjeto(temporada)) return null;
+    if (
+      typeof temporada.nombre !== "string" ||
+      typeof temporada.desdeFecha !== "string" ||
+      typeof temporada.hastaFecha !== "string" ||
+      typeof temporada.premioFinalCentavos !== "number"
+    ) {
+      return null;
+    }
+  }
+  if (crudo.proximoTorneo !== null && !esTorneo(crudo.proximoTorneo)) return null;
+
+  return {
+    temporada: temporada as DatosPublicos["temporada"],
+    proximoTorneo: crudo.proximoTorneo as Torneo | null,
+    torneos: crudo.torneos,
+    ranking: crudo.ranking,
+    campeones: crudo.campeones,
+    jugadoresActivos: crudo.jugadoresActivos,
+    // Se respeta el `esEjemplo` que manda el panel. Antes se forzaba a `false`, y entonces un
+    // panel en modo demo (datos sembrados de prueba) se mostraba como si fuera la temporada
+    // real, sin ningún aviso. Que el panel diga la verdad y el sitio la muestre.
+    esEjemplo: Boolean(crudo.esEjemplo),
+  };
+}
+
+/**
+ * Trae los datos del panel. Si no hay panel configurado, si no responde, si tarda demasiado o si
+ * contesta algo que no tiene la forma esperada, devuelve los de ejemplo: es preferible un sitio
+ * que se ve completo a un sitio roto. Nada del panel puede tirar abajo la página de captación.
  */
 export async function obtenerDatos(): Promise<DatosPublicos> {
   const url = process.env.PANEL_API_URL;
@@ -160,13 +285,31 @@ export async function obtenerDatos(): Promise<DatosPublicos> {
       // Se revalida cada 60 segundos: el ranking se siente "en vivo" sin castigar la
       // velocidad de carga ni golpear la base en cada visita.
       next: { revalidate: 60 },
+      /*
+       * Sin timeout, un panel colgado (no caído: colgado, que no cierra la conexión) bloquea la
+       * regeneración de la home hasta el límite de la plataforma. El free tier de una base que
+       * quedó dormida es exactamente ese escenario.
+       *
+       * Nota verificada en los docs de esta versión de Next
+       * (node_modules/next/dist/docs/01-app/03-api-reference/04-functions/fetch.md): pasar un
+       * `signal` desactiva la **memoización** del fetch, que es la deduplicación dentro de un
+       * mismo render. No desactiva el cacheo persistente, que es cosa de `next.revalidate`. Acá
+       * hay un solo lugar que llama al panel, así que perder la memoización no cambia nada.
+       */
+      signal: AbortSignal.timeout(TIMEOUT_MS),
     });
     if (!res.ok) return EJEMPLO;
-    const datos = (await res.json()) as DatosPublicos;
-    // Se respeta el `esEjemplo` que manda el panel. Antes se forzaba a `false`, y entonces un
-    // panel en modo demo (datos sembrados de prueba) se mostraba como si fuera la temporada
-    // real, sin ningún aviso. Que el panel diga la verdad y el sitio la muestre.
-    return { ...datos, esEjemplo: Boolean(datos.esEjemplo) };
+
+    const validados = validar(await res.json());
+    if (!validados) {
+      console.warn(
+        "[kripta-web] El panel respondió 200 pero con una forma que no reconozco, así que se " +
+          "muestran los datos de ejemplo. Suele significar que cambió el shape de DatosPublicos " +
+          "en el panel y este repo quedó atrás.",
+      );
+      return EJEMPLO;
+    }
+    return validados;
   } catch {
     return EJEMPLO;
   }
@@ -178,9 +321,6 @@ export function formatoARS(centavos: number): string {
   const conPuntos = entero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   return `${centavos < 0 ? "-" : ""}$${conPuntos}${dec === "00" ? "" : `,${dec}`}`;
 }
-
-/** La comunidad es argentina y los torneos son a la hora de acá, sea donde corra el servidor. */
-const ZONA = "America/Argentina/Buenos_Aires";
 
 /**
  * Fecha en formato "martes 18/8 · 22:00 hs", siempre en hora argentina.

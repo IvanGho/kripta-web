@@ -20,8 +20,21 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#050806",
     lang: "es-AR",
     orientation: "portrait",
+    /*
+     * Antes había un solo ícono SVG con `sizes: "any"`. Chrome lo acepta para instalar, pero
+     * Android necesita PNG para el ícono adaptativo, y sin una variante `maskable` el sistema
+     * recorta el logo a la forma del launcher del teléfono: se puede comer el hocico del lobo o
+     * rellenar los bordes con blanco sobre un logo pensado para fondo negro.
+     *
+     * Los PNG los genera `app/icono/[tamano]/route.tsx` con el lobo al 60% del lienzo, que es la
+     * zona segura del recorte adaptativo. El SVG se deja porque es el que se ve nítido en la
+     * pestaña del navegador a cualquier tamaño.
+     */
     icons: [
       { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
+      { src: "/icono/192", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icono/512", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icono/512", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
 }
