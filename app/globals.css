@@ -122,6 +122,81 @@ body {
   color: transparent;
 }
 
+/*
+ * Fallback obligatorio para el modo de contraste forzado de Windows.
+ *
+ * `.texto-degradado` funciona pintando el fondo y recortándolo con la forma del texto, con el
+ * texto en `transparent`. En contraste forzado el sistema descarta los fondos decorativos, y
+ * entonces queda un texto transparente sobre nada: **invisible**.
+ *
+ * No es un caso de borde: esta clase la usan el puntaje del anotador y el resultado del
+ * convertidor, o sea la salida principal de las dos herramientas. Alguien que usa contraste
+ * forzado abría el anotador y no veía el número.
+ */
+@media (forced-colors: active) {
+  .texto-degradado {
+    background: none;
+    color: CanvasText;
+    -webkit-text-fill-color: CanvasText;
+  }
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Foco visible
+ * ---------------------------------------------------------------------------
+ * No había ninguna regla de foco, así que todo dependía del anillo por defecto del navegador,
+ * que sobre el fondo #050806 es un contorno oscuro sobre negro. Y encima los campos de las dos
+ * herramientas usaban `outline-none` reemplazándolo por un borde de 1px, que es más débil todavía.
+ *
+ * Se usa `:focus-visible` y no `:focus` a propósito: `:focus` también se dispara al hacer clic
+ * con el mouse, y un anillo que aparece en cada clic termina siendo lo primero que alguien pide
+ * sacar. `:focus-visible` lo muestra cuando el navegador entiende que hace falta, o sea al
+ * navegar con teclado.
+ *
+ * El anillo va en verde claro con un offset, para que se separe del borde propio del control y
+ * se vea sobre cualquiera de nuestras superficies.
+ */
+:focus-visible {
+  outline: 2px solid var(--acento-2);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* En contraste forzado el sistema decide el color, y hay que dejarlo decidir. */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/*
+ * Enlace para saltar al contenido.
+ *
+ * La cabecera es pegajosa y tiene logo, cuatro enlaces y el botón de Discord: son seis paradas
+ * de teclado antes de llegar a lo que la persona vino a leer, en todas las páginas. Este enlace
+ * está fuera de la pantalla hasta que recibe foco, que es el patrón estándar: no se ve con el
+ * mouse y aparece en cuanto alguien tabula.
+ */
+.salto-al-contenido {
+  position: absolute;
+  left: 50%;
+  top: 0.5rem;
+  z-index: 60;
+  transform: translate(-50%, -250%);
+  transition: transform 160ms ease;
+}
+
+.salto-al-contenido:focus-visible {
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .salto-al-contenido {
+    transition: none;
+  }
+}
+
 /* Resplandor sobre el texto del acento, para que "prenda" como neón. */
 .neon {
   color: var(--acento-2);
@@ -170,6 +245,31 @@ body {
 .boton-sec:hover {
   border-color: rgba(47, 201, 79, 0.45);
   background: #16291c;
+}
+
+/*
+ * Estado "todavía no disponible", para el botón de Discord sin invitación cargada.
+ *
+ * Antes ese caso era el botón verde con `opacity: 55%`, y no alcanzaba: un verde neón al 55%
+ * sobre negro sigue siendo el elemento más brillante de la pantalla, así que se lee como la
+ * acción principal. La persona lo toca, no pasa nada, y no hay ningún mensaje.
+ *
+ * Acá el estilo se despega del botón activo a propósito: sin relleno, sin luz, con el borde
+ * punteado que es la convención de "esto va a estar acá pero todavía no". Deja de competir por
+ * la atención y deja de prometer algo que no puede cumplir.
+ */
+.boton-no-disponible {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 12px;
+  padding: 0.85rem 1.5rem;
+  font-weight: 600;
+  color: var(--tenue);
+  background: transparent;
+  border: 1px dashed var(--borde);
+  cursor: not-allowed;
 }
 
 /* Pastilla chica, para etiquetas tipo "EN VIVO" o "18+". */

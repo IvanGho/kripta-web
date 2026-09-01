@@ -90,9 +90,13 @@ with sync_playwright() as p:
     # ---------------- navegacion en telefono ----------------
     print("\nnavegacion en telefono")
     pagina.goto(BASE + "/", wait_until="networkidle")
+    # Hay dos <nav> en la cabecera: el de escritorio (oculto en telefono) y el de telefono.
+    # Hay que mirar si ALGUNA de las coincidencias es visible, no la primera: la primera en el
+    # DOM es la de escritorio y a 390px esta oculta.
     enlaces_visibles = 0
     for texto in ["Ranking", "Torneos", "Anotador", "Sensibilidad"]:
-        if pagina.locator(f'header a:has-text("{texto}")').first.is_visible():
+        candidatos = pagina.locator(f'header a:has-text("{texto}")')
+        if any(candidatos.nth(i).is_visible() for i in range(candidatos.count())):
             enlaces_visibles += 1
     chequear(
         "se puede navegar desde la cabecera en telefono",

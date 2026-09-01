@@ -19,7 +19,7 @@ export default function Pagina() {
   return (
     <>
       <Cabecera />
-      <main className="grilla relative mx-auto max-w-3xl px-5 pb-16 pt-12">
+      <main id="contenido" className="grilla relative mx-auto max-w-3xl px-5 pb-16 pt-12">
         <div className="resplandor left-1/2 top-[-120px] h-[260px] w-[520px] -translate-x-1/2 bg-acento/15" />
         <div className="relative z-10">
           <h1 className="text-3xl font-extrabold uppercase leading-tight sm:text-5xl">

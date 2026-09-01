@@ -17,6 +17,12 @@ export default async function Inicio() {
     <>
       <Cabecera />
 
+      {/*
+        La home no tenía `<main>`: las siete secciones colgaban directo del body. Las otras dos
+        páginas sí lo tenían, así que además era inconsistente. Sin región principal no hay a
+        dónde saltar, y un lector de pantalla no puede ofrecer "ir al contenido".
+      */}
+      <main id="contenido">
       {/* ============================ HERO ============================ */}
       <section className="grilla relative overflow-hidden">
         {/* Resplandores: son lo que le saca lo plano al fondo. */}
@@ -101,13 +107,29 @@ export default async function Inicio() {
         ) : (
         <div className="tarjeta overflow-hidden p-0">
           <table className="w-full text-left text-sm">
+            {/*
+              `caption` le dice a un lector de pantalla qué tabla es antes de meterse a leer
+              celdas, y `scope="col"` es lo que permite que al llegar a un dato anuncie el
+              encabezado de su columna ("Puntos: 84") en vez de un número suelto. Sin scope, una
+              tabla de cinco columnas leída en voz alta es una lista de números sin referencia.
+              Va oculto visualmente porque el título de la sección ya está arriba.
+            */}
+            <caption className="sr-only">
+              {esEjemplo
+                ? "Ranking de ejemplo de la temporada, ordenado por puntos"
+                : "Ranking de la temporada en curso, ordenado por puntos"}
+            </caption>
             <thead>
               <tr className="border-b border-borde text-[11px] uppercase tracking-[0.1em] text-tenue">
-                <th className="px-4 py-3 sm:px-5">#</th>
-                <th className="px-4 py-3 sm:px-5">Jugador</th>
-                <th className="px-4 py-3 text-right sm:px-5">Puntos</th>
-                <th className="hidden px-5 py-3 text-right sm:table-cell">Torneos</th>
-                <th className="hidden px-5 py-3 text-right sm:table-cell">Títulos</th>
+                {/* El "#" visible es un símbolo; lo que se anuncia es la palabra. */}
+                <th scope="col" className="px-4 py-3 sm:px-5">
+                  <span aria-hidden="true">#</span>
+                  <span className="sr-only">Puesto</span>
+                </th>
+                <th scope="col" className="px-4 py-3 sm:px-5">Jugador</th>
+                <th scope="col" className="px-4 py-3 text-right sm:px-5">Puntos</th>
+                <th scope="col" className="hidden px-5 py-3 text-right sm:table-cell">Torneos</th>
+                <th scope="col" className="hidden px-5 py-3 text-right sm:table-cell">Títulos</th>
               </tr>
             </thead>
             <tbody>
@@ -141,7 +163,13 @@ export default async function Inicio() {
               { n: "03", t: "Sumás puntos", d: "Ganes o pierdas, participar suma. El ranking define el podio y el premio de temporada." },
             ].map((p) => (
               <li key={p.n} className="tarjeta tarjeta-viva p-6">
-                <span className="text-3xl font-extrabold text-acento/30">{p.n}</span>
+                {/*
+                  Era `text-acento/30`, que sobre el panel da ~1,8:1 de contraste. A este tamaño
+                  cuenta como texto grande y necesita 3:1, así que no llegaba ni a eso. Y no es
+                  decoración: el número comunica el orden de los pasos, que es información.
+                  `text-acento` a secas da contraste de sobra y se sigue leyendo como acento.
+                */}
+                <span className="text-3xl font-extrabold text-acento">{p.n}</span>
                 <h3 className="mt-2 text-lg font-bold">{p.t}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-tenue">{p.d}</p>
               </li>
@@ -236,6 +264,7 @@ export default async function Inicio() {
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {campeones.map((c, i) => (
             <div key={`${c.nombre}-${i}`} className="tarjeta tarjeta-viva flex items-center gap-3 p-4">
+              {/* Decorativo: lo que importa de la tarjeta es el nombre del campeón. */}
               <Lobo tamano={34} />
               <div className="min-w-0">
                 <p className="truncate font-bold">{c.nombre}</p>
@@ -289,6 +318,8 @@ export default async function Inicio() {
           </div>
         </div>
       </section>
+
+      </main>
 
       <Pie />
     </>

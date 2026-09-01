@@ -129,7 +129,7 @@ export function Convertidor() {
             <select
               value={origen}
               onChange={(e) => cambiar("origen", e.target.value as IdJuego)}
-              className="w-full rounded-xl border border-borde bg-panel-2 px-3 py-2.5 text-texto outline-none focus:border-acento"
+              className="w-full rounded-xl border border-borde bg-panel-2 px-3 py-2.5 text-texto focus-visible:border-acento"
             >
               {JUEGOS.map((j) => (
                 <option key={j.id} value={j.id}>{j.nombre}</option>
@@ -142,7 +142,7 @@ export function Convertidor() {
             <select
               value={destino}
               onChange={(e) => cambiar("destino", e.target.value as IdJuego)}
-              className="w-full rounded-xl border border-borde bg-panel-2 px-3 py-2.5 text-texto outline-none focus:border-acento"
+              className="w-full rounded-xl border border-borde bg-panel-2 px-3 py-2.5 text-texto focus-visible:border-acento"
             >
               {JUEGOS.map((j) => (
                 <option key={j.id} value={j.id}>{j.nombre}</option>
@@ -156,7 +156,7 @@ export function Convertidor() {
               value={sens}
               onChange={(e) => cambiar("sens", e.target.value)}
               inputMode="decimal"
-              className="w-full rounded-xl border border-borde bg-panel-2 px-3 py-2.5 text-texto outline-none focus:border-acento"
+              className="w-full rounded-xl border border-borde bg-panel-2 px-3 py-2.5 text-texto focus-visible:border-acento"
             />
           </label>
 
@@ -166,7 +166,7 @@ export function Convertidor() {
               value={dpi}
               onChange={(e) => cambiar("dpi", e.target.value)}
               inputMode="numeric"
-              className="w-full rounded-xl border border-borde bg-panel-2 px-3 py-2.5 text-texto outline-none focus:border-acento"
+              className="w-full rounded-xl border border-borde bg-panel-2 px-3 py-2.5 text-texto focus-visible:border-acento"
             />
           </label>
         </div>

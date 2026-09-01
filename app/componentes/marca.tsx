@@ -10,15 +10,40 @@
  * se reemplaza SOLO este archivo y cambia en todo el sitio.
  */
 
-export function Lobo({ className = "", tamano = 40 }: { className?: string; tamano?: number }) {
+/**
+ * El lobo es **decorativo por defecto**, y eso es lo correcto.
+ *
+ * Antes llevaba `role="img"` con `aria-label="Logo de la Kripta"` siempre. En la home el logo
+ * aparece seis veces (las cuatro tarjetas de campeones, el bloque de referidos y el pie), así que
+ * un lector de pantalla anunciaba "Logo de la Kripta" seis veces sin que aportara nada. Peor: en
+ * las tarjetas de campeón el logo se anuncia **antes** del nombre de la persona, que es el dato
+ * que la tarjeta existe para mostrar.
+ *
+ * `aria-hidden` lo saca del árbol de accesibilidad y `focusable="false"` evita que reciba foco en
+ * navegadores viejos. Donde el logo sí carga significado (la marca de la cabecera), se pasa
+ * `etiqueta` y ahí sí se anuncia.
+ */
+export function Lobo({
+  className = "",
+  tamano = 40,
+  etiqueta,
+}: {
+  className?: string;
+  tamano?: number;
+  /** Sólo cuando el logo lleva información que no está en el texto de al lado. */
+  etiqueta?: string;
+}) {
+  const accesible = etiqueta
+    ? { role: "img" as const, "aria-label": etiqueta }
+    : { "aria-hidden": true, focusable: "false" as const };
+
   return (
     <svg
       viewBox="0 0 100 100"
       width={tamano}
       height={tamano}
       className={className}
-      role="img"
-      aria-label="Logo de la Kripta"
+      {...accesible}
     >
       <defs>
         <linearGradient id="lobo-verde" x1="50" y1="0" x2="50" y2="100" gradientUnits="userSpaceOnUse">
@@ -59,7 +84,11 @@ export function Lobo({ className = "", tamano = 40 }: { className?: string; tama
   );
 }
 
-/** El logo con el nombre al lado, para la cabecera. */
+/**
+ * El logo con el nombre al lado, para la cabecera.
+ *
+ * El lobo va decorativo: el texto "Kripta / Monsterland" está justo al lado y lo dice mejor.
+ */
 export function Marca({ tamano = 34 }: { tamano?: number }) {
   return (
     <span className="flex items-center gap-2.5">
