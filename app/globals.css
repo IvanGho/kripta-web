@@ -27,6 +27,9 @@
   --color-tenue: var(--tenue);
   --color-acento: var(--acento);
   --color-acento-2: var(--acento-2);
+  /* --ok estaba declarado arriba pero no se mapeaba acá, así que `text-ok` no existía y era un
+     token muerto: el único de los once que se quedaba afuera. */
+  --color-ok: var(--ok);
   --color-alerta: var(--alerta);
   --color-grave: var(--grave);
   --font-sans: var(--font-poppins);
