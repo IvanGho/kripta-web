@@ -1,22 +1,54 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins } from "next/font/google";
+import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { URL_SITIO } from "./lib/sitio";
 import { HAY_ANALITICA } from "./lib/medicion";
 
 /**
- * Poppins, la misma familia que usa TrucoChón. La elección no es estética nada más:
- * una sola familia bien usada (peso 800 para títulos, 400 para texto) se ve más
- * profesional que tres fuentes combinadas, y es un pedido menos al servidor.
+ * Archivo, en su versión variable. Cubre titulares y texto con **un solo archivo**.
  *
- * next/font la descarga en el build y la sirve desde nuestro dominio, así que no hay
- * request a Google en runtime ni el salto de texto al cargar.
+ * Reemplaza a Poppins, y el motivo está en la dirección visual escrita en `globals.css`: Poppins es
+ * el geométrico más usado de la web, y un titular grande en mayúsculas con una bajada tenue debajo
+ * era la respuesta de plantilla. Como la paleta está fijada y no se puede mover, la distinción tiene
+ * que salir de la tipografía y la estructura.
+ *
+ * Archivo es una grotesca, no un geométrico amable. Lo que la hace servir acá es el eje de **ancho**
+ * (`wdth`): estirada al máximo, en peso 900 y mayúsculas, se lee como algo tallado en una pared, que
+ * es el lenguaje material de la Kripta. En ancho normal y peso 400 es una tipografía de texto
+ * discreta y muy legible en teléfono. Una familia, dos expresiones opuestas.
+ *
+ * Al ser variable pesa **un archivo en lugar de los cinco pesos** que se bajaban de Poppins, así que
+ * el cambio no cuesta carga: la abarata.
+ *
+ * `next/font` la descarga en el build y la sirve desde nuestro dominio, así que no hay pedido a
+ * Google al visitar ni salto de texto al cargar. Eso además es lo que permite que la política de
+ * seguridad no tenga que abrirle permiso a ningún dominio externo.
  */
-const poppins = Poppins({
+const archivo = Archivo({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-poppins",
+  axes: ["wdth"],
+  variable: "--font-archivo",
+  display: "swap",
+});
+
+/**
+ * IBM Plex Mono, para números y etiquetas.
+ *
+ * No es decorativa, resuelve un problema concreto: este sitio está lleno de datos —puntos, puestos,
+ * cupos, premios, la cuenta regresiva— y en una tipografía proporcional los números de una misma
+ * columna tienen anchos distintos, así que el ranking se lee torcido. Una monoespaciada los alinea
+ * sola.
+ *
+ * De paso le da a la cuenta regresiva el carácter de un instrumento que marca, en lugar de texto que
+ * cambia.
+ *
+ * Dos pesos nada más: 400 para los números y 500 para las etiquetas en mayúsculas.
+ */
+const mono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -51,7 +83,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es-AR" className={`${poppins.variable} h-full antialiased`}>
+    <html lang="es-AR" className={`${archivo.variable} ${mono.variable} h-full antialiased`}>
       {/* `grano` agrega la capa de ruido sobre todo el sitio: es lo que hace que el fondo
           oscuro no se vea plano. Ver globals.css. */}
       <body className="grano flex min-h-full flex-col bg-fondo font-sans text-texto">

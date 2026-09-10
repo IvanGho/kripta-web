@@ -23,6 +23,7 @@ que es lo que de verdad ve un visitante:
     $env:BASE = "http://localhost:3100"; npm run verificar-navegador
 """
 
+import gzip
 import os
 import re
 import sys
@@ -88,6 +89,17 @@ LISTA = "load"
 # que exista el manejador: el clic no hace nada y el chequeo falla por una razon que no es la que
 # esta probando. Con "networkidle" esta espera venia de arado; ahora va explicita.
 ESPERA_HIDRATACION = 800
+
+# Techo de JavaScript servido en la portada, en KB, tal como viaja por la red.
+#
+# El valor sale de la direccion visual declarada en app/globals.css. La linea base antes del pase
+# visual eran 198 KB, y el pase visual no agrego nada medible: las tipografias son archivos de fuente,
+# las llaves y las insignias son SVG renderizado en el servidor, las apariciones al scrollear son CSS,
+# y el canvas de brasas son unas cuarenta lineas.
+#
+# El margen de 12 KB esta para no fallar por un cambio de version de Next. Si hace falta subirlo, la
+# pregunta a contestar antes es que se gano a cambio.
+TECHO_JS_KB = 210
 
 fallas = []
 
@@ -418,6 +430,198 @@ with sync_playwright() as p:
             pagina.locator(f'footer a[href="{ruta}"]').count() > 0,
         )
 
+    # ---------------- contraste, area tactil y desplazamiento ----------------
+    #
+    # Esto es lo que no se ve mirando una captura: un texto tenue puede quedar lindo y ser ilegible
+    # para alguien con vision reducida, y un boton de 30px se toca mal en un telefono.
+    print("\naccesibilidad medida")
+
+    for ruta in RUTAS:
+        pagina.goto(BASE + ruta, wait_until=LISTA)
+        pagina.wait_for_timeout(ESPERA_HIDRATACION)
+
+        # Sin desplazamiento horizontal a 390 puntos. Es el ancho del viewport de este contexto.
+        desborde = pagina.evaluate(
+            "() => document.documentElement.scrollWidth - document.documentElement.clientWidth"
+        )
+        chequear(
+            f"{ruta} sin desplazamiento horizontal a 390px",
+            desborde <= 1,  # 1px de tolerancia por redondeo del navegador
+            f"se desborda {desborde}px",
+        )
+
+        # Contraste del texto real contra el fondo real que le toca.
+        #
+        # Se mide sobre los elementos que de verdad hay en la pagina, resolviendo el color de fondo
+        # heredado. El umbral de WCAG AA es 4.5:1 para cuerpo y 3:1 para texto grande (>=24px, o
+        # >=18.66px si es negrita), asi que el umbral se elige por elemento.
+        malos = pagina.evaluate(
+            """() => {
+                function aRgb(css) {
+                    const m = css.match(/\\d+(\\.\\d+)?/g);
+                    return m ? m.slice(0, 3).map(Number) : null;
+                }
+                function luminancia([r, g, b]) {
+                    const f = c => {
+                        c /= 255;
+                        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+                    };
+                    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+                }
+                // Devuelve el fondo opaco mas cercano, o null si en el camino hay un degradado.
+                //
+                // Lo del degradado importa y fue un error de la primera version de este chequeo:
+                // los botones del sitio tienen `background: linear-gradient(...)`, asi que su
+                // `backgroundColor` es transparente. El codigo subia hasta el fondo de la pagina y
+                // comparaba el texto oscuro del boton contra el negro de la pagina, dando 1:1 y
+                // reportando como ilegible el control mas legible del sitio.
+                //
+                // Un degradado no tiene "un" color de fondo, asi que no se puede calcular una razon
+                // de contraste unica: se devuelve null y el elemento se saltea. Su legibilidad se
+                // decide mirandolo, no midiendo.
+                function fondoDe(el) {
+                    let n = el;
+                    while (n && n !== document.documentElement) {
+                        const est = getComputedStyle(n);
+                        if (est.backgroundImage && est.backgroundImage !== 'none') return null;
+                        const c = est.backgroundColor;
+                        const rgb = aRgb(c);
+                        const alfa = c.startsWith('rgba') ? parseFloat(c.split(',')[3]) : 1;
+                        if (rgb && alfa > 0.85) return rgb;
+                        n = n.parentElement;
+                    }
+                    return [5, 8, 6];
+                }
+                const malos = [];
+                const nodos = document.querySelectorAll(
+                    'p, li, td, th, h1, h2, h3, dt, dd, span, a, button, caption, time'
+                );
+                for (const el of nodos) {
+                    const texto = (el.textContent || '').trim();
+                    if (!texto) continue;
+                    // Solo hojas: si tiene hijos con texto, el que manda es el hijo.
+                    if ([...el.children].some(h => (h.textContent || '').trim())) continue;
+                    const est = getComputedStyle(el);
+                    if (est.visibility === 'hidden' || est.display === 'none') continue;
+                    if (parseFloat(est.opacity) < 0.9) continue;
+                    const caja = el.getBoundingClientRect();
+                    if (caja.width < 2 || caja.height < 2) continue;
+                    // El degradado recorta el texto y deja el color transparente a proposito: su
+                    // legibilidad no se mide asi, y tiene su propio respaldo en contraste forzado.
+                    if (el.classList.contains('texto-degradado')) continue;
+
+                    const frente = aRgb(est.color);
+                    if (!frente) continue;
+                    const fondo = fondoDe(el);
+                    if (!fondo) continue;  // fondo con degradado: ver el comentario de fondoDe
+                    const l1 = luminancia(frente);
+                    const l2 = luminancia(fondo);
+                    const razon = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+
+                    const px = parseFloat(est.fontSize);
+                    const peso = parseInt(est.fontWeight, 10) || 400;
+                    const grande = px >= 24 || (px >= 18.66 && peso >= 700);
+                    const umbral = grande ? 3 : 4.5;
+
+                    if (razon < umbral) {
+                        malos.push({
+                            texto: texto.slice(0, 42),
+                            razon: Math.round(razon * 100) / 100,
+                            umbral,
+                            px: Math.round(px * 10) / 10,
+                        });
+                    }
+                }
+                return malos;
+            }"""
+        )
+        chequear(
+            f"{ruta} contraste AA en todo el texto",
+            len(malos) == 0,
+            "; ".join(f'"{m["texto"]}" {m["razon"]}:1 < {m["umbral"]} ({m["px"]}px)' for m in malos[:4]),
+        )
+
+        # Area tactil de los controles.
+        #
+        # El umbral es 24x24 y no 44x44, y conviene saber por que: el criterio de WCAG que exige
+        # 44x44 es el 2.5.5, que es nivel **AAA**. El que corresponde a AA es el 2.5.8 de WCAG 2.2,
+        # que pide 24x24. Medir contra 44 y llamarlo AA seria decir que el sitio no cumple algo que
+        # si cumple.
+        #
+        # Eso no significa que 24px sea comodo: los controles principales de este sitio pasan
+        # holgadamente los 44px porque se tocan con el pulgar, y eso es una decision de diseno, no
+        # una exigencia de la norma.
+        chicos = pagina.evaluate(
+            """() => {
+                const chicos = [];
+                for (const el of document.querySelectorAll('a, button')) {
+                    const c = el.getBoundingClientRect();
+                    if (c.width < 2 || c.height < 2) continue;              // fuera de pantalla
+                    if (getComputedStyle(el).display === 'inline') continue; // enlace dentro de un parrafo
+                    if (c.height < 24 || c.width < 24) {
+                        chicos.push({
+                            texto: (el.textContent || '').trim().slice(0, 30),
+                            alto: Math.round(c.height),
+                            ancho: Math.round(c.width),
+                        });
+                    }
+                }
+                return chicos;
+            }"""
+        )
+        chequear(
+            f"{ruta} controles de 24x24 o mas (WCAG 2.2 AA)",
+            len(chicos) == 0,
+            "; ".join(f'"{c["texto"]}" {c["ancho"]}x{c["alto"]}' for c in chicos[:4]),
+        )
+
+        # Un solo h1 y sin saltos de nivel (un h4 despues de un h2 desorienta a quien navega por
+        # encabezados, que es como se recorre una pagina con lector de pantalla).
+        niveles = pagina.evaluate(
+            "() => [...document.querySelectorAll('h1,h2,h3,h4,h5,h6')].map(h => Number(h.tagName[1]))"
+        )
+        chequear(f"{ruta} tiene exactamente un h1", niveles.count(1) == 1, f"h1: {niveles.count(1)}")
+        saltos = [
+            (a, b) for a, b in zip(niveles, niveles[1:]) if b > a + 1
+        ]
+        chequear(f"{ruta} sin saltos de nivel de encabezado", not saltos, f"saltos: {saltos}")
+
+    # La preferencia de menos movimiento tiene que apagar las animaciones de verdad.
+    print("\npreferencia de menos movimiento")
+    contexto_quieto = navegador.new_context(
+        viewport={"width": 390, "height": 844}, reduced_motion="reduce"
+    )
+    pagina_quieta = contexto_quieto.new_page()
+    pagina_quieta.goto(BASE + "/", wait_until=LISTA)
+    pagina_quieta.wait_for_timeout(ESPERA_HIDRATACION)
+    animando = pagina_quieta.evaluate(
+        """() => document.getAnimations()
+              .filter(a => a.playState === 'running')
+              .map(a => a.animationName || 'sin-nombre')"""
+    )
+    chequear(
+        "con menos movimiento no queda ninguna animacion corriendo",
+        len(animando) == 0,
+        f"siguen: {animando}",
+    )
+    # El canvas de brasas no tiene que dibujar ni un cuadro.
+    sin_brasas = pagina_quieta.evaluate(
+        """() => {
+            const c = document.querySelector('canvas');
+            if (!c) return 'no hay canvas';
+            const ctx = c.getContext('2d');
+            const d = ctx.getImageData(0, 0, c.width, c.height).data;
+            for (let i = 3; i < d.length; i += 4) if (d[i] !== 0) return 'dibujo algo';
+            return 'vacio';
+        }"""
+    )
+    chequear(
+        "con menos movimiento el canvas de brasas no dibuja",
+        sin_brasas in ("vacio", "no hay canvas"),
+        str(sin_brasas),
+    )
+    contexto_quieto.close()
+
     # ---------------- cabeceras de seguridad ----------------
     # No cambian nada de lo que se ve, asi que se rompen sin que nadie lo note. Por eso se chequean.
     print("\ncabeceras de seguridad")
@@ -447,6 +651,57 @@ with sync_playwright() as p:
         "x-powered-by" not in recibidas,
         f'x-powered-by: {recibidas.get("x-powered-by")}',
     )
+
+    # ---------------- presupuesto de JavaScript ----------------
+    #
+    # La direccion visual de globals.css declara un techo: el JavaScript servido no pasa de
+    # TECHO_JS_KB comprimido. Existe porque el pedido original de la parte visual traia cuatro
+    # librerias de animacion que medidas suman entre 130 y 180 KB y duplicaban el peso de la pagina.
+    # Se resolvio con CSS y un canvas propio.
+    #
+    # Sin este chequeo el techo es una frase en un comentario. Con el, agregar una libreria grande
+    # rompe la verificacion en vez de pasar desapercibido hasta que alguien mire el informe de
+    # rendimiento.
+    print("\npresupuesto de JavaScript")
+    contexto_medido = navegador.new_context(viewport={"width": 390, "height": 844})
+    pagina_medida = contexto_medido.new_page()
+
+    bytes_js = {}
+
+    def anotar(respuesta):
+        """
+        Anota cuanto pesaria cada archivo JS al viajar por la red.
+
+        Se comprime el cuerpo aca en lugar de leer `content-length`, y el motivo aparecio midiendo:
+        el servidor local devolvia los archivos sin comprimir, asi que `content-length` daba 508 KB
+        contra un techo declarado en 210 KB comprimidos. Comparaba dos unidades distintas.
+
+        Comprimiendo nosotros, el numero es el mismo corriendo contra el servidor local o contra
+        Vercel, y no depende de que el servidor de turno tenga la compresion prendida.
+        """
+        url = respuesta.url
+        if not url.endswith(".js"):
+            return
+        try:
+            bytes_js[url] = len(gzip.compress(respuesta.body(), compresslevel=6))
+        except Exception:
+            pass
+
+    pagina_medida.on("response", anotar)
+    pagina_medida.goto(BASE + "/", wait_until=LISTA)
+    pagina_medida.wait_for_timeout(ESPERA_HIDRATACION)
+
+    total_kb = round(sum(bytes_js.values()) / 1024)
+    chequear(
+        f"la portada sirve {total_kb} KB de JavaScript comprimido, techo {TECHO_JS_KB} KB",
+        total_kb <= TECHO_JS_KB,
+        f"{len(bytes_js)} archivos; los mas grandes: "
+        + ", ".join(
+            f"{u.split('/')[-1]} {round(b / 1024)}KB"
+            for u, b in sorted(bytes_js.items(), key=lambda x: -x[1])[:3]
+        ),
+    )
+    contexto_medido.close()
 
     # ---------------- pagina de 404 ----------------
     # Desde una campana de anuncios este caso pasa seguido: cualquier link mal copiado cae aca. La

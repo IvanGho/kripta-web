@@ -14,7 +14,7 @@ import { Pie } from "./pie";
  * de ancho obliga a mover la cabeza para volver al principio del renglón.
  *
  * Toma la tipografía, la paleta y las capas de fondo de `globals.css` a través de las clases
- * (`grilla`, `resplandor`, `neon`, los tokens de color). Cero valores copiados.
+ * (`llaves`, `resplandor`, `neon`, los tokens de color). Cero valores copiados.
  */
 export function Documento({
   titulo,
@@ -41,7 +41,9 @@ export function Documento({
   return (
     <>
       <Cabecera />
-      <main id="contenido" className="grilla relative mx-auto max-w-3xl px-5 pb-16 pt-12">
+      {/* `overflow-x-clip` recorta el resplandor decorativo, más ancho que un teléfono. Sin esto las
+          tres páginas legales tenían desplazamiento horizontal a 390px. */}
+      <main id="contenido" className="llaves relative mx-auto max-w-3xl overflow-x-clip px-5 pb-16 pt-12">
         <div className="resplandor left-1/2 top-[-120px] h-[260px] w-[520px] -translate-x-1/2 bg-acento/15" />
 
         <div className="relative z-10">

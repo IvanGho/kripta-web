@@ -49,7 +49,11 @@ export default function Pagina() {
       <DatosEstructurados datos={preguntas(PREGUNTAS)} />
 
       <Cabecera />
-      <main id="contenido" className="grilla relative mx-auto max-w-3xl px-5 pb-16 pt-12">
+      {/* `overflow-x-clip` recorta el resplandor decorativo, que mide 520px de ancho y en un teléfono
+          de 390 sobresalía 65px de cada lado generando desplazamiento horizontal en toda la página.
+          Se usa `clip` y no `hidden` porque `hidden` crea un contenedor de scroll y eso rompe el
+          `position: sticky` de la cabecera. */}
+      <main id="contenido" className="llaves relative mx-auto max-w-3xl overflow-x-clip px-5 pb-16 pt-12">
         <div className="resplandor left-1/2 top-[-120px] h-[260px] w-[520px] -translate-x-1/2 bg-acento/15" />
         <div className="relative z-10">
           <h1 className="text-3xl font-extrabold uppercase leading-tight sm:text-5xl">

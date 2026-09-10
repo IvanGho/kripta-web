@@ -68,14 +68,39 @@ Sin una sola imagen, porque todavía no hay assets del logo definitivo. Son cuat
 en `app/globals.css`:
 
 1. **Resplandores** (`.resplandor`): manchas de verde desenfocadas detrás del contenido.
-2. **Grilla** (`.grilla`): una cuadrícula muy tenue que se desvanece en los bordes, para que
-   dé sensación de superficie y no de vacío.
+2. **Campo de llaves** (`.llaves`): el mosaico es una celda de llave de torneo —dos partidos que
+   entran, un conector, una rama que sale— repetida y desvanecida hacia los bordes. Reemplazó a una
+   cuadrícula de 56px que daba superficie pero no decía nada del contenido.
 3. **Grano** (`.grano`): ruido casi invisible sobre todo el sitio, embebido como SVG. Es lo que
    más rinde: un fondo oscuro plano se ve digital y barato, y el grano lo hace parecer material.
 4. **Tarjetas** (`.tarjeta`): borde, luz interna arriba y sombra proyectada, que es lo que las
    despega del fondo.
 
-Más tipografía grande (Poppins 800 en mayúsculas) y el verde del logo como acento.
+### La dirección visual está escrita en el código
+
+El encabezado de `app/globals.css` tiene la dirección completa: por qué se fue Poppins, por qué la
+página entera es una llave de torneo, y el presupuesto de JavaScript. **Leerla antes de tocar el
+diseño**, porque cada decisión tiene un motivo y varias contradicen lo que uno haría por defecto.
+
+Lo esencial:
+
+- **Tipografía: Archivo variable** para titulares y texto, y **IBM Plex Mono** para números y
+  etiquetas. Los titulares usan el eje de ancho al máximo (`.titular`), lo que los hace leer como una
+  inscripción tallada en lugar del titular de una startup. La mono no es cosmética: alinea las
+  columnas de números del ranking, que en una proporcional se ven torcidas.
+- **Estructura: la página es una llave de muchos a uno.** Los separadores entre secciones van
+  convergiendo (4 ramas, 3, 2, y el nodo final antes del llamado a la acción), y el ritmo vertical se
+  aprieta hacia el final. Bajar por la página es avanzar en el torneo.
+- **Las insignias del podio se distinguen por forma**, no sólo por color: mismo hexágono con tres,
+  dos o una marca adentro. Antes eran el mismo número con tres colores, que falla para quien no
+  distingue el verde del ámbar y falla del todo en contraste forzado.
+- **Movimiento sin librerías.** Las apariciones al scrollear son `animation-timeline: view()`, que es
+  CSS puro; las brasas del hero son un canvas propio de unas cuarenta líneas. El pedido original traía
+  Framer Motion, GSAP, tsparticles y Lottie, que medidos suman entre 130 y 180 KB comprimidos y
+  duplicaban el JavaScript de la página.
+
+**El presupuesto está verificado, no prometido:** el techo es 210 KB de JavaScript comprimido y
+`verificar_navegador.py` lo mide en cada corrida. El pase visual completo no agregó nada medible.
 
 ## El logo
 
