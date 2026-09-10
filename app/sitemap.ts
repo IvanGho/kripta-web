@@ -14,7 +14,8 @@ import { PAGINAS, URL_SITIO } from "./lib/sitio";
  * fuera del sitemap durante meses sin que nadie lo note.
  *
  * La home lleva `daily` porque el ranking y los torneos cambian con cada torneo jugado; las dos
- * herramientas `monthly`, porque su contenido es fijo.
+ * herramientas `monthly`, porque su contenido es fijo; y privacidad y términos `yearly`, porque
+ * sólo cambian si cambia cómo funciona algo.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const ahora = new Date();

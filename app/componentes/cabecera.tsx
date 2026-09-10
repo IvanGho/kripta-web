@@ -32,7 +32,7 @@ export function Cabecera() {
           ))}
         </nav>
 
-        <BotonDiscord className="ml-auto px-4 py-2 text-sm md:ml-0">
+        <BotonDiscord ubicacion="cabecera" className="ml-auto px-4 py-2 text-sm md:ml-0">
           Entrar al Discord
         </BotonDiscord>
       </div>
