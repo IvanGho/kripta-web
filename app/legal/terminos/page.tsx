@@ -32,9 +32,18 @@ export const metadata: Metadata = {
  *  - la Pista Libre con inscripción y premio en cero
  *  - la llave armada con quienes hicieron check-in
  *
- * La única cláusula que **no** está programada es la de "Si un torneo no se juega": el panel tiene
- * el estado `cancelado` pero no tiene flujo de devolución, así que devolver es un acto manual de la
- * organización. Queda escrito acá para que nadie la lea como algo automático.
+ * La única cláusula que **no** describe algo programado es la de "Si un torneo no se juega": el panel
+ * tiene el estado `cancelado` pero no tiene flujo de devolución.
+ *
+ * Eso se resolvió diciéndolo, en lugar de dejar la promesa sonando automática. La página ahora
+ * enuncia tres cosas: que la devolución se hace, que **se hace a mano**, y qué hacer si la
+ * organización se olvida. Las tres son verdad y las tres son verificables por la persona, que es lo
+ * que hace que la cláusula sirva.
+ *
+ * Prometer una devolución automática habría sido más cómodo de leer y falso: el sistema no la
+ * ejecuta y nada le avisa al operador. Prometerla y explicar que es manual mantiene la obligación
+ * —que es lo que corresponde y lo que esperaría la Ley 24.240— sin describir un mecanismo que no
+ * existe. Si algún día el panel registra devoluciones, este párrafo se puede simplificar.
  */
 export default function Pagina() {
   return (
@@ -129,9 +138,14 @@ export default function Pagina() {
         torneos del Discord.
       </p>
       <p>
-        Si el torneo tenía inscripción y no se juega, <strong>se te devuelve lo que pagaste</strong>,
-        por el mismo medio por el que lo pagaste. Si preferís, se te puede acreditar para el torneo
-        siguiente.
+        Si el torneo tenía inscripción y no se juega, <strong>se te devuelve lo que pagaste</strong>.
+        Te escribimos por Discord para coordinar la devolución por el mismo medio por el que pagaste,
+        o para acreditarla al torneo siguiente si preferís.
+      </p>
+      <p>
+        La devolución la hacemos <strong>a mano</strong>, no es automática, así que puede tardar unos
+        días. Si pasó una semana y no te contactamos, escribinos por Discord y lo resolvemos: el
+        compromiso es nuestro y no se cae porque se nos haya pasado un mensaje.
       </p>
 
       <h2>Puntos y ranking</h2>
