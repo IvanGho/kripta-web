@@ -84,7 +84,7 @@ export default async function Inicio() {
             )}
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <BotonDiscord className="text-base">Entrar al Discord</BotonDiscord>
+              <BotonDiscord ubicacion="hero" className="text-base">Entrar al Discord</BotonDiscord>
               <a href="#torneos" className="boton-sec text-base">
                 Ver los torneos
               </a>
@@ -252,6 +252,7 @@ export default async function Inicio() {
                 </div>
 
                 <BotonDiscord
+                  ubicacion="tarjeta-torneo"
                   variante={lleno ? "secundario" : "primario"}
                   className="mt-5 w-full text-sm"
                 >
@@ -329,7 +330,9 @@ export default async function Inicio() {
               temporada. Se pide el nombre de quien te invitó al entrar al Discord.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <BotonDiscord className="text-base">Entrar al Discord</BotonDiscord>
+              <BotonDiscord ubicacion="cta-referidos" className="text-base">
+                Entrar al Discord
+              </BotonDiscord>
               <a href="#ranking" className="boton-sec text-base">
                 Ver el ranking
               </a>

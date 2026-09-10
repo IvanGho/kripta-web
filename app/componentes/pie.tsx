@@ -14,11 +14,17 @@ export function Pie() {
             </p>
           </div>
 
-          <div className="flex gap-12 text-sm">
+          {/*
+            `flex-wrap` no es decorativo: con la columna de legales son tres listas, y en un teléfono
+            de 390px "Convertir sensibilidad" más las otras dos columnas y sus separaciones no entran
+            en el ancho. Sin esto aparece desplazamiento horizontal en todas las páginas, que es
+            justamente lo que verifica el script del navegador.
+          */}
+          <div className="flex flex-wrap gap-x-10 gap-y-8 text-sm">
             <div>
               <p className="mb-3 text-xs uppercase tracking-[0.14em] text-tenue">Comunidad</p>
               <ul className="space-y-2">
-                <li><BotonDiscord variante="enlace" className="text-texto hover:text-acento-2">Discord</BotonDiscord></li>
+                <li><BotonDiscord ubicacion="pie" variante="enlace" className="text-texto hover:text-acento-2">Discord</BotonDiscord></li>
                 <li><Link href="/#ranking" className="text-texto hover:text-acento-2">Ranking</Link></li>
                 <li><Link href="/#torneos" className="text-texto hover:text-acento-2">Torneos</Link></li>
               </ul>
@@ -28,6 +34,18 @@ export function Pie() {
               <ul className="space-y-2">
                 <li><Link href="/anotador" className="text-texto hover:text-acento-2">Anotador de Truco</Link></li>
                 <li><Link href="/sensibilidad" className="text-texto hover:text-acento-2">Convertir sensibilidad</Link></li>
+              </ul>
+            </div>
+            {/*
+              Privacidad y términos van en el pie y en una columna propia porque tienen que estar
+              alcanzables desde cualquier página del sitio: es donde la gente las busca, y donde las
+              busca también quien revisa un sitio antes de aprobarle una campaña de anuncios.
+            */}
+            <div>
+              <p className="mb-3 text-xs uppercase tracking-[0.14em] text-tenue">Legales</p>
+              <ul className="space-y-2">
+                <li><Link href="/privacidad" className="text-texto hover:text-acento-2">Privacidad</Link></li>
+                <li><Link href="/terminos" className="text-texto hover:text-acento-2">Términos</Link></li>
               </ul>
             </div>
           </div>

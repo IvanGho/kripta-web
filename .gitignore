@@ -38,6 +38,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Capturas de la verificación visual. Son para mirar y adjuntar a un PR, no para versionar:
+# se regeneran cuando se las necesita y cada corrida produce archivos distintos.
+/capturas/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

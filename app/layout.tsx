@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { URL_SITIO } from "./lib/sitio";
+import { HAY_ANALITICA } from "./lib/medicion";
 
 /**
  * Poppins, la misma familia que usa TrucoChón. La elección no es estética nada más:
@@ -63,6 +65,27 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Saltar al contenido
         </a>
         {children}
+        {/*
+          Vercel Web Analytics. Va acá, en el layout raíz, para que cuente todas las páginas sin
+          repetirlo en cada una.
+
+          Mide visitas y el evento `clic_discord` de cada botón (ver lib/medicion.ts). Es el único
+          instrumento que va a decir si una campaña de anuncios sirvió: sin esto, la respuesta a
+          "¿cuánta gente entró al Discord desde el sitio?" es una estimación mirando el conteo de
+          miembros.
+
+          Tres razones por las que es este y no Google Analytics: no usa cookies, así que no hace
+          falta cartel de consentimiento ni entra en la política de privacidad como seguimiento de
+          terceros; son unos pocos kilobytes contra los ~45 de gtag; y se activa con un interruptor
+          en el proyecto de Vercel, sin cuenta aparte ni etiquetas que pegar.
+
+          Va sólo cuando el sitio corre en Vercel: el script lo sirve la red de Vercel y fuera de
+          ahí esa ruta devuelve 404 en cada carga. El motivo completo está en lib/medicion.ts.
+
+          Y una vez desplegado, todavía hay que activar Web Analytics en el proyecto de Vercel
+          (pestaña Analytics -> Enable). Sin eso el script carga pero no hay dónde ver los datos.
+        */}
+        {HAY_ANALITICA && <Analytics />}
       </body>
     </html>
   );

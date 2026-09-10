@@ -6,15 +6,28 @@
  * escriba la variable con un formato raro, unos archivos lo tolerarían y otros no.
  */
 
-const URL_POR_DEFECTO = "https://monsterland.gg";
+/**
+ * El dominio del sitio.
+ *
+ * Este valor **no es un placeholder**: es el dominio real, y se usa cuando
+ * `NEXT_PUBLIC_URL_SITIO` no está cargada. Antes acá había `https://monsterland.gg`, un dominio
+ * que se evaluó y nunca se compró, y esa diferencia no se ve en pantalla: el sitio se renderiza
+ * igual de bien. Lo que sale mal es el `<link rel="canonical">`, el sitemap, el robots.txt y la
+ * URL de la imagen para compartir, o sea justo lo que sólo leen Google y las redes sociales. Un
+ * canonical apuntando a un dominio ajeno es pedirle a Google que no indexe este sitio.
+ *
+ * Que el valor por defecto sea el correcto significa que olvidarse la variable en Vercel deja de
+ * ser un error silencioso.
+ */
+const URL_POR_DEFECTO = "https://kripta.infinixapp.com";
 
 /**
  * Devuelve la URL del sitio tolerando que la variable venga mal escrita.
  *
  * `new URL()` tira si el valor no tiene protocolo, y donde esto se usa se evalúa al importar el
- * módulo: o sea que `NEXT_PUBLIC_URL_SITIO=monsterland.gg` (sin `https://`, que es exactamente
- * como uno escribe un dominio) **rompía el build entero**, con un error que no menciona ni la
- * variable ni el archivo.
+ * módulo: o sea que `NEXT_PUBLIC_URL_SITIO=kripta.infinixapp.com` (sin `https://`, que es
+ * exactamente como uno escribe un dominio) **rompía el build entero**, con un error que no
+ * menciona ni la variable ni el archivo.
  *
  * Como el dominio lo va a cargar a mano alguien que no programa, el caso no es hipotético: se le
  * agrega el protocolo si falta, y si igual no se puede interpretar se cae al valor por defecto
@@ -36,7 +49,7 @@ function resolver(): URL {
   }
 }
 
-/** Origen sin barra final, por ejemplo "https://monsterland.gg". */
+/** Origen sin barra final, por ejemplo "https://kripta.infinixapp.com". */
 export const URL_SITIO = resolver().origin;
 
 /**
@@ -48,9 +61,19 @@ export const URL_SITIO = resolver().origin;
  */
 export const esVistaPrevia = process.env.VERCEL_ENV === "preview";
 
-/** Las páginas del sitio, para el sitemap y para no repetir rutas a mano. */
+/**
+ * Las páginas del sitio, para el sitemap y para no repetir rutas a mano.
+ *
+ * Privacidad y términos van con la prioridad más baja y frecuencia anual: son páginas que tienen
+ * que existir y ser encontrables (Google las busca para verificar que un sitio que menciona cobros
+ * es legítimo, y las plataformas de anuncios piden la de privacidad), pero no son por lo que
+ * queremos que alguien nos encuentre. Declararlas en `0.3` le dice a Google dónde poner el foco
+ * dentro del propio sitio.
+ */
 export const PAGINAS = [
   { ruta: "/", prioridad: 1, frecuencia: "daily" as const },
   { ruta: "/anotador", prioridad: 0.8, frecuencia: "monthly" as const },
   { ruta: "/sensibilidad", prioridad: 0.8, frecuencia: "monthly" as const },
+  { ruta: "/privacidad", prioridad: 0.3, frecuencia: "yearly" as const },
+  { ruta: "/terminos", prioridad: 0.3, frecuencia: "yearly" as const },
 ];

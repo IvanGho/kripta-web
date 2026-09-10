@@ -1,4 +1,6 @@
 import { HAY_DISCORD, URL_DISCORD } from "../lib/enlaces";
+import type { UbicacionDiscord } from "../lib/medicion";
+import { EnlaceMedido } from "./enlace-medido";
 
 /**
  * El botón que lleva al Discord. Es **la** conversión del sitio, así que vive en un solo lugar.
@@ -14,13 +16,23 @@ import { HAY_DISCORD, URL_DISCORD } from "../lib/enlaces";
  *     Es peor perder al visitante en silencio que mostrar que falta configurar algo.
  *  2. `rel="noopener noreferrer"` queda garantizado en todos los enlaces externos.
  *  3. Cuando quieras medir la conversión (UTM, evento de analítica), se toca este archivo y listo.
+ *
+ * El punto 3 ya está usado: cada botón manda un evento con el lugar de la página desde donde se
+ * apretó. El manejador vive en `EnlaceMedido` y no acá, para que este componente siga siendo de
+ * servidor; el motivo completo está en ese archivo.
  */
 export function BotonDiscord({
   children,
+  ubicacion,
   variante = "primario",
   className = "",
 }: {
   children: React.ReactNode;
+  /**
+   * Desde qué lugar de la página se apretó. **Obligatoria**: es lo que permite saber qué parte del
+   * sitio convierte, y sin eso el total de clics no sirve para decidir nada. Ver `lib/medicion.ts`.
+   */
+  ubicacion: UbicacionDiscord;
   /** "primario" es el verde lleno; "secundario" el de borde; "enlace" para el pie. */
   variante?: "primario" | "secundario" | "enlace";
   className?: string;
@@ -87,8 +99,8 @@ export function BotonDiscord({
   }
 
   return (
-    <a href={URL_DISCORD} target="_blank" rel="noopener noreferrer" className={clases}>
+    <EnlaceMedido href={URL_DISCORD} ubicacion={ubicacion} className={clases}>
       {children}
-    </a>
+    </EnlaceMedido>
   );
 }
