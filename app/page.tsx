@@ -249,17 +249,42 @@ export default async function Inicio() {
           <Vacio texto="No hay torneos abiertos en este momento. Entrá al Discord y te avisamos en cuanto se anuncie el próximo." />
         )}
 
-        <div className="grid gap-4 md:grid-cols-3">
+        {/*
+          En teléfono los torneos van en carrusel horizontal con **la siguiente tarjeta asomando**, y
+          en pantallas anchas vuelven a la grilla de tres.
+
+          Es el patrón de las dos referencias de streaming, y resuelve algo concreto: apiladas en
+          vertical, la tercera tarjeta queda a dos pantallas de scroll y casi nadie la ve. El borde de
+          la siguiente asomando es lo que le dice a la persona que hay más, sin barra de scroll y sin
+          puntitos.
+
+          `snap` hace que se detenga en cada tarjeta en lugar de quedar a mitad de camino, que es lo
+          que separa un carrusel de una fila que se desborda.
+        */}
+        <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {torneos.map((t) => {
             const gratis = t.inscripcionCentavos === 0 && t.premioCentavos === 0;
             const lleno = t.inscriptos >= t.cupo;
+            const quedanPocos = !lleno && t.cupo > 0 && t.cupo - t.inscriptos <= 2;
             return (
-              <article key={t.id} className="tarjeta tarjeta-viva flex flex-col p-5">
-                <div className="flex items-center gap-2">
+              <article
+                key={t.id}
+                className="tarjeta tarjeta-viva flex w-[82vw] shrink-0 snap-start flex-col p-5 sm:w-[60vw] md:w-auto"
+              >
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="pastilla">{t.juego} {t.formato}</span>
                   {gratis && (
                     <span className="pastilla border-acento/40 text-acento-2">Pista Libre</span>
                   )}
+                  {/*
+                    Pastilla de estado con la escala compartida. El color codifica el dato y la
+                    palabra lo dice: quien no distingue el ámbar del verde lee lo mismo.
+                  */}
+                  <span
+                    className={`estado ${lleno ? "estado-cerrado" : quedanPocos ? "estado-atencion" : "estado-ok"}`}
+                  >
+                    {lleno ? "Sin lugar" : quedanPocos ? `Quedan ${t.cupo - t.inscriptos}` : "Abierto"}
+                  </span>
                 </div>
 
                 <h3 className="mt-3 text-lg font-bold leading-snug">{t.nombre}</h3>
@@ -327,9 +352,23 @@ export default async function Inicio() {
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {campeones.map((c, i) => (
-            <div key={`${c.nombre}-${i}`} className="tarjeta tarjeta-viva flex items-center gap-3 p-4">
-              {/* Decorativo: lo que importa de la tarjeta es el nombre del campeón. */}
-              <Lobo tamano={34} />
+            <div
+              key={`${c.nombre}-${i}`}
+              className="tarjeta tarjeta-viva flex items-center gap-3 px-4 pb-4 pt-7"
+            >
+              {/*
+                El lobo **desborda el borde superior** de la tarjeta.
+
+                Es el sexto mecanismo de SISTEMA.md, sacado de la app de streaming donde el personaje
+                se sale de su tarjeta. Rompe la cuadrícula sin desordenarla, y le da presencia a una
+                tarjeta chica que ninguna sombra le da. El `pt-7` de arriba es el aire que ocupa la
+                parte que sale.
+
+                Sigue siendo decorativo: lo que importa de la tarjeta es el nombre del campeón.
+              */}
+              <span className="-mt-9 shrink-0 drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)]">
+                <Lobo tamano={40} />
+              </span>
               <div className="min-w-0">
                 <p className="truncate font-bold">{c.nombre}</p>
                 <p className="truncate text-xs text-tenue">{c.torneo}</p>
@@ -370,8 +409,11 @@ export default async function Inicio() {
       <section className="llaves-cierre relative overflow-hidden pb-20 pt-8">
         <div className="resplandor left-1/2 top-1/2 h-[320px] w-[620px] -translate-x-1/2 -translate-y-1/2 bg-acento/15" />
         <div className="relative z-10 mx-auto max-w-3xl px-5 text-center">
-          <div className="tarjeta p-8 sm:p-12">
-            <Lobo tamano={54} className="mx-auto" />
+          {/* `corchetes` marca esta tarjeta como el destino final de la página. Es uno de los dos
+              únicos lugares donde se usan: ver el comentario en globals.css. */}
+          <div className="tarjeta corchetes mt-8 p-8 sm:p-12">
+            {/* El lobo desborda, igual que en las tarjetas de campeón. */}
+            <Lobo tamano={62} className="mx-auto -mt-16 drop-shadow-[0_6px_14px_rgba(0,0,0,0.8)]" />
             <h2 className="mt-5 text-2xl font-extrabold uppercase leading-tight sm:text-4xl">
               Traé un amigo y <span className="neon">los dos suman</span>
             </h2>
@@ -406,10 +448,21 @@ export default async function Inicio() {
 function Titulo({ alto, resaltado, bajada }: { alto: string; resaltado: string; bajada: string }) {
   return (
     <div className="mb-10 max-w-2xl">
-      {/* `.titular-seccion` es un paso menos de intensidad que el del hero: si todos los títulos
-          gritan igual, ninguno manda y el hero deja de ser el hero. */}
+      {/*
+        Los títulos de sección van **en blanco**, no en verde.
+
+        Es el segundo mecanismo de SISTEMA.md y el cambio más visible de todos. Antes cada uno de los
+        siete títulos tenía media frase en verde neón. En las referencias que funcionan hay
+        exactamente **un** elemento con acento saturado por pantalla, y por eso el ojo sabe adónde ir.
+        Con verde en los títulos, en los números, en los bordes y en el botón, el verde dejaba de
+        señalar nada.
+
+        Acá el verde queda para el botón de Discord —que es la conversión— y para los puntos del
+        ranking. La palabra que antes iba en verde ahora se distingue por **peso**: sigue siendo el
+        acento de la frase, con una jerarquía que no gasta color.
+      */}
       <h2 className="titular-seccion text-2xl sm:text-4xl">
-        {alto} <span className="neon">{resaltado}</span>
+        <span className="text-tenue">{alto}</span> {resaltado}
       </h2>
       <p className="mt-4 text-sm leading-relaxed text-tenue sm:text-base">{bajada}</p>
     </div>

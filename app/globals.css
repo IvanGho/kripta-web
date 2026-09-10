@@ -92,11 +92,27 @@
  */
 :root {
   --fondo: #050806;
-  --panel: #0d160f;
-  --panel-2: #122117;
-  --borde: #1e3a26;
+  /*
+   * Las superficies suben un escalón, y el borde baja.
+   *
+   * Es el primero de los seis mecanismos de SISTEMA.md, sacado de las referencias: en todas las que
+   * funcionan la jerarquía se lee por **luminosidad**, no por línea. Antes `--panel` estaba casi al
+   * mismo valor que `--fondo` y lo que separaba una tarjeta del fondo era un borde verde. Con veinte
+   * tarjetas en la portada, eso es una reja: muchas líneas compitiendo y ningún plano que se lea
+   * como "más cerca".
+   *
+   * Ahora `--panel` está claramente por encima del fondo y el borde queda como refuerzo, no como
+   * estructura.
+   *
+   * Subir el valor de la tarjeta **empeora el contraste del texto que va encima**, porque el texto es
+   * claro. Por eso `--tenue` sube con ellas. Los dos valores salieron de medir: con el `--tenue`
+   * anterior, el texto secundario sobre la tarjeta nueva caía por debajo de 4,5:1.
+   */
+  --panel: #101a13;
+  --panel-2: #18271d;
+  --borde: #24422c;
   --texto: #e4f2e7;
-  --tenue: #8ca694;
+  --tenue: #9db8a5;
   --acento: #2fc94f;
   --acento-2: #5dff86;
   --ok: #3be85f;
@@ -276,28 +292,123 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23r)'/%3E%3C/svg%3E");
 }
 
-/* 4. Tarjeta con borde de gradiente y luz interna arriba. */
+/*
+ * 4. Tarjeta.
+ *
+ * El borde pasó de `var(--borde)` sólido a una línea al 45%, y el degradado verde de arriba se fue.
+ * La tarjeta ahora se separa del fondo por su propio valor, no por su contorno. La sombra proyectada
+ * se conserva y se agranda: es lo que de verdad da la sensación de que el plano está por encima.
+ */
 .tarjeta {
   position: relative;
   border-radius: 16px;
-  background:
-    linear-gradient(180deg, rgba(47, 201, 79, 0.05) 0%, rgba(5, 8, 6, 0) 55%),
-    var(--panel);
-  border: 1px solid var(--borde);
+  background: var(--panel);
+  border: 1px solid rgba(36, 66, 44, 0.45);
   box-shadow:
-    inset 0 1px 0 0 rgba(93, 255, 134, 0.09),
-    0 1px 2px rgba(0, 0, 0, 0.5),
-    0 12px 32px -12px rgba(0, 0, 0, 0.7);
-  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.03),
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 16px 40px -16px rgba(0, 0, 0, 0.75);
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
+/*
+ * Al pasar el mouse la tarjeta sube **otro** escalón de luminosidad, en lugar de encenderse el borde.
+ * Es el mismo principio: el movimiento se comunica con el plano, no con la línea.
+ */
 .tarjeta-viva:hover {
-  border-color: rgba(47, 201, 79, 0.4);
+  background: var(--panel-2);
+  border-color: rgba(36, 66, 44, 0.8);
   transform: translateY(-2px);
   box-shadow:
-    inset 0 1px 0 0 rgba(93, 255, 134, 0.14),
-    0 0 0 1px rgba(47, 201, 79, 0.12),
-    0 18px 40px -14px rgba(0, 0, 0, 0.8);
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    0 22px 48px -18px rgba(0, 0, 0, 0.85);
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Corchetes de esquina
+ * ---------------------------------------------------------------------------
+ *
+ * Sacados del manual de identidad de las referencias, que rodea cada elemento con marcas de plano
+ * técnico. Es lo que hace que ese board se vea deliberado y no decorado.
+ *
+ * Encajan acá por dos motivos: el lenguaje de la Kripta es piedra tallada y arquitectura, y la
+ * monoespaciada que ya está cargada pertenece al mismo registro.
+ *
+ * Van en **dos lugares y nada más**. Repetidos en cada tarjeta dejarían de ser un detalle y pasarían
+ * a ser el ruido que este sistema vino a sacar.
+ */
+.corchetes::before,
+.corchetes::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--acento);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.corchetes::before {
+  top: -1px;
+  left: -1px;
+  border-right: 0;
+  border-bottom: 0;
+  border-top-left-radius: 16px;
+}
+
+.corchetes::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: 0;
+  border-top: 0;
+  border-bottom-right-radius: 16px;
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Pastillas de estado
+ * ---------------------------------------------------------------------------
+ *
+ * Tercer mecanismo de SISTEMA.md: el color codifica estado, no decora. La escala es la misma en el
+ * panel, así que "ámbar" significa lo mismo en los dos lados.
+ *
+ * El color **nunca** es la única señal: cada pastilla lleva su palabra. Alguien que no distingue el
+ * ámbar del verde lee la tabla igual.
+ */
+.estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 6px;
+  padding: 0.2rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid;
+}
+
+/* Resuelto: hay lugar, se puede entrar. */
+.estado-ok {
+  color: var(--acento-2);
+  border-color: rgba(47, 201, 79, 0.4);
+  background: rgba(47, 201, 79, 0.1);
+}
+
+/* Requiere algo de la persona, o queda poco. */
+.estado-atencion {
+  color: var(--alerta);
+  border-color: rgba(224, 184, 74, 0.4);
+  background: rgba(224, 184, 74, 0.1);
+}
+
+/* Bloqueado: no se puede entrar. */
+.estado-cerrado {
+  color: var(--tenue);
+  border-color: rgba(36, 66, 44, 0.7);
+  background: transparent;
 }
 
 /* Texto con degradado, para los números grandes del contador. */
