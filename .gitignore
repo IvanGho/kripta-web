@@ -42,6 +42,13 @@ yarn-error.log*
 # se regeneran cuando se las necesita y cada corrida produce archivos distintos.
 /capturas/
 
+# Referencias visuales de terceros (capturas de Dribbble, Behance, otros sitios).
+#
+# NO se versionan, y el motivo es legal antes que técnico: son trabajo con derechos de autor de
+# otras personas, y este repositorio es público. Sirven para que el agente las mire y extraiga
+# decisiones de diseño; no para redistribuirlas.
+/referencias/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
