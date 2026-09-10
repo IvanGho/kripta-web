@@ -133,8 +133,10 @@ app/
   error.tsx             la pantalla si falla el renderizado
   manifest.ts           PWA: se instala en el celular como app
   icon.svg              ícono
-  privacidad/           qué datos se recolectan y cuáles no
-  terminos/             cómo funcionan los torneos
+  legal/
+    privacidad/         qué datos se recolectan y cuáles no
+    terminos/           cómo funcionan los torneos
+    derechos/           cómo ejercer los derechos de la Ley 25.326
   componentes/          marca (logo SVG), cabecera, pie, contador, documento
   lib/                  datos, enlaces, sitio y medición
   anotador/             anotador de Truco
@@ -143,7 +145,27 @@ scripts/
   verificar_navegador.py  la verificación en un navegador de verdad
 ```
 
-### Privacidad y términos
+### Cabeceras de seguridad
+
+Van en `next.config.ts` y se aplican a todas las rutas: CSP, HSTS, `X-Frame-Options`,
+`X-Content-Type-Options`, `Referrer-Policy` y `Permissions-Policy`, más `poweredByHeader: false`.
+
+**No cambian nada de lo que se ve**, y por eso se pueden romper sin que nadie lo note: hay un
+chequeo de cada una en `verificar_navegador.py`. Se verifican contra el sitio compilado, porque en
+`next dev` no salen igual.
+
+La única decisión discutible es `unsafe-inline` en `script-src`. El motivo largo está escrito en
+`next.config.ts`: el CSP con nonce obliga a renderizado dinámico y con eso se pierde la generación
+estática y el caché de CDN en las 15 rutas, que en una página que recibe tráfico pago se paga en
+conversión. El `unsafe-inline` debilita la defensa contra XSS, y hoy este sitio no renderiza
+contenido escrito por desconocidos, así que ese vector no existe. **Si algún día lo hace, hay que
+revisar esa decisión**, y el camino de salida está anotado ahí.
+
+La lista de CSP no nombra ningún dominio externo, y eso es una propiedad del sitio: la tipografía y
+la analítica se sirven desde el mismo origen. Si alguien agrega un script de terceros, va a fallar
+ahí y de forma visible. Es a propósito.
+
+### Privacidad, términos y derechos
 
 No son relleno legal: **una plataforma de anuncios no aprueba una campaña** hacia un dominio sin
 política de privacidad alcanzable, y el sitio menciona inscripciones y mayoría de edad.
@@ -152,6 +174,26 @@ La regla al tocarlas es que **cada afirmación tiene que ser verificable en el c
 que promete más de lo que el sistema hace es peor que no tenerla, porque pasa de ser una protección a
 ser una declaración falsa. Cada archivo tiene arriba la lista de dónde se comprueba cada cosa. Si el
 sitio suma un formulario, esas páginas quedan desactualizadas y hay que tocarlas en el mismo cambio.
+
+**Los plazos de `/legal/derechos` los fija la ley, no nosotros:** 10 días corridos para el acceso
+(Ley 25.326 art. 14 inc. 2) y 5 días hábiles para rectificar, actualizar o suprimir (art. 16 inc. 2).
+Anunciar un plazo más largo que el legal es anunciar que no se va a cumplir.
+
+Esa página es un **canal, no un formulario**, y el motivo está escrito en el archivo: la ley pide un
+reclamo identificable, un formulario obligaría a debilitar la afirmación más fuerte de la política de
+privacidad, y sería la primera entrada de datos del sitio, de la que dependen la decisión de no tener
+base ni sesiones y el `unsafe-inline` del CSP.
+
+### Por qué no hay cartel de cookies
+
+Porque **el sitio no usa cookies**, ni propias ni de terceros, y Vercel Web Analytics tampoco.
+Un cartel pidiendo consentimiento donde no hay nada que consentir le dice al visitante algo que no es
+cierto, y mete un modal delante de una página que recibe tráfico pago.
+
+**Cambia el día que se agregue un píxel de publicidad.** Un píxel de Meta o de Google sí requiere
+consentimiento previo, y en ese momento el cartel deja de ser opcional: hay que construirlo *antes*
+del píxel, y el píxel no se carga hasta que la persona acepta. Ese es el orden correcto y no el
+inverso.
 
 Y no se usa vocabulario de apuestas, ni siquiera negado: la lista es la misma que audita
 `monsterland-panel/src/discord/revisor.js`, y `verificar_navegador.py` la chequea sobre el texto

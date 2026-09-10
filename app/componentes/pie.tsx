@@ -44,8 +44,9 @@ export function Pie() {
             <div>
               <p className="mb-3 text-xs uppercase tracking-[0.14em] text-tenue">Legales</p>
               <ul className="space-y-2">
-                <li><Link href="/privacidad" className="text-texto hover:text-acento-2">Privacidad</Link></li>
-                <li><Link href="/terminos" className="text-texto hover:text-acento-2">Términos</Link></li>
+                <li><Link href="/legal/privacidad" className="text-texto hover:text-acento-2">Privacidad</Link></li>
+                <li><Link href="/legal/terminos" className="text-texto hover:text-acento-2">Términos</Link></li>
+                <li><Link href="/legal/derechos" className="text-texto hover:text-acento-2">Tus derechos</Link></li>
               </ul>
             </div>
           </div>

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Documento } from "../componentes/documento";
+import { Documento } from "../../componentes/documento";
 
 export const metadata: Metadata = {
   title: "Privacidad",
   description:
     "Qué datos recolecta el sitio de Kripta y qué datos se guardan de los participantes de los torneos. Sin cookies, sin cuentas y sin formularios.",
-  alternates: { canonical: "/privacidad" },
+  alternates: { canonical: "/legal/privacidad" },
 };
 
 /**
@@ -178,8 +178,15 @@ export default function Pagina() {
         abierto y el historial de esta página se puede leer completo en su repositorio.
       </p>
       <p>
-        Ver también los <Link href="/terminos" className="text-acento-2 underline">términos y
-        condiciones</Link>.
+        Ver también los{" "}
+        <Link href="/legal/terminos" className="text-acento-2 underline">
+          términos y condiciones
+        </Link>{" "}
+        y{" "}
+        <Link href="/legal/derechos" className="text-acento-2 underline">
+          cómo ejercer tus derechos
+        </Link>
+        .
       </p>
     </Documento>
   );

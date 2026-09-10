@@ -14,6 +14,9 @@
  *    no se están leyendo como el paso a seguir.
  *  - `pagina-404`: cayeron en una ruta que no existe y aun así entraron. Si este aparece seguido,
  *    hay un link mal escrito circulando por algún lado y vale la pena encontrarlo.
+ *  - `pagina-legal`: desde `/legal/derechos`, donde el botón es el canal para ejercer los derechos
+ *    de la Ley 25.326. No es conversión: es la vía de contacto, y conviene poder distinguirla del
+ *    resto para no leer un reclamo como si fuera una alta.
  *
  * Es un tipo cerrado y la prop es obligatoria a propósito. Con un valor por defecto tipo
  * `"desconocido"`, el día que alguien agregue un sexto botón sin nombrarlo, la medición seguiría
@@ -29,7 +32,8 @@ export type UbicacionDiscord =
   | "tarjeta-torneo"
   | "cta-referidos"
   | "pie"
-  | "pagina-404";
+  | "pagina-404"
+  | "pagina-legal";
 
 /**
  * ¿Corresponde inyectar el script de analítica?

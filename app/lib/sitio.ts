@@ -74,6 +74,7 @@ export const PAGINAS = [
   { ruta: "/", prioridad: 1, frecuencia: "daily" as const },
   { ruta: "/anotador", prioridad: 0.8, frecuencia: "monthly" as const },
   { ruta: "/sensibilidad", prioridad: 0.8, frecuencia: "monthly" as const },
-  { ruta: "/privacidad", prioridad: 0.3, frecuencia: "yearly" as const },
-  { ruta: "/terminos", prioridad: 0.3, frecuencia: "yearly" as const },
+  { ruta: "/legal/privacidad", prioridad: 0.3, frecuencia: "yearly" as const },
+  { ruta: "/legal/terminos", prioridad: 0.3, frecuencia: "yearly" as const },
+  { ruta: "/legal/derechos", prioridad: 0.3, frecuencia: "yearly" as const },
 ];
