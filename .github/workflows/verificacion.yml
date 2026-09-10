@@ -42,6 +42,18 @@ jobs:
   secretos:
     name: Secretos en el historial
     runs-on: ubuntu-latest
+    # El permiso global es sólo lectura del código. Este trabajo necesita uno más, y va acá y no
+    # arriba para que el otro trabajo no lo herede sin necesitarlo.
+    #
+    # En un evento de pull request, gitleaks le pregunta a la API de GitHub qué commits trae el PR
+    # para escanear ese rango. Sin `pull-requests: read` esa llamada devuelve 403 y el paso falla con
+    # un error que no menciona permisos: se lee como si hubiera encontrado un secreto.
+    #
+    # En este repo, que es público, funcionaba igual porque esos datos ya son públicos. En el del
+    # panel, que es privado, fallaba. Va declarado en los dos para que no dependa de la visibilidad.
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v4
         with:
