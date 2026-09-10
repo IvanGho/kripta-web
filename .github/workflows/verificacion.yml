@@ -1,0 +1,79 @@
+# Verificación automática en cada push y cada PR.
+#
+# ## Por qué existe
+#
+# Este repo no tenía ninguna. La consecuencia concreta: Next 16.3.1 estuvo en `main` con dos
+# advisories **críticos** de ejecución remota sin autenticar, y se descubrieron a mano una semana
+# después. `npm audit` los reporta en dos segundos.
+#
+# Un aviso que depende de que alguien se acuerde de correr un comando no es un aviso.
+#
+# ## Por qué gitleaks y no también trufflehog
+#
+# El pedido original nombraba los dos. Hacen lo mismo —buscar secretos en el historial— y correr dos
+# duplica el tiempo y los falsos positivos sin agregar cobertura real. gitleaks es el más rápido y el
+# que trae reglas mantenidas. Si algún día se escapa algo que gitleaks no ve, ahí se suma el otro.
+#
+# ## Por qué no hay hooks de pre-commit
+#
+# Se evaluó `.pre-commit-config.yaml`. Un hook local sólo protege a quien lo tiene instalado, y hay
+# que instalarlo en cada máquina; en un repo cuyo dueño no programa, eso es un paso que se saltea.
+# La verificación en el servidor no se puede saltear, y es la que decide si un PR se puede mergear.
+
+name: Verificación
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Si se empuja dos veces seguidas a la misma rama, cancelar la corrida vieja: lo que importa es el
+# último commit, y el free tier de Actions tiene minutos contados.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Deny-by-default: el token del workflow arranca sin permisos y sólo se le da lectura del código.
+# Sin esto hereda los permisos por defecto del repositorio, que pueden incluir escritura.
+permissions:
+  contents: read
+
+jobs:
+  secretos:
+    name: Secretos en el historial
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # gitleaks necesita el historial completo. Con el checkout por defecto (un solo commit)
+          # sólo vería el último cambio, que es justamente el que ya se puede leer en el PR.
+          fetch-depth: 0
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  dependencias:
+    name: Dependencias y build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # La misma versión que corre en Vercel. Probar en otra versión es probar otra cosa.
+          node-version: 22.x
+          cache: npm
+
+      - run: npm ci
+
+      - name: Vulnerabilidades en las dependencias
+        # `--audit-level=high` corta con alto y crítico, y deja pasar las de severidad baja y
+        # moderada. Es a propósito: un corte en "low" convierte el paso en ruido permanente por
+        # avisos de paquetes de desarrollo, y un paso que siempre falla se termina ignorando.
+        run: npm audit --audit-level=high
+
+      - run: npm run lint
+
+      - run: npm run build
