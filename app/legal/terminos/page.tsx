@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Documento } from "../componentes/documento";
+import { Documento } from "../../componentes/documento";
 
 export const metadata: Metadata = {
   title: "Términos y condiciones",
   description:
     "Cómo funcionan los torneos de Kripta: el premio es fijo y se anuncia antes de abrir la inscripción, la mayoría de edad es obligatoria donde hay dinero y las mesas de Pista Libre son gratuitas.",
-  alternates: { canonical: "/terminos" },
+  alternates: { canonical: "/legal/terminos" },
 };
 
 /**
@@ -196,7 +196,10 @@ export default function Pagina() {
       </p>
       <p>
         Ver también la{" "}
-        <Link href="/privacidad" className="text-acento-2 underline">política de privacidad</Link>.
+        <Link href="/legal/privacidad" className="text-acento-2 underline">
+          política de privacidad
+        </Link>
+        .
       </p>
     </Documento>
   );

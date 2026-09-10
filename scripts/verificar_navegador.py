@@ -34,15 +34,36 @@ BASE = os.environ.get("BASE", "http://localhost:3000")
 # Todas las paginas del sitio. Tiene que coincidir con PAGINAS de app/lib/sitio.ts: el chequeo del
 # sitemap compara contra el largo de esta lista, asi que agregar una pagina alla y olvidarse aca
 # hace fallar la verificacion en vez de pasar desapercibido.
-RUTAS = ["/", "/anotador", "/sensibilidad", "/privacidad", "/terminos"]
+RUTAS = [
+    "/",
+    "/anotador",
+    "/sensibilidad",
+    "/legal/privacidad",
+    "/legal/terminos",
+    "/legal/derechos",
+]
 
 # Las paginas que declaran datos estructurados para Google. Las dos legales no estan y no deberian:
 # no hay ningun tipo de schema.org que corresponda a una politica de privacidad, y declarar uno
 # inventado es peor que no declarar nada.
 RUTAS_CON_SCHEMA = ["/", "/anotador", "/sensibilidad"]
 
-# Las dos paginas de texto legal, que tienen sus propios chequeos.
-RUTAS_LEGALES = ["/privacidad", "/terminos"]
+# Las paginas de texto legal, que tienen sus propios chequeos.
+RUTAS_LEGALES = ["/legal/privacidad", "/legal/terminos", "/legal/derechos"]
+
+# Cabeceras de seguridad que tienen que venir en TODA respuesta, con el valor esperado. Se
+# verifican contra el sitio compilado y no contra `next dev`: en desarrollo no salen igual.
+#
+# El valor se compara por "contiene" y no por igualdad, porque el CSP es largo y lo que importa es
+# que la directiva este presente. Los motivos de cada una estan en next.config.ts.
+CABECERAS_ESPERADAS = {
+    "content-security-policy": "frame-ancestors 'none'",
+    "strict-transport-security": "max-age=",
+    "x-frame-options": "DENY",
+    "x-content-type-options": "nosniff",
+    "referrer-policy": "strict-origin",
+    "permissions-policy": "camera=()",
+}
 
 # Vocabulario que no se usa nunca, ni negado. Es la misma lista que VOCABULARIO_PROHIBIDO de
 # monsterland-panel/src/discord/revisor.js. Se compara como palabra completa para no marcar falsos
@@ -396,6 +417,36 @@ with sync_playwright() as p:
             f"el pie enlaza a {ruta}",
             pagina.locator(f'footer a[href="{ruta}"]').count() > 0,
         )
+
+    # ---------------- cabeceras de seguridad ----------------
+    # No cambian nada de lo que se ve, asi que se rompen sin que nadie lo note. Por eso se chequean.
+    print("\ncabeceras de seguridad")
+    respuesta_cab = pagina.request.get(BASE + "/")
+    recibidas = {k.lower(): v for k, v in respuesta_cab.headers.items()}
+    for cabecera, esperado in CABECERAS_ESPERADAS.items():
+        valor = recibidas.get(cabecera, "")
+        chequear(
+            f"{cabecera} presente y con {esperado}",
+            esperado.lower() in valor.lower(),
+            f'valor recibido: "{valor}"' if valor else "la cabecera no vino",
+        )
+
+    # El CSP no puede permitir scripts de cualquier origen: eso lo volveria decorativo.
+    csp = recibidas.get("content-security-policy", "")
+    chequear(
+        "el CSP no abre script-src a cualquier dominio",
+        "script-src" in csp and "*" not in csp.split("script-src")[1].split(";")[0],
+        csp,
+    )
+    # Sin esta, el CSP no protege contra que le cambien la base a todos los links relativos.
+    chequear("el CSP declara base-uri", "base-uri" in csp, csp)
+
+    # Que no se filtre el servidor ni su version.
+    chequear(
+        "no se anuncia la tecnologia del servidor",
+        "x-powered-by" not in recibidas,
+        f'x-powered-by: {recibidas.get("x-powered-by")}',
+    )
 
     # ---------------- pagina de 404 ----------------
     # Desde una campana de anuncios este caso pasa seguido: cualquier link mal copiado cae aca. La
