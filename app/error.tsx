@@ -72,7 +72,7 @@ export default function Error({
 
       <main
         id="contenido"
-        className="grilla relative mx-auto flex max-w-3xl flex-col items-center px-5 pb-24 pt-20 text-center"
+        className="llaves relative mx-auto flex max-w-3xl flex-col items-center overflow-x-clip px-5 pb-24 pt-20 text-center"
       >
         {/* Ámbar y no verde: es la única superficie del sitio que avisa que algo salió mal. */}
         <div className="resplandor left-1/2 top-[-120px] h-[280px] w-[520px] -translate-x-1/2 bg-alerta/10" />

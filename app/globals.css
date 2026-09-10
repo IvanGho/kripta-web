@@ -1,6 +1,92 @@
 @import "tailwindcss";
 
 /*
+ * ===========================================================================
+ * DIRECCIÓN VISUAL
+ * ===========================================================================
+ *
+ * Escrita antes de tocar una línea de CSS, porque es la decisión que ordena todo lo demás.
+ *
+ * ## El sujeto y el trabajo de la página
+ *
+ * Kripta es la comunidad de Monsterland: un servidor de Discord argentino de ~140 personas que
+ * juegan Valorant y Truco de 20:00 a 05:00. Quien llega a esta página **viene de un anuncio pago,
+ * desde un teléfono, y no conoce el servidor**. La página tiene un solo trabajo: que apriete el
+ * botón de Discord.
+ *
+ * Todo lo de abajo se justifica contra eso. Nada acá es decoración que "queda linda".
+ *
+ * ## El eje que NO es libre
+ *
+ * El verde neón sobre negro está fijado: es la identidad de Monsterland, los tokens son los mismos
+ * que usa el panel, y `IMAGENES.md` prohíbe explícitamente el azul y el violeta.
+ *
+ * Hay que decirlo igual: **negro con un verde ácido es exactamente el look que produce cualquiera
+ * por defecto.** Como el color no se puede mover, la distinción tiene que venir de otro lado, y ahí
+ * es donde se gasta el esfuerzo: tipografía, estructura y una pieza propia. Si además fuéramos
+ * genéricos en tipografía y en estructura, el sitio sería indistinguible de cientos.
+ *
+ * ## Tipografía: se va Poppins
+ *
+ * Poppins 800 en mayúsculas era lo que había, y es el geométrico más usado de la web. Un titular
+ * grande en mayúsculas con una bajada tenue debajo es *la* respuesta de plantilla.
+ *
+ * En su lugar, tres roles con dos familias:
+ *
+ *  - **Titulares: Archivo**, variable, en peso 800-900 y **ancho expandido**. No es un geométrico
+ *    amable: es una grotesca, y estirada al ancho máximo en mayúsculas se lee como algo **tallado
+ *    en una pared**, no como el título de una startup. Es la parte que conecta con el lenguaje
+ *    material de `IMAGENES.md`: basalto de cortes limpios, arquitectura monumental.
+ *  - **Texto: la misma Archivo**, en peso 400-500 y ancho normal. Una sola familia variable cubre
+ *    los dos extremos, así que la cohesión sale gratis y es **un archivo, no cinco** como antes.
+ *  - **Números y etiquetas: IBM Plex Mono.** Este sitio está lleno de datos: puntos, puestos,
+ *    cupos, premios, la cuenta regresiva. En una proporcional los números de una columna no se
+ *    alinean y el ranking se lee torcido. Una mono los alinea sola, y de paso hace que la cuenta
+ *    regresiva se lea como un instrumento y no como texto.
+ *
+ * ## Estructura: la página es una llave de torneo
+ *
+ * Es la pieza propia, y encodea algo verdadero en lugar de decorar.
+ *
+ * Un torneo es una llave de eliminación: muchos entran, uno queda. Es lo único que comparten
+ * Valorant y Truco, es lo que el panel ya calcula, y `IMAGENES.md` lo describe en su escena G3
+ * como "ramas simétricas que avanzan hacia un único círculo luminoso".
+ *
+ * Así que **la página entera es una llave, de muchos a uno**: arriba, en el hero, el fondo son
+ * muchas ramas; a medida que se baja, los separadores entre secciones muestran cada vez menos
+ * ramas, convergiendo; y el llamado final es el nodo único. El ritmo vertical se ajusta igual: las
+ * secciones se van apretando hacia el final, en vez del `py-16` parejo que hacía que las siete se
+ * leyeran iguales.
+ *
+ * Eso reemplaza la grilla de 56px, que era dos degradados lineales y se leía como un cuaderno
+ * cuadriculado: una superficie neutra que no decía nada del contenido.
+ *
+ * ## Movimiento: fluido, sin librerías
+ *
+ * El pedido era "muchos detalles estéticos y fluidos". Se hace con CSS y unas pocas líneas de
+ * canvas, no con Framer Motion + GSAP + tsparticles + Lottie, que medidos suman entre 130 y 180 KB
+ * comprimidos y **duplicarían el JavaScript del sitio** (hoy son 198 KB). En una página que se paga
+ * por clic, cada segundo de carga se cobra en conversión.
+ *
+ *  - Las apariciones al scrollear van con `animation-timeline: view()`, que es CSS puro y cuesta
+ *    **0 KB**. Donde el navegador no lo soporta, el contenido simplemente se ve: no hay estado en
+ *    el que algo quede invisible esperando JavaScript que no llegó.
+ *  - La atmósfera del hero son brasas subiendo, dibujadas en un canvas propio de menos de 2 KB.
+ *    Encaja con el sujeto (luz saliendo de ranuras en la piedra) y el presupuesto de cuadros lo
+ *    controlamos nosotros.
+ *  - Todo lo demás es `:hover` y `transition` de CSS.
+ *
+ * **Techo declarado: el JavaScript servido no pasa de 210 KB comprimidos.** Se mide en
+ * `scripts/verificar_navegador.py`, así que dejar de cumplirlo rompe la verificación en vez de
+ * pasar desapercibido.
+ *
+ * Y todo se apaga con `prefers-reduced-motion`. No es una casilla que tachar: un fondo con
+ * partículas es exactamente lo que le arruina la visita a alguien sensible al movimiento.
+ *
+ * ===========================================================================
+ */
+
+/*
  * Paleta Kripta: lobo verde neón sobre negro. Son los mismos valores que usa el panel
  * (monsterland-panel, src/web/plantilla.js). Si cambia un token, cambia en los dos lados.
  */
@@ -32,12 +118,81 @@
   --color-ok: var(--ok);
   --color-alerta: var(--alerta);
   --color-grave: var(--grave);
-  --font-sans: var(--font-poppins);
+  --font-sans: var(--font-archivo);
+  /* Para números y etiquetas. Ver la dirección visual arriba. */
+  --font-mono: var(--font-mono);
 }
 
 body {
   background: var(--fondo);
   color: var(--texto);
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Tipografía
+ * ---------------------------------------------------------------------------
+ */
+
+/*
+ * Titular monumental: Archivo estirada al ancho máximo, en el peso más pesado.
+ *
+ * El eje `font-stretch` es lo que hace el trabajo. Archivo normal es una grotesca correcta y
+ * anónima; al 125% de ancho, en 900 y en mayúsculas, las letras se tocan casi entre sí y el bloque
+ * se lee como una inscripción tallada en una pared, que es el lenguaje material de la Kripta.
+ *
+ * El `letter-spacing` negativo es imprescindible acá y no es un detalle: a ese ancho y peso, el
+ * espaciado normal deja huecos que rompen la lectura del bloque como una sola masa.
+ */
+.titular {
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-stretch: 125%;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+}
+
+/*
+ * Titular de sección. Mismo principio, un paso menos de intensidad: si todos los títulos de la
+ * página gritan igual, ninguno manda y el hero deja de ser el hero.
+ */
+.titular-seccion {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-stretch: 112%;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+/*
+ * Etiqueta de datos, en monoespaciada y mayúsculas con mucho espaciado.
+ *
+ * Reemplaza a los `text-xs uppercase tracking-[0.14em]` repetidos por toda la página. Que sea mono
+ * no es cosmético: la separa del texto de lectura, así que funciona como rótulo de instrumento y no
+ * como una frase más chica.
+ */
+.rotulo {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--tenue);
+}
+
+/*
+ * Números. `tabular-nums` es el punto de todo esto.
+ *
+ * Sin esto, en la tabla de ranking el 1 ocupa menos que el 8 y la columna de puntos queda
+ * visualmente torcida aunque el HTML esté alineado a la derecha. Con anchos tabulares, los dígitos
+ * ocupan lo mismo y la columna se lee como una columna.
+ */
+.dato {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
 /*
@@ -61,18 +216,49 @@ body {
   z-index: 0;
 }
 
-/* 2. Grilla tenue: da la sensación de estar sobre una superficie, no en el vacío. */
-.grilla::before {
+/*
+ * 2. Campo de llaves.
+ *
+ * Antes acá había una grilla: dos degradados lineales de 56px. Funcionaba para dar superficie, pero
+ * no decía nada del contenido y de cerca se leía como un cuaderno cuadriculado.
+ *
+ * Ahora el mosaico es una **celda de llave de torneo**: dos partidos que entran, un conector
+ * vertical, y una rama que sale hacia la derecha. Repetido, da un campo de eliminatorias que se lee
+ * como la estructura de lo que la página vende, y además encaja con las "ranuras de luz integradas
+ * en la piedra" de la dirección de arte: son líneas dentro de una superficie, no dibujos flotando.
+ *
+ * Va como SVG embebido en lugar de archivo aparte por lo mismo que el grano: es más chico que el
+ * pedido HTTP que costaría traerlo, y el CSP no necesita permitir ningún origen externo.
+ *
+ * La máscara radial que desvanece hacia los bordes se conserva. Sin ella el patrón llega hasta el
+ * borde con la misma intensidad y la sección se lee como una textura aplicada encima, no como
+ * profundidad.
+ */
+.llaves::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image:
-    linear-gradient(to right, rgba(47, 201, 79, 0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(47, 201, 79, 0.055) 1px, transparent 1px);
-  background-size: 56px 56px;
-  /* Se desvanece hacia los bordes para que no parezca un cuaderno cuadriculado. */
-  mask-image: radial-gradient(ellipse 75% 60% at 50% 0%, #000 40%, transparent 100%);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='64' viewBox='0 0 80 64'%3E%3Cg fill='none' stroke='%232fc94f' stroke-opacity='0.085' stroke-width='1'%3E%3Cpath d='M0 16h56M0 48h56M56 16v32M56 32h24'/%3E%3C/g%3E%3Ccircle cx='56' cy='32' r='1.4' fill='%235dff86' fill-opacity='0.16'/%3E%3C/svg%3E");
+  background-size: 80px 64px;
+  mask-image: radial-gradient(ellipse 78% 62% at 50% 0%, #000 38%, transparent 100%);
+}
+
+/*
+ * La misma superficie, pero para el pie de la página, donde la llave ya convergió.
+ *
+ * Es la contraparte del hero: allá el campo entra por arriba y se abre; acá se desvanece hacia
+ * abajo, después del nodo único. Es lo que cierra la idea de que la página entera es una llave de
+ * muchos a uno.
+ */
+.llaves-cierre::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='64' viewBox='0 0 80 64'%3E%3Cg fill='none' stroke='%232fc94f' stroke-opacity='0.06' stroke-width='1'%3E%3Cpath d='M0 16h56M0 48h56M56 16v32M56 32h24'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 64px;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 100%, #000 30%, transparent 100%);
 }
 
 /*
@@ -294,6 +480,109 @@ body {
 
 .latido {
   animation: latido 1.8s ease-in-out infinite;
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Apariciones al scrollear, sin una sola línea de JavaScript
+ * ---------------------------------------------------------------------------
+ *
+ * `animation-timeline: view()` ata el avance de una animación a la posición del elemento dentro de
+ * la ventana. Es lo que normalmente se resuelve con una librería de scroll de 40 KB, y acá cuesta
+ * **cero**: no baja nada al navegador y no hay hidratación de la que dependa.
+ *
+ * ## El detalle que hace que esto sea seguro
+ *
+ * El estado base del elemento es **visible**. La animación sólo se aplica adentro del `@supports`,
+ * así que en un navegador que no la soporta —hoy Safari y Firefox— el contenido simplemente está
+ * ahí. Comparado con el patrón habitual (`opacity: 0` de entrada y una librería que lo revela),
+ * acá **no existe el estado en que algo queda invisible** porque el JavaScript no llegó, falló, o
+ * lo bloqueó una extensión. En una página que se paga por clic, ese estado es una venta perdida.
+ *
+ * Va además dentro de `prefers-reduced-motion: no-preference`, o sea que se activa sólo si la
+ * persona no pidió lo contrario. La consulta en positivo y no en negativo es a propósito: lo que se
+ * agrega es el movimiento, no la excepción.
+ */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .aparece {
+      animation: aparecer linear both;
+      animation-timeline: view();
+      /*
+       * El rango se cierra **dentro de la entrada**, no en `cover`.
+       *
+       * La primera versión decía `entry 4% cover 26%`, y tenía un problema que apareció recién al
+       * mirar una captura de página completa: las secciones altas necesitan mucho scroll para
+       * llegar a `cover 26%`, así que quedaban en el estado inicial —invisibles— más tiempo del
+       * previsto, y cualquier herramienta que renderice la página entera de una vez las veía en
+       * blanco.
+       *
+       * Con `entry 0% entry 70%` la animación termina cuando el elemento entró en un 70%, o sea
+       * apenas asoma. El movimiento se siente igual y deja de depender del alto de la sección.
+       */
+      animation-range: entry 0% entry 70%;
+    }
+  }
+}
+
+/*
+ * Al imprimir o generar un PDF no hay scroll, así que una animación atada al scroll dejaría
+ * secciones enteras en su estado inicial: el documento saldría con la mitad en blanco. Es el mismo
+ * problema que apareció con la captura de página completa, y acá no se puede scrollear para
+ * resolverlo.
+ */
+@media print {
+  .aparece {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Insignias del podio
+ * ---------------------------------------------------------------------------
+ *
+ * Los puestos 1, 2 y 3 eran números pintados con tres clases de color distintas. Eso falla para
+ * quien no distingue el verde del ámbar, y falla del todo en el modo de contraste forzado, donde el
+ * sistema descarta nuestros colores.
+ *
+ * Ahora los tres comparten el mismo marco hexagonal —derivado del nodo de la llave— y se
+ * distinguen por **cuántas marcas tienen adentro**: tres el primero, dos el segundo, una el
+ * tercero. Es una diferencia que se cuenta, no que se percibe, así que sobrevive a cualquier
+ * daltonismo y al contraste forzado.
+ *
+ * El color se conserva encima, porque para quien sí lo distingue es más rápido. Pero ya no es la
+ * única señal.
+ */
+.insignia {
+  flex: none;
+  color: var(--tenue);
+}
+
+.insignia-1 {
+  color: var(--acento-2);
+  filter: drop-shadow(0 0 6px rgba(93, 255, 134, 0.45));
+}
+
+.insignia-2 {
+  color: var(--texto);
+}
+
+.insignia-3 {
+  color: var(--alerta);
 }
 
 /* Respeta a quien pidió menos movimiento en el sistema operativo. */

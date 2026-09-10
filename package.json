@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "verificar-navegador": "python scripts/verificar_navegador.py"
+    "verificar-navegador": "python scripts/verificar_navegador.py",
+    "capturas": "python scripts/capturas.py"
   },
   "dependencies": {
     "@vercel/analytics": "2.0.1",

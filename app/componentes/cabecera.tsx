@@ -47,15 +47,21 @@ export function Cabecera() {
         lo que se podría mostrar), y un desplegable necesita JavaScript de estado, mientras que
         esto es HTML y CSS. Lo visible siempre gana sobre lo que hay que descubrir.
       */}
+      {/*
+        Los enlaces llevan `py-2.5` para que el área que responde al toque llegue a ~44px de alto.
+        Antes eran 20px, que es la altura del texto: técnicamente pasa el mínimo de WCAG 2.2 AA
+        (24px), pero se toca mal con el pulgar y esta es la barra de navegación de un sitio al que la
+        mayoría llega desde el teléfono. El texto se ve igual; lo que cambia es la zona sensible.
+      */}
       <nav
         aria-label="Secciones"
-        className="flex gap-5 overflow-x-auto border-t border-borde/50 px-5 py-2 text-[13px] text-tenue md:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex gap-1 overflow-x-auto border-t border-borde/50 px-4 text-[13px] text-tenue md:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {ENLACES.map((e) => (
           <Link
             key={e.href}
             href={e.href}
-            className="shrink-0 rounded transition-colors hover:text-texto"
+            className="shrink-0 rounded px-2 py-2.5 transition-colors hover:text-texto"
           >
             {e.cortoEnTelefono ?? e.texto}
           </Link>

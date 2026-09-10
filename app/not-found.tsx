@@ -28,7 +28,7 @@ export default function NoEncontrada() {
       <Cabecera />
       <main
         id="contenido"
-        className="grilla relative mx-auto flex max-w-3xl flex-col items-center px-5 pb-24 pt-20 text-center"
+        className="llaves relative mx-auto flex max-w-3xl flex-col items-center overflow-x-clip px-5 pb-24 pt-20 text-center"
       >
         <div className="resplandor left-1/2 top-[-120px] h-[280px] w-[520px] -translate-x-1/2 bg-acento/15" />
 

@@ -5,6 +5,8 @@ import { Pie } from "./componentes/pie";
 import { Contador } from "./componentes/contador";
 import { Lobo } from "./componentes/marca";
 import { BotonDiscord } from "./componentes/boton-discord";
+import { Brasas } from "./componentes/brasas";
+import { Insignia, Llave, NodoFinal } from "./componentes/llave";
 import { DatosEstructurados } from "./componentes/datos-estructurados";
 import { obtenerDatos, formatoARS, fechaLinda } from "./lib/datos";
 import { eventosDeTorneos, listaDeCampeones, organizacion } from "./lib/datos-estructurados";
@@ -46,39 +48,48 @@ export default async function Inicio() {
       */}
       <main id="contenido">
       {/* ============================ HERO ============================ */}
-      <section className="grilla relative overflow-hidden">
+      <section className="llaves relative overflow-hidden">
         {/* Resplandores: son lo que le saca lo plano al fondo. */}
         <div className="resplandor left-1/2 top-[-160px] h-[380px] w-[680px] -translate-x-1/2 bg-acento/20" />
         <div className="resplandor right-[-140px] top-[180px] h-[300px] w-[300px] bg-acento-2/10" />
+        {/* Las brasas del hero. Componente de cliente propio, menos de 2 KB. */}
+        <Brasas />
 
-        <div className="relative z-10 mx-auto max-w-6xl px-5 pb-20 pt-16 sm:pt-24">
+        <div className="relative z-10 mx-auto max-w-6xl px-5 pb-24 pt-16 sm:pt-28">
           <div className="flex flex-col items-center text-center">
             {/*
               El "en vivo" sólo se dice cuando de verdad lo es. Con datos de ejemplo la pastilla
               cambia y el puntito deja de latir: no se anuncia como temporada real algo que no lo
               es. Es el aviso más barato posible, sin romper el diseño.
             */}
-            <span className="pastilla">
+            <span className="pastilla font-mono">
               {!esEjemplo && <span className="latido h-1.5 w-1.5 rounded-full bg-acento" />}
               {temporada ? temporada.nombre : "Comunidad activa"}
               {esEjemplo ? " · vista previa" : " · en vivo"}
             </span>
 
-            <h1 className="mt-6 max-w-3xl text-4xl font-extrabold uppercase leading-[1.05] tracking-tight sm:text-6xl">
-              Torneos de <span className="neon">Valorant</span> y{" "}
-              <span className="neon">Truco</span> todas las semanas
+            {/*
+              El titular usa `.titular`: Archivo al ancho máximo, peso 900, mayúsculas. A ese ancho
+              el bloque se lee como una inscripción tallada y no como el título de una startup, que
+              es exactamente el punto de haber dejado Poppins.
+
+              El texto también cambió. Antes decía "Torneos de Valorant y Truco todas las semanas",
+              que describe el producto. Ahora nombra el lugar y lo que hay que hacer: quien llega de
+              un anuncio no está buscando torneos, está decidiendo si esto es para él.
+            */}
+            <h1 className="titular mt-7 max-w-4xl text-[2.6rem] sm:text-7xl lg:text-8xl">
+              Entrá a la <span className="neon">Kripta</span>
             </h1>
 
-            <p className="mt-5 max-w-xl text-base text-tenue sm:text-lg">
-              Comunidad argentina, de 20 a 05. Premios fijos anunciados antes de abrir la
-              inscripción, ranking de temporada y mesas gratis todos los días.
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-tenue sm:text-lg">
+              Comunidad argentina de Valorant y Truco, de 20 a 05. Dos torneos por semana con premio
+              fijo anunciado antes de abrir la inscripción, ranking de temporada, y mesas gratis
+              todos los días.
             </p>
 
             {proximoTorneo && (
-              <div className="mt-10 flex w-full flex-col items-center">
-                <p className="mb-3 text-xs uppercase tracking-[0.16em] text-tenue">
-                  Próximo torneo · {proximoTorneo.nombre}
-                </p>
+              <div className="mt-12 flex w-full flex-col items-center">
+                <p className="rotulo mb-3">Próximo torneo · {proximoTorneo.nombre}</p>
                 <Contador hasta={proximoTorneo.empiezaEn} />
               </div>
             )}
@@ -100,9 +111,10 @@ export default async function Inicio() {
                   "premio de temporada",
                 ],
               ].map(([valor, etiqueta]) => (
-                <div key={etiqueta} className="tarjeta px-3 py-4">
-                  <dt className="texto-degradado text-xl font-extrabold sm:text-3xl">{valor}</dt>
-                  <dd className="mt-1 text-[11px] uppercase tracking-[0.1em] text-tenue sm:text-xs">
+                <div key={etiqueta} className="tarjeta px-3 py-5">
+                  {/* En mono y tabular: son datos, y así se leen como datos. */}
+                  <dt className="dato texto-degradado text-xl font-medium sm:text-3xl">{valor}</dt>
+                  <dd className="rotulo mt-1.5 block text-[10px] tracking-[0.14em] sm:text-[11px]">
                     {etiqueta}
                   </dd>
                 </div>
@@ -112,8 +124,22 @@ export default async function Inicio() {
         </div>
       </section>
 
+      {/*
+        Los separadores son tramos de llave que van convergiendo: 8 ramas, después 4, después 2, y al
+        final el nodo único antes del llamado a la acción. Bajar por la página es avanzar en el
+        torneo. El motivo completo está en `componentes/llave.tsx` y en la dirección visual de
+        `globals.css`.
+
+        El ritmo vertical acompaña: las secciones se van apretando hacia el final en lugar del `py-16`
+        parejo que hacía que las siete se leyeran iguales.
+      */}
+      <Llave ramas={4} className="mx-auto max-w-3xl px-5" />
+
       {/* ============================ RANKING ============================ */}
-      <section id="ranking" className="relative mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
+      <section
+        id="ranking"
+        className="aparece relative mx-auto max-w-6xl scroll-mt-20 px-5 pb-20 pt-12"
+      >
         <Titulo
           alto="Ranking"
           resaltado={esEjemplo ? "de muestra" : "en vivo"}
@@ -142,7 +168,7 @@ export default async function Inicio() {
                 : "Ranking de la temporada en curso, ordenado por puntos"}
             </caption>
             <thead>
-              <tr className="border-b border-borde text-[11px] uppercase tracking-[0.1em] text-tenue">
+              <tr className="rotulo border-b border-borde text-left [&>th]:font-medium">
                 {/* El "#" visible es un símbolo; lo que se anuncia es la palabra. */}
                 <th scope="col" className="px-4 py-3 sm:px-5">
                   <span aria-hidden="true">#</span>
@@ -160,10 +186,20 @@ export default async function Inicio() {
                   <td className="px-4 py-3 sm:px-5">
                     <Medalla puesto={f.puesto} />
                   </td>
-                  <td className="px-4 py-3 font-semibold sm:px-5">{f.nombre}</td>
-                  <td className="px-4 py-3 text-right font-bold text-acento-2 sm:px-5">{f.puntos}</td>
-                  <td className="hidden px-5 py-3 text-right text-tenue sm:table-cell">{f.torneos}</td>
-                  <td className="hidden px-5 py-3 text-right text-tenue sm:table-cell">{f.titulos}</td>
+                  <td className="px-4 py-3.5 font-semibold sm:px-5">{f.nombre}</td>
+                  {/*
+                    Los tres números van en `.dato`, o sea monoespaciados y con anchos tabulares.
+                    Sin eso el 1 ocupa menos que el 8 y la columna se ve torcida aunque el HTML esté
+                    alineado a la derecha. Es el motivo por el que entró IBM Plex Mono.
+
+                    Puntos en un tamaño mayor que las otras dos columnas: es la que define el
+                    ranking, así que es la que tiene que mandar visualmente.
+                  */}
+                  <td className="dato px-4 py-3.5 text-right text-base font-medium text-acento-2 sm:px-5">
+                    {f.puntos}
+                  </td>
+                  <td className="dato hidden px-5 py-3.5 text-right text-tenue sm:table-cell">{f.torneos}</td>
+                  <td className="dato hidden px-5 py-3.5 text-right text-tenue sm:table-cell">{f.titulos}</td>
                 </tr>
               ))}
             </tbody>
@@ -173,7 +209,7 @@ export default async function Inicio() {
       </section>
 
       {/* ============================ CÓMO FUNCIONA ============================ */}
-      <section className="relative overflow-hidden py-16">
+      <section className="aparece relative overflow-hidden pb-18 pt-6">
         <div className="resplandor left-[-120px] top-1/2 h-[280px] w-[280px] bg-acento/10" />
         <div className="relative z-10 mx-auto max-w-6xl px-5">
           <Titulo alto="Cómo" resaltado="funciona" bajada="Tres pasos. No hace falta ser bueno para arrancar: se puntúa también por participar." />
@@ -200,8 +236,13 @@ export default async function Inicio() {
         </div>
       </section>
 
+      <Llave ramas={3} className="mx-auto max-w-2xl px-5" />
+
       {/* ============================ TORNEOS ============================ */}
-      <section id="torneos" className="relative mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
+      <section
+        id="torneos"
+        className="aparece relative mx-auto max-w-6xl scroll-mt-20 px-5 pb-18 pt-12"
+      >
         <Titulo alto="Torneos de" resaltado="la semana" bajada="El premio se anuncia antes de abrir la inscripción y es el mismo con 4 o con 16 anotados." />
 
         {torneos.length === 0 && (
@@ -269,7 +310,7 @@ export default async function Inicio() {
       </section>
 
       {/* ============================ CAMPEONES ============================ */}
-      <section className="relative mx-auto max-w-6xl px-5 py-16">
+      <section className="aparece relative mx-auto max-w-6xl px-5 pb-16 pt-6">
         <Titulo
           alto="Salón de"
           resaltado="campeones"
@@ -298,8 +339,11 @@ export default async function Inicio() {
         </div>
       </section>
 
+      {/* El ancho también se va cerrando junto con las ramas: la figura converge en los dos ejes. */}
+      <Llave ramas={2} className="mx-auto max-w-md px-5" />
+
       {/* ============================ HERRAMIENTAS ============================ */}
-      <section className="relative mx-auto max-w-6xl px-5 py-16">
+      <section className="aparece relative mx-auto max-w-6xl px-5 pb-14 pt-12">
         <Titulo alto="Herramientas" resaltado="gratis" bajada="Sin registro y sin vueltas. Las hicimos para la comunidad y las dejamos abiertas." />
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -316,8 +360,14 @@ export default async function Inicio() {
         </div>
       </section>
 
+      {/*
+        El nodo final: acá la llave ya convergió a uno. Es lo que cierra la figura que arranca en el
+        hero y hace que los separadores se lean como estructura y no como adorno que se achica.
+      */}
+      <NodoFinal className="pt-4" />
+
       {/* ============================ REFERIDOS + CTA ============================ */}
-      <section className="relative overflow-hidden py-16">
+      <section className="llaves-cierre relative overflow-hidden pb-20 pt-8">
         <div className="resplandor left-1/2 top-1/2 h-[320px] w-[620px] -translate-x-1/2 -translate-y-1/2 bg-acento/15" />
         <div className="relative z-10 mx-auto max-w-3xl px-5 text-center">
           <div className="tarjeta p-8 sm:p-12">
@@ -355,11 +405,13 @@ export default async function Inicio() {
 
 function Titulo({ alto, resaltado, bajada }: { alto: string; resaltado: string; bajada: string }) {
   return (
-    <div className="mb-8 max-w-2xl">
-      <h2 className="text-2xl font-extrabold uppercase leading-tight sm:text-4xl">
+    <div className="mb-10 max-w-2xl">
+      {/* `.titular-seccion` es un paso menos de intensidad que el del hero: si todos los títulos
+          gritan igual, ninguno manda y el hero deja de ser el hero. */}
+      <h2 className="titular-seccion text-2xl sm:text-4xl">
         {alto} <span className="neon">{resaltado}</span>
       </h2>
-      <p className="mt-3 text-sm text-tenue sm:text-base">{bajada}</p>
+      <p className="mt-4 text-sm leading-relaxed text-tenue sm:text-base">{bajada}</p>
     </div>
   );
 }
@@ -377,16 +429,26 @@ function Vacio({ texto }: { texto: string }) {
   );
 }
 
+/**
+ * El puesto en el ranking.
+ *
+ * Para el podio va la insignia hexagonal, que distingue los tres puestos por **cuántas marcas
+ * tiene adentro** y no sólo por color: antes eran el mismo número con tres clases de color, lo que
+ * falla para quien no distingue el verde del ámbar y falla del todo en contraste forzado.
+ *
+ * El número sigue estando como texto al lado, así que un lector de pantalla anuncia "1°" igual que
+ * antes. La insignia va decorativa.
+ */
 function Medalla({ puesto }: { puesto: number }) {
   if (puesto <= 3) {
-    const colores = ["text-acento-2", "text-texto", "text-alerta"];
     return (
-      <span className={`text-base font-extrabold ${colores[puesto - 1]}`}>
-        {puesto}°
+      <span className="flex items-center gap-2">
+        <Insignia puesto={puesto as 1 | 2 | 3} />
+        <span className="dato text-sm font-medium">{puesto}°</span>
       </span>
     );
   }
-  return <span className="text-tenue">{puesto}</span>;
+  return <span className="dato text-tenue">{puesto}</span>;
 }
 
 function Herramienta({ href, titulo, texto }: { href: string; titulo: string; texto: string }) {
