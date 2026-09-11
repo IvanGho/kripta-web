@@ -1,5 +1,8 @@
 # kripta-web
 
+Para revisar cambios desde Orca, usar previews y entender los comandos, ver
+[GLOSARIO-FLUJO-DE-TRABAJO.md](GLOSARIO-FLUJO-DE-TRABAJO.md).
+
 **Pase visual de septiembre de 2026:** la dirección vigente está en [IDENTIDAD.md](IDENTIDAD.md).
 La portada usa las cinco escenas generadas de `IMAGENES.md`, optimizadas en `public/imagenes/`;
 los PNG originales y los prompts enviados están en `assets/`. `node scripts/optimizar-imagenes.mjs`
