@@ -53,6 +53,10 @@ export type DatosPublicos = {
   ranking: FilaRanking[];
   campeones: Campeon[];
   jugadoresActivos: number;
+  /** Cantidad agregada de miembros del Discord. Cero significa que el panel no tiene el dato. */
+  miembros: number;
+  /** Torneos anunciados que empiezan dentro de los próximos siete días. */
+  torneosProximos7Dias: number;
   /** true cuando lo que se está mostrando son datos de ejemplo y no la temporada real. */
   esEjemplo: boolean;
 };
@@ -172,6 +176,8 @@ const EJEMPLO: DatosPublicos = {
     { nombre: "Nahuel", torneo: "Truco — Copa Panteón", juego: "Truco", fecha: "2026-08-15" },
   ],
   jugadoresActivos: 140,
+  miembros: 0,
+  torneosProximos7Dias: 3,
   esEjemplo: true,
 };
 
@@ -219,6 +225,13 @@ function esCampeon(v: unknown): v is Campeon {
   );
 }
 
+/** Los contadores adicionales son informativos: si un panel anterior no los expone, se omiten. */
+function enteroPublico(v: unknown): number {
+  return typeof v === "number" && Number.isFinite(v) && v >= 0
+    ? Math.trunc(v)
+    : 0;
+}
+
 /**
  * Valida la respuesta del panel antes de dársela a la página.
  *
@@ -264,6 +277,8 @@ function validar(crudo: unknown): DatosPublicos | null {
     ranking: crudo.ranking,
     campeones: crudo.campeones,
     jugadoresActivos: crudo.jugadoresActivos,
+    miembros: enteroPublico(crudo.miembros),
+    torneosProximos7Dias: enteroPublico(crudo.torneosProximos7Dias),
     // Se respeta el `esEjemplo` que manda el panel. Antes se forzaba a `false`, y entonces un
     // panel en modo demo (datos sembrados de prueba) se mostraba como si fuera la temporada
     // real, sin ningún aviso. Que el panel diga la verdad y el sitio la muestre.

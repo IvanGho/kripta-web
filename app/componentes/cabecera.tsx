@@ -3,6 +3,8 @@ import { Marca } from "./marca";
 import { BotonDiscord } from "./boton-discord";
 
 const ENLACES = [
+  { href: "/mi-kripta", texto: "Mi Kripta" },
+  { href: "/#empezar", texto: "Cómo participar", cortoEnTelefono: "Empezar" },
   { href: "/#ranking", texto: "Ranking" },
   { href: "/#torneos", texto: "Torneos" },
   { href: "/anotador", texto: "Anotador de Truco", cortoEnTelefono: "Anotador" },

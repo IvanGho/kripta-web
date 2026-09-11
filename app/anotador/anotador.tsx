@@ -62,8 +62,17 @@ function validarPartida(crudo: unknown): Partida | null {
   const { equipos, historial } = crudo as Partida;
   if (!Array.isArray(equipos) || equipos.length !== 2) return null;
   for (const equipo of equipos) {
-    if (typeof equipo?.nombre !== "string" || typeof equipo?.puntos !== "number") return null;
-    if (!Number.isFinite(equipo.puntos) || equipo.puntos < 0 || equipo.puntos > TOTAL) return null;
+    if (
+      typeof equipo?.nombre !== "string" ||
+      typeof equipo?.puntos !== "number"
+    )
+      return null;
+    if (
+      !Number.isFinite(equipo.puntos) ||
+      equipo.puntos < 0 ||
+      equipo.puntos > TOTAL
+    )
+      return null;
   }
   return {
     equipos: [equipos[0], equipos[1]],
@@ -80,12 +89,62 @@ function Grupo({ marcados }: { marcados: number }) {
   return (
     <svg viewBox="0 0 34 30" className="h-8 w-9" aria-hidden="true">
       {/* Los cuatro lados del cuadrado. */}
-      {marcados >= 1 && <line x1="5" y1="4" x2="5" y2="26" stroke={trazo} strokeWidth="2.5" strokeLinecap="round" />}
-      {marcados >= 2 && <line x1="5" y1="4" x2="27" y2="4" stroke={trazo} strokeWidth="2.5" strokeLinecap="round" />}
-      {marcados >= 3 && <line x1="27" y1="4" x2="27" y2="26" stroke={trazo} strokeWidth="2.5" strokeLinecap="round" />}
-      {marcados >= 4 && <line x1="5" y1="26" x2="27" y2="26" stroke={trazo} strokeWidth="2.5" strokeLinecap="round" />}
+      {marcados >= 1 && (
+        <line
+          x1="5"
+          y1="4"
+          x2="5"
+          y2="26"
+          stroke={trazo}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+      )}
+      {marcados >= 2 && (
+        <line
+          x1="5"
+          y1="4"
+          x2="27"
+          y2="4"
+          stroke={trazo}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+      )}
+      {marcados >= 3 && (
+        <line
+          x1="27"
+          y1="4"
+          x2="27"
+          y2="26"
+          stroke={trazo}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+      )}
+      {marcados >= 4 && (
+        <line
+          x1="5"
+          y1="26"
+          x2="27"
+          y2="26"
+          stroke={trazo}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+      )}
       {/* El quinto cierra el grupo con la diagonal. */}
-      {marcados >= 5 && <line x1="5" y1="4" x2="27" y2="26" stroke={trazo} strokeWidth="2.5" strokeLinecap="round" />}
+      {marcados >= 5 && (
+        <line
+          x1="5"
+          y1="4"
+          x2="27"
+          y2="26"
+          stroke={trazo}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+      )}
     </svg>
   );
 }
@@ -93,10 +152,14 @@ function Grupo({ marcados }: { marcados: number }) {
 /** Dibuja una mitad (malas o buenas): tres grupos de 5. */
 function Mitad({ puntos, etiqueta }: { puntos: number; etiqueta: string }) {
   const enEstaMitad = Math.max(0, Math.min(LIMITE_MITAD, puntos));
-  const grupos = [0, 1, 2].map((i) => Math.max(0, Math.min(5, enEstaMitad - i * 5)));
+  const grupos = [0, 1, 2].map((i) =>
+    Math.max(0, Math.min(5, enEstaMitad - i * 5)),
+  );
   return (
     <div>
-      <p className="mb-1.5 text-[10px] uppercase tracking-[0.14em] text-tenue">{etiqueta}</p>
+      <p className="mb-1.5 text-[10px] uppercase tracking-[0.14em] text-tenue">
+        {etiqueta}
+      </p>
       <div className="flex gap-1.5">
         {grupos.map((m, i) => (
           <Grupo key={i} marcados={m} />
@@ -118,7 +181,11 @@ export function Anotador() {
    * El cómo está explicado en app/lib/persistencia.ts: leerlo en el valor inicial de useState
    * rompe la hidratación, y leerlo en un efecto viola una regla de React 19.
    */
-  const [partida, setPartida] = usePersistido(CLAVE_GUARDADO, PARTIDA_INICIAL, validarPartida);
+  const [partida, setPartida] = usePersistido(
+    CLAVE_GUARDADO,
+    PARTIDA_INICIAL,
+    validarPartida,
+  );
   const { equipos, historial } = partida;
 
   const ganador = equipos.find((e) => e.puntos >= TOTAL);
@@ -132,12 +199,18 @@ export function Anotador() {
       // nada. Antes se apilaba siempre, así que en 30 puntos el botón acumulaba pasos vacíos.
       if (despues === antes) return prev;
 
-      const equipos: [Equipo, Equipo] = [{ ...prev.equipos[0] }, { ...prev.equipos[1] }];
+      const equipos: [Equipo, Equipo] = [
+        { ...prev.equipos[0] },
+        { ...prev.equipos[1] },
+      ];
       equipos[indice].puntos = despues;
       return {
         equipos,
         // El snapshot sale del mismo `prev` que el cambio, así que nunca queda desfasado.
-        historial: [...prev.historial, [prev.equipos[0].puntos, prev.equipos[1].puntos]],
+        historial: [
+          ...prev.historial,
+          [prev.equipos[0].puntos, prev.equipos[1].puntos],
+        ],
       };
     });
   }
@@ -161,7 +234,11 @@ export function Anotador() {
     const hayPartidaEnCurso = equipos.some((e) => e.puntos > 0);
     // Reiniciar está al lado de Deshacer y borra la partida entera. Un toque de más no puede
     // costarte el puntaje de una mesa que va por la mitad.
-    if (pedirConfirmacion && hayPartidaEnCurso && !window.confirm("¿Borrar la partida y arrancar de cero?")) {
+    if (
+      pedirConfirmacion &&
+      hayPartidaEnCurso &&
+      !window.confirm("¿Borrar la partida y arrancar de cero?")
+    ) {
       return;
     }
     setPartida((prev) => ({
@@ -175,19 +252,27 @@ export function Anotador() {
 
   function renombrar(indice: 0 | 1, nombre: string) {
     setPartida((prev) => {
-      const equipos: [Equipo, Equipo] = [{ ...prev.equipos[0] }, { ...prev.equipos[1] }];
+      const equipos: [Equipo, Equipo] = [
+        { ...prev.equipos[0] },
+        { ...prev.equipos[1] },
+      ];
       equipos[indice].nombre = nombre.slice(0, 14);
       return { ...prev, equipos };
     });
   }
 
   return (
-    <div className="mt-8">
+    <div className="anotador-kripta mt-5">
       {ganador && (
         <div className="tarjeta mb-4 border-acento/50 p-4 text-center">
-          <p className="text-lg font-extrabold text-acento-2">¡Ganó {nombreParaLeer(ganador, equipos.indexOf(ganador))}!</p>
+          <p className="text-lg font-extrabold text-acento-2">
+            ¡Ganó {nombreParaLeer(ganador, equipos.indexOf(ganador))}!
+          </p>
           {/* Ya está terminada: no hay nada que perder, así que no se pregunta. */}
-          <button onClick={() => reiniciar(false)} className="boton mt-3 text-sm">
+          <button
+            onClick={() => reiniciar(false)}
+            className="boton mt-3 text-sm"
+          >
             Partida nueva
           </button>
         </div>
@@ -199,7 +284,9 @@ export function Anotador() {
         que el usuario termine lo que está haciendo en vez de interrumpirlo en cada toque.
       */}
       <p aria-live="polite" className="sr-only">
-        {equipos.map((e, i) => `${nombreParaLeer(e, i)}: ${e.puntos}`).join(". ")}
+        {equipos
+          .map((e, i) => `${nombreParaLeer(e, i)}: ${e.puntos}`)
+          .join(". ")}
       </p>
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
@@ -212,7 +299,7 @@ export function Anotador() {
           // sentido dichos en voz alta.
           const nombre = nombreParaLeer(e, i);
           return (
-            <div key={i} className="tarjeta flex flex-col p-4">
+            <div key={i} className="tarjeta anotador-equipo flex flex-col p-4">
               <label className="sr-only" htmlFor={`nombre-equipo-${i}`}>
                 Nombre del equipo {i + 1}
               </label>
@@ -260,10 +347,17 @@ export function Anotador() {
       </div>
 
       <div className="mt-4 flex gap-2">
-        <button onClick={deshacer} disabled={historial.length === 0} className="boton-sec flex-1 text-sm disabled:opacity-40">
+        <button
+          onClick={deshacer}
+          disabled={historial.length === 0}
+          className="boton-sec flex-1 text-sm disabled:opacity-40"
+        >
           Deshacer
         </button>
-        <button onClick={() => reiniciar()} className="boton-sec flex-1 text-sm">
+        <button
+          onClick={() => reiniciar()}
+          className="boton-sec flex-1 text-sm"
+        >
           Reiniciar
         </button>
       </div>

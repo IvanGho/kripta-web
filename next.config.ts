@@ -47,12 +47,16 @@ import type { NextConfig } from "next";
  * —el píxel de una plataforma de anuncios, por ejemplo— **va a fallar acá**, visiblemente, y eso
  * es deseable: obliga a decidir a conciencia a quién se le da permiso de ejecutar código.
  */
+// React usa `eval` para reconstruir stacks de depuraciÃ³n en `next dev`. La guÃ­a de esta versiÃ³n
+// de Next lo pide explÃ­citamente en desarrollo; el build de producciÃ³n no lo necesita ni lo recibe.
+const ES_DESARROLLO = process.env.NODE_ENV === "development";
+
 const DIRECTIVAS_CSP = [
   // Todo lo que no esté nombrado abajo sólo puede venir de este dominio.
   "default-src 'self'",
 
   // Ver el comentario largo de arriba sobre por qué va `unsafe-inline`.
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${ES_DESARROLLO ? " 'unsafe-eval'" : ""}`,
 
   // Tailwind y Next emiten estilos en línea. Son propios, no contenido de nadie de afuera.
   "style-src 'self' 'unsafe-inline'",

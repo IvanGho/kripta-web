@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* La dirección vigente está en IDENTIDAD.md y los estilos de la portada en identidad.css.
+ * El comentario siguiente conserva el contexto del primer sistema, anterior a las imágenes. */
+
 /*
  * ===========================================================================
  * DIRECCIÓN VISUAL
@@ -92,16 +95,17 @@
  */
 :root {
   --fondo: #050806;
-  --panel: #0d160f;
-  --panel-2: #122117;
-  --borde: #1e3a26;
-  --texto: #e4f2e7;
-  --tenue: #8ca694;
-  --acento: #2fc94f;
-  --acento-2: #5dff86;
-  --ok: #3be85f;
-  --alerta: #e0b84a;
-  --grave: #e5484d;
+  --panel: #111813;
+  --panel-2: #1a251d;
+  --borde: #304335;
+  --texto: #eff7eb;
+  --tenue: #a6b5a8;
+  --jade: #00c9a7;
+  --acento: #52f52b;
+  --acento-2: #a3ff73;
+  --ok: #69ed9a;
+  --alerta: #f2c76a;
+  --grave: #ff727c;
 }
 
 @theme inline {
@@ -111,6 +115,7 @@
   --color-borde: var(--borde);
   --color-texto: var(--texto);
   --color-tenue: var(--tenue);
+  --color-jade: var(--jade);
   --color-acento: var(--acento);
   --color-acento-2: var(--acento-2);
   /* --ok estaba declarado arriba pero no se mapeaba acá, así que `text-ok` no existía y era un
@@ -126,6 +131,10 @@
 body {
   background: var(--fondo);
   color: var(--texto);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 /*
@@ -587,6 +596,7 @@ body {
 
 /* Respeta a quien pidió menos movimiento en el sistema operativo. */
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   .latido { animation: none; }
   .tarjeta-viva:hover { transform: none; }
   .boton:hover { transform: none; }

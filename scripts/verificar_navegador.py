@@ -32,10 +32,10 @@ from playwright.sync_api import sync_playwright
 
 BASE = os.environ.get("BASE", "http://localhost:3000")
 
-# Todas las paginas del sitio. Tiene que coincidir con PAGINAS de app/lib/sitio.ts: el chequeo del
+# Paginas que se pueden indexar. Tiene que coincidir con PAGINAS de app/lib/sitio.ts: el chequeo del
 # sitemap compara contra el largo de esta lista, asi que agregar una pagina alla y olvidarse aca
 # hace fallar la verificacion en vez de pasar desapercibido.
-RUTAS = [
+RUTAS_INDEXABLE = [
     "/",
     "/anotador",
     "/sensibilidad",
@@ -43,6 +43,9 @@ RUTAS = [
     "/legal/terminos",
     "/legal/derechos",
 ]
+
+# Pantallas propias que no se indexan, pero igual necesitan pasar carga, estructura y accesibilidad.
+RUTAS = [*RUTAS_INDEXABLE, "/acceso"]
 
 # Las paginas que declaran datos estructurados para Google. Las dos legales no estan y no deberian:
 # no hay ningun tipo de schema.org que corresponda a una politica de privacidad, y declarar uno
@@ -177,6 +180,44 @@ with sync_playwright() as p:
         enlaces_visibles > 0,
         f"{enlaces_visibles} de 4 enlaces visibles a 390px de ancho",
     )
+
+    # El primer enlace lleva al paso de inscripcion y queda debajo de la cabecera pegajosa.
+    pagina.goto(BASE + "/", wait_until=LISTA)
+    enlace_empezar = pagina.locator('header a[href="/#empezar"]:visible').first
+    enlace_empezar.click()
+    pagina.wait_for_timeout(700)
+    destino_empezar = pagina.evaluate(
+        """() => {
+          const seccion = document.getElementById('empezar');
+          const cabecera = document.querySelector('header');
+          if (!seccion) return { existe: false };
+          return {
+            existe: true,
+            hash: window.location.hash,
+            arriba: Math.round(seccion.getBoundingClientRect().top),
+            altoCabecera: Math.round(cabecera?.getBoundingClientRect().height || 0),
+          };
+        }"""
+    )
+    chequear(
+        "Como participar lleva al recorrido de inscripcion visible",
+        destino_empezar["existe"]
+        and destino_empezar["hash"] == "#empezar"
+        and destino_empezar["arriba"] >= destino_empezar["altoCabecera"]
+        and destino_empezar["arriba"] < 260,
+        str(destino_empezar),
+    )
+
+    # La agenda es una accion concreta que no requiere registro ni datos personales.
+    pagina.goto(BASE + "/", wait_until=LISTA)
+    enlace_google = pagina.locator('a[data-agenda-google="true"]').first
+    chequear(
+        "cada torneo permite abrir Google Calendar",
+        enlace_google.count() == 1 and "calendar.google.com" in (enlace_google.get_attribute("href") or ""),
+        enlace_google.get_attribute("href") or "sin enlace",
+    )
+    descarga_ics = pagina.locator('button:has-text("Descargar .ics")').first
+    chequear("cada torneo permite descargar un recordatorio .ics", descarga_ics.count() == 1)
 
     # ---------------- foco visible ----------------
     print("\nfoco visible")
@@ -338,13 +379,13 @@ with sync_playwright() as p:
     mapa = pagina.request.get(f"{BASE}/sitemap.xml")
     chequear("sitemap.xml responde 200", mapa.status == 200, f"status {mapa.status}")
     cuerpo_mapa = mapa.text()
-    for ruta in RUTAS:
+    for ruta in RUTAS_INDEXABLE:
         if ruta != "/":
             chequear(f"el sitemap incluye {ruta}", ruta in cuerpo_mapa)
     chequear(
-        f"el sitemap tiene las {len(RUTAS)} paginas",
-        cuerpo_mapa.count("<loc>") == len(RUTAS),
-        f'{cuerpo_mapa.count("<loc>")} urls, se esperaban {len(RUTAS)}',
+        f"el sitemap tiene las {len(RUTAS_INDEXABLE)} paginas indexables",
+        cuerpo_mapa.count("<loc>") == len(RUTAS_INDEXABLE),
+        f'{cuerpo_mapa.count("<loc>")} urls, se esperaban {len(RUTAS_INDEXABLE)}',
     )
 
     # La imagen para compartir. Declarar summary_large_image sin imagen deja la tarjeta vacia,
@@ -378,6 +419,20 @@ with sync_playwright() as p:
             canonical.count() == 1,
             f"encontrados {canonical.count()}",
         )
+
+    pagina.goto(BASE + "/acceso", wait_until=LISTA)
+    chequear(
+        "/acceso declara noindex",
+        pagina.locator('meta[name="robots"][content*="noindex"]').count() == 1,
+    )
+    proveedores = pagina.locator("button.proveedor-boton")
+    chequear("el acceso ofrece Discord y Google", proveedores.count() == 2, f"{proveedores.count()} botones")
+    pagina.goto(BASE + "/mi-kripta", wait_until=LISTA)
+    chequear(
+        "Mi Kripta pide iniciar sesion cuando no hay una sesion",
+        pagina.url.rstrip("/").endswith("/acceso"),
+        pagina.url,
+    )
 
     # JSON-LD: que exista y que sea JSON valido. Un bloque roto no da error visible en la
     # pagina, simplemente lo ignoran los buscadores y nadie se entera.

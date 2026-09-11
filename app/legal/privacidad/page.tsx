@@ -4,189 +4,99 @@ import { Documento } from "../../componentes/documento";
 
 export const metadata: Metadata = {
   title: "Privacidad",
-  description:
-    "Qué datos recolecta el sitio de Kripta y qué datos se guardan de los participantes de los torneos. Sin cookies, sin cuentas y sin formularios.",
+  description: "Cómo se usan los datos de acceso, agenda y torneos en Kripta.",
   alternates: { canonical: "/legal/privacidad" },
 };
 
-/**
- * Política de privacidad.
- *
- * **Cada afirmación de esta página tiene que ser verificable en el código.** No es una formalidad:
- * una política que promete más de lo que el sistema hace es peor que no tenerla, porque pasa de ser
- * una protección a ser una declaración falsa. Dónde se comprueba cada una:
- *
- *  - "no hay formularios ni cuentas": el sitio no tiene ninguna ruta que reciba datos. Se ve en que
- *    no existe ningún `<form>` ni ninguna Server Action en `app/`.
- *  - "no usamos cookies": no hay `cookies()` de Next en ninguna parte, y Vercel Web Analytics no
- *    usa cookies ni identificador persistente.
- *  - "las tipografías se sirven desde este dominio": `next/font` descarga Poppins en el build
- *    (`app/layout.tsx`), así que visitar el sitio no genera ningún pedido a Google.
- *  - "tu navegador nunca habla con el sistema de administración": `obtenerDatos()` de
- *    `app/lib/datos.ts` corre en el servidor. Al navegador llega HTML ya armado.
- *  - las categorías de datos de los jugadores son las que el panel guarda de verdad: es la misma
- *    lista que `CAMPOS_PRIVADOS` de `monsterland-panel/src/discord/revisor.js`.
- *
- * Si mañana el sitio suma un formulario, esta página queda desactualizada y hay que tocarla en el
- * mismo cambio.
- */
 export default function Pagina() {
   return (
     <Documento
       titulo="Política de"
       resaltado="privacidad"
       bajada="Qué datos se recolectan, quién los ve y cómo pedir que se borren."
-      actualizado="2026-09-09"
+      actualizado="2026-09-11"
     >
       <h2>Lo corto</h2>
       <p>
-        Este sitio <strong>no te pide ningún dato</strong>. No hay formularios, no hay cuentas, no
-        hay que registrarse y no usamos cookies. Podés leer todo, usar las dos herramientas y salir
-        sin dejar nada más que una visita anónima en las estadísticas.
+        Podés recorrer el sitio, usar las herramientas y consultar los torneos <strong>sin crear una
+        cuenta</strong>. Si elegís entrar a tu Kripta, Discord o Google confirman tu identidad: tu
+        contraseña nunca pasa por nuestros servidores.
       </p>
       <p>
-        Los datos de las personas aparecen recién cuando alguien participa de un torneo, y eso pasa{" "}
-        <strong>dentro de Discord</strong>, no acá.
+        La cuenta sirve para construir una agenda y un perfil personal. La inscripción, el check-in
+        y la confirmación de mayoría de edad para competir siguen pasando <strong>dentro de Discord</strong>.
       </p>
 
-      <h2>Qué recolecta este sitio</h2>
-      <p>Tres cosas, todas agregadas y ninguna que te identifique:</p>
+      <h2>Información de visita</h2>
       <ul>
         <li>
-          <strong>Estadísticas de visita.</strong> Usamos Vercel Web Analytics, que cuenta qué
-          páginas se ven, desde qué sitio llegaste, de qué país, y con qué tipo de dispositivo y
-          navegador. No usa cookies ni te asigna un identificador que persista entre visitas, así
-          que no podemos seguirte de una visita a la otra ni de un sitio a otro.
+          <strong>Estadísticas agregadas.</strong> Vercel Web Analytics cuenta páginas vistas,
+          procedencia general y tipo de dispositivo. No crea un perfil publicitario ni sigue a una
+          persona entre sitios.
         </li>
         <li>
-          <strong>Qué botón de Discord se apretó.</strong> Cuando alguien toca un botón que lleva al
-          Discord, registramos desde qué parte de la página fue (la cabecera, la portada, una tarjeta
-          de torneo, el pie). Es un conteo: no queda asociado a ninguna persona.
+          <strong>Acciones generales.</strong> Medimos desde dónde se abre Discord y cuándo se agrega
+          un torneo al calendario. Es información de uso, no una ficha de la persona que hizo clic.
         </li>
         <li>
-          <strong>Registros del servidor.</strong> Como cualquier sitio web, el servidor que lo aloja
-          (Vercel) anota los pedidos que recibe, incluida la dirección IP, para poder servir las
-          páginas y defenderse de abusos. Son registros técnicos y de corta vida, no un perfil.
+          <strong>Agenda en este dispositivo.</strong> Al guardar un torneo, el navegador conserva
+          solamente su identificador público. Sirve para mostrarte que ya lo agendaste y no se envía
+          al servidor mientras no exista una función de sincronización que te la pida.
+        </li>
+        <li>
+          <strong>Registros técnicos.</strong> El alojamiento registra pedidos e IP de forma temporal
+          para entregar las páginas y defender el servicio de abusos.
         </li>
       </ul>
 
-      <h2>Qué no hace este sitio</h2>
-      <ul>
-        <li>No te pide nombre, mail, teléfono ni ningún dato de contacto.</li>
-        <li>No tiene cuentas de usuario ni inicio de sesión.</li>
-        <li>No usa cookies, ni propias ni de terceros.</li>
-        <li>No vende ni cede datos a nadie.</li>
-        <li>No muestra publicidad de terceros.</li>
-        <li>
-          No carga tipografías desde servidores ajenos: Poppins se descarga cuando se compila el
-          sitio y se sirve desde este mismo dominio, así que visitarnos no genera un pedido a Google.
-        </li>
-        <li>
-          No conecta tu navegador con nuestro sistema de administración. El ranking y los torneos que
-          ves los pide nuestro servidor y te llegan ya armados dentro de la página.
-        </li>
-      </ul>
-
-      <h2>Los datos de los participantes de un torneo</h2>
+      <h2>Información de tu cuenta</h2>
       <p>
-        Esto no pasa en el sitio: pasa en Discord y se guarda en el sistema de administración que usa
-        la organización. Lo contamos acá porque es donde se puede leer.
+        Sólo existe si entrás. Guardamos la identidad que devuelve el proveedor elegido, tu nombre
+        visible, la imagen de perfil si la comparte y, en el caso de Google, el mail que entrega esa
+        cuenta verificada. Guardamos además una sesión revocable que vence a los 30 días.
       </p>
       <p>
-        Para anotarte a un torneo primero te das de alta con el comando{" "}
-        <strong>/registrarme</strong> en Discord. A partir de ahí se guardan estas categorías de
-        datos:
-      </p>
-      <ul>
-        <li>
-          <strong>Tu identidad en Discord:</strong> el nombre de usuario y el identificador numérico
-          que Discord le asigna a tu cuenta. Es lo que permite que el botón «Anotarme» sepa que sos
-          vos.
-        </li>
-        <li>
-          <strong>Tu nombre dentro del juego</strong> (por ejemplo el de Riot), para poder armar las
-          llaves y que cada uno encuentre a su rival.
-        </li>
-        <li>
-          <strong>Si tu mayoría de edad fue confirmada.</strong> Es un sí o un no, revisado a mano
-          por la organización. No guardamos tu documento ni tu fecha de nacimiento.
-        </li>
-        <li>
-          <strong>Un alias para acreditarte un premio</strong>, y sólo si participás de un torneo con
-          inscripción o premio en dinero.
-        </li>
-        <li>
-          <strong>Tus resultados:</strong> partidos, puntos de temporada y títulos. Esta parte es
-          pública: es el ranking que se muestra en la portada, con tu nombre y tus números.
-        </li>
-        <li>
-          <strong>Notas de organización</strong>, si hizo falta anotar algo sobre tu participación.
-        </li>
-      </ul>
-      <p>
-        Nada de esto se publica salvo lo que dice arriba que es público. El sistema revisa cada
-        anuncio antes de mandarlo al Discord justamente para que ninguno de los otros datos se
-        escape a un canal a la vista de todos.
+        Discord se usa con el permiso mínimo de identificación: no leemos mensajes, contactos ni
+        servidores. Los tokens de Google y Discord se descartan después de validar el acceso, por lo
+        que la web no puede operar esos servicios en tu nombre. Tampoco unimos cuentas sólo porque
+        tengan el mismo mail.
       </p>
 
-      <h2>Quién los ve</h2>
+      <h2>Datos de quienes compiten</h2>
       <p>
-        Las <strong>dos personas</strong> que operan la comunidad: quien la administra y el moderador
-        de torneos. Nadie más tiene acceso, y no se comparten con terceros.
+        Al registrarte con <strong>/registrarme</strong> dentro de Discord, la organización puede guardar
+        tu identidad de Discord, nombre de juego, confirmación de mayoría de edad, alias para acreditar
+        un premio cuando corresponda y resultados de competencia. El ranking puede mostrar tu nombre,
+        puntos, torneos y títulos.
       </p>
       <p>
-        Los datos viven en la infraestructura de nuestros dos proveedores: <strong>Vercel</strong>,
-        que aloja el sitio y el sistema de administración, y <strong>Discord</strong>, donde ocurre
-        la comunidad. Cada uno tiene su propia política de privacidad, y la de Discord aplica a todo
-        lo que hagas dentro de Discord.
+        El resto de la ficha de jugador no se publica. La web pública recibe datos agregados y resultados
+        necesarios para mostrar los torneos y el ranking; tu navegador no se conecta directamente al
+        sistema de administración.
       </p>
 
-      <h2>Cuánto tiempo se guardan</h2>
+      <h2>Quién accede</h2>
       <p>
-        Los resultados y los puntos se conservan mientras la comunidad exista: son el historial de
-        las temporadas y el ranking. El resto se guarda mientras tu ficha de jugador siga activa, y
-        se borra cuando pedís que se borre.
+        La administración y la moderación de torneos acceden a la información operativa necesaria.
+        Vercel aloja el sitio y la base de datos guarda las sesiones. Si elegís entrar, Discord o Google
+        procesan la autenticación según su propia política de privacidad. No vendemos ni cedemos datos.
+      </p>
+
+      <h2>Conservación y eliminación</h2>
+      <p>
+        La relación con un proveedor se conserva mientras tu cuenta siga activa y se borra cuando pedís
+        eliminarla. Los resultados y puntos se mantienen como historial de las temporadas; si pedís la
+        baja, el historial puede conservarse de forma anónima para no alterar resultados ya cerrados.
       </p>
 
       <h2>Tus derechos</h2>
       <p>
-        En Argentina la Ley 25.326 de Protección de los Datos Personales te da derecho a{" "}
-        <strong>saber qué datos tenemos tuyos, corregirlos y pedir que se borren</strong>, sin costo
-        y sin tener que explicar por qué.
+        Podés saber qué datos tenemos, corregirlos o pedir su eliminación. En Argentina estos derechos
+        están contemplados por la Ley 25.326. Encontrás el canal y los plazos en la página de{" "}
+        <Link href="/legal/derechos" className="text-acento-2 underline">tus derechos</Link>.
       </p>
       <p>
-        Se piden por mensaje directo a la administración en el Discord, que es donde ya nos podés
-        encontrar. Si pedís que se borren, se borra tu ficha; los resultados de los torneos que ya
-        jugaste quedan en el historial de la temporada de forma anónima, porque son el registro de
-        una competencia que ya pasó.
-      </p>
-      <p>
-        Si creés que no manejamos bien tus datos, podés reclamar ante la Agencia de Acceso a la
-        Información Pública, que es el organismo de control de esa ley.
-      </p>
-
-      <h2>Menores de edad</h2>
-      <p>
-        Los torneos con inscripción o con premio en dinero son <strong>sólo para mayores de 18
-        años</strong>, y esa condición la revisa una persona antes de habilitarte. Las mesas de Pista
-        Libre son gratuitas y abiertas a todo el servidor.
-      </p>
-
-      <h2>Cambios</h2>
-      <p>
-        Si esto cambia, cambia la fecha de arriba. No hay versiones escondidas: el sitio es de código
-        abierto y el historial de esta página se puede leer completo en su repositorio.
-      </p>
-      <p>
-        Ver también los{" "}
-        <Link href="/legal/terminos" className="text-acento-2 underline">
-          términos y condiciones
-        </Link>{" "}
-        y{" "}
-        <Link href="/legal/derechos" className="text-acento-2 underline">
-          cómo ejercer tus derechos
-        </Link>
-        .
+        Ver también los <Link href="/legal/terminos" className="text-acento-2 underline">términos de la comunidad</Link>.
       </p>
     </Documento>
   );

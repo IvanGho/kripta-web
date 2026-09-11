@@ -1,5 +1,11 @@
 # kripta-web
 
+**Pase visual de septiembre de 2026:** la dirección vigente está en [IDENTIDAD.md](IDENTIDAD.md).
+La portada usa las cinco escenas generadas de `IMAGENES.md`, optimizadas en `public/imagenes/`;
+los PNG originales y los prompts enviados están en `assets/`. `node scripts/optimizar-imagenes.mjs`
+reproduce las versiones web y el fondo de la imagen para compartir. Los estilos del portal viven
+en `app/identidad.css`. El resto de este documento conserva también contexto de etapas anteriores.
+
 Sitio público de captación de **Monsterland / Kripta**. Su único objetivo es que el de afuera
 termine entrando al Discord.
 
@@ -20,6 +26,35 @@ Después, en **Settings → Environment Variables**, sólo una es importante:
 | `PANEL_API_URL` | La URL del panel, para mostrar el ranking y los torneos de verdad. Sin esto usa datos de ejemplo. |
 
 Después de cargarlas hay que hacer **Redeploy**: las variables se leen al compilar.
+
+### Acceso con Discord y Google
+
+El acceso personal usa Auth.js y Postgres. Es independiente de las tablas operativas del panel:
+si se usa la misma base, guarda sus cuatro tablas dentro del esquema `kripta_auth`.
+
+1. Conectá una base Postgres al proyecto web y cargá su URL como `DATABASE_URL`.
+2. Ejecutá una vez `npm run preparar-auth` con esa variable cargada. Sólo crea el esquema y tablas
+   idempotentes de cuentas y sesiones; no toca torneos, jugadores ni caja del panel.
+3. Generá `AUTH_SECRET` con `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+   y cargalo como variable de entorno del proyecto web.
+4. Creá una aplicación OAuth de Discord y una de Google. Cargá `AUTH_DISCORD_ID`,
+   `AUTH_DISCORD_SECRET`, `AUTH_GOOGLE_ID` y `AUTH_GOOGLE_SECRET`.
+5. En ambos proveedores declarás exactamente estas URL de retorno:
+
+   ```text
+   https://kripta.infinixapp.com/api/auth/callback/discord
+   https://kripta.infinixapp.com/api/auth/callback/google
+   ```
+
+   En local, las equivalentes usan `http://localhost:3000`.
+
+6. Hacé redeploy. Mientras falte la base, el secreto o al menos un proveedor, `/acceso` deja los
+   botones apagados en lugar de simular una cuenta que no se puede guardar.
+
+Discord se pide solamente con el alcance `identify`. Google se usa para identidad y no para leer el
+calendario. Los tokens de ambos proveedores se descartan después de validar el acceso; la cuenta y
+la sesión se pueden revocar. Las cuentas no se unen automáticamente por tener el mismo mail: el
+enlace entre proveedores será una acción explícita desde una sesión ya iniciada.
 
 ### El dominio propio
 

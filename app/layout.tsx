@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+import "./identidad.css";
 import { URL_SITIO } from "./lib/sitio";
 import { HAY_ANALITICA } from "./lib/medicion";
 

@@ -24,6 +24,7 @@ VISTAS = [("tel", 390, 844), ("esc", 1440, 900)]
 
 RUTAS = [
     ("/", "portada"),
+    ("/acceso", "acceso"),
     ("/anotador", "anotador"),
     ("/sensibilidad", "sensibilidad"),
     ("/legal/privacidad", "privacidad"),
@@ -56,7 +57,14 @@ with sync_playwright() as p:
                 content=".aparece { animation: none !important; opacity: 1 !important;"
                 " transform: none !important; }"
             )
-            pagina.wait_for_timeout(600)
+            # Recorrer las imágenes como una persona: las imágenes lazy fuera de pantalla no
+            # se descargan por pedir una captura completa. Esperar decode evita falsos huecos.
+            for imagen in pagina.locator("img").all():
+                imagen.scroll_into_view_if_needed()
+                imagen.evaluate("img => img.decode()")
+            pagina.evaluate("document.fonts.ready")
+            pagina.evaluate("window.scrollTo(0, 0)")
+            pagina.wait_for_timeout(1500)
 
             destino = f"{SALIDA}/{archivo}-{nombre}.png"
             pagina.screenshot(path=destino, full_page=True)

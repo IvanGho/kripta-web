@@ -68,13 +68,21 @@ function leerDpi(texto: string): number {
  */
 function formatearSens(valor: number): string {
   const decimales = valor >= 1 ? 3 : valor >= 0.01 ? 4 : 6;
-  return valor.toFixed(decimales).replace(/\.?0+$/, "").replace(".", ",");
+  return valor
+    .toFixed(decimales)
+    .replace(/\.?0+$/, "")
+    .replace(".", ",");
 }
 
 /** Los valores elegidos se recuerdan: la gente vuelve a chequear su sensibilidad, no la calcula una vez. */
 const CLAVE_GUARDADO = "kripta:sensibilidad";
 
-type Elecciones = { origen: IdJuego; destino: IdJuego; sens: string; dpi: string };
+type Elecciones = {
+  origen: IdJuego;
+  destino: IdJuego;
+  sens: string;
+  dpi: string;
+};
 
 const ELECCIONES_INICIALES: Elecciones = {
   origen: "valorant",
@@ -83,7 +91,8 @@ const ELECCIONES_INICIALES: Elecciones = {
   dpi: "800",
 };
 
-const esIdJuego = (id: unknown): id is IdJuego => JUEGOS.some((j) => j.id === id);
+const esIdJuego = (id: unknown): id is IdJuego =>
+  JUEGOS.some((j) => j.id === id);
 
 function validarElecciones(crudo: unknown): Elecciones | null {
   if (typeof crudo !== "object" || crudo === null) return null;
@@ -102,15 +111,18 @@ export function Convertidor() {
   );
   const { origen, destino, sens, dpi } = elecciones;
 
-  const cambiar = <C extends keyof Elecciones>(campo: C, valor: Elecciones[C]) =>
-    setElecciones((previo) => ({ ...previo, [campo]: valor }));
+  const cambiar = <C extends keyof Elecciones>(
+    campo: C,
+    valor: Elecciones[C],
+  ) => setElecciones((previo) => ({ ...previo, [campo]: valor }));
 
   const mismoJuego = origen === destino;
 
   const resultado = useMemo(() => {
     const s = Number(sens.replace(",", "."));
     const d = leerDpi(dpi);
-    if (!Number.isFinite(s) || s <= 0 || !Number.isFinite(d) || d <= 0) return null;
+    if (!Number.isFinite(s) || s <= 0 || !Number.isFinite(d) || d <= 0)
+      return null;
     const convertida = s * (yawDe(origen) / yawDe(destino));
     return {
       convertida,
@@ -121,37 +133,47 @@ export function Convertidor() {
   }, [origen, destino, sens, dpi]);
 
   return (
-    <div className="mt-8">
+    <div className="convertidor-kripta mt-5">
       <div className="tarjeta p-5 sm:p-6">
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.12em] text-tenue">Desde</span>
+            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.12em] text-tenue">
+              Desde
+            </span>
             <select
               value={origen}
               onChange={(e) => cambiar("origen", e.target.value as IdJuego)}
               className="w-full rounded-xl border border-borde bg-panel-2 px-3 py-2.5 text-texto focus-visible:border-acento"
             >
               {JUEGOS.map((j) => (
-                <option key={j.id} value={j.id}>{j.nombre}</option>
+                <option key={j.id} value={j.id}>
+                  {j.nombre}
+                </option>
               ))}
             </select>
           </label>
 
           <label className="block">
-            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.12em] text-tenue">Hacia</span>
+            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.12em] text-tenue">
+              Hacia
+            </span>
             <select
               value={destino}
               onChange={(e) => cambiar("destino", e.target.value as IdJuego)}
               className="w-full rounded-xl border border-borde bg-panel-2 px-3 py-2.5 text-texto focus-visible:border-acento"
             >
               {JUEGOS.map((j) => (
-                <option key={j.id} value={j.id}>{j.nombre}</option>
+                <option key={j.id} value={j.id}>
+                  {j.nombre}
+                </option>
               ))}
             </select>
           </label>
 
           <label className="block">
-            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.12em] text-tenue">Tu sensibilidad</span>
+            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.12em] text-tenue">
+              Tu sensibilidad
+            </span>
             <input
               value={sens}
               onChange={(e) => cambiar("sens", e.target.value)}
@@ -161,7 +183,9 @@ export function Convertidor() {
           </label>
 
           <label className="block">
-            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.12em] text-tenue">DPI del mouse</span>
+            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.12em] text-tenue">
+              DPI del mouse
+            </span>
             <input
               value={dpi}
               onChange={(e) => cambiar("dpi", e.target.value)}
@@ -177,36 +201,52 @@ export function Convertidor() {
         */}
         {mismoJuego && (
           <p className="mt-4 rounded-xl border border-alerta/40 bg-alerta/5 px-3 py-2 text-center text-xs text-alerta">
-            Elegiste el mismo juego en los dos lados, así que el número no cambia. Cambiá uno para
-            convertir.
+            Elegiste el mismo juego en los dos lados, así que el número no
+            cambia. Cambiá uno para convertir.
           </p>
         )}
 
         {/* aria-live: el resultado se actualiza sin recargar, así que hay que anunciarlo. */}
-        <div className="mt-6 border-t border-borde pt-6 text-center" aria-live="polite">
+        <div
+          className="mt-6 border-t border-borde pt-6 text-center"
+          aria-live="polite"
+        >
           {resultado ? (
             <>
               <p className="text-[11px] uppercase tracking-[0.14em] text-tenue">
-                Tu sensibilidad en {JUEGOS.find((j) => j.id === destino)!.nombre}
+                Tu sensibilidad en{" "}
+                {JUEGOS.find((j) => j.id === destino)!.nombre}
               </p>
               <p className="texto-degradado mt-1 text-5xl font-extrabold tabular-nums sm:text-6xl">
                 {formatearSens(resultado.convertida)}
               </p>
               <div className="mt-5 grid grid-cols-3 gap-2 text-sm">
-                <Dato etiqueta="cm/360" valor={`${resultado.cm.toFixed(1).replace(".", ",")} cm`} />
-                <Dato etiqueta="eDPI origen" valor={String(resultado.edpiOrigen)} />
-                <Dato etiqueta="eDPI destino" valor={String(resultado.edpiDestino)} />
+                <Dato
+                  etiqueta="cm/360"
+                  valor={`${resultado.cm.toFixed(1).replace(".", ",")} cm`}
+                />
+                <Dato
+                  etiqueta="eDPI origen"
+                  valor={String(resultado.edpiOrigen)}
+                />
+                <Dato
+                  etiqueta="eDPI destino"
+                  valor={String(resultado.edpiDestino)}
+                />
               </div>
             </>
           ) : (
-            <p className="text-tenue">Poné una sensibilidad y un DPI mayores a cero.</p>
+            <p className="text-tenue">
+              Poné una sensibilidad y un DPI mayores a cero.
+            </p>
           )}
         </div>
       </div>
 
       <p className="mt-4 text-center text-xs text-tenue">
-        Mantiene el cm/360, así que el giro te queda igual en los dos juegos. No convierte la
-        sensibilidad de las miras con zoom, que cada juego maneja aparte.
+        Mantiene el cm/360, así que el giro te queda igual en los dos juegos. No
+        convierte la sensibilidad de las miras con zoom, que cada juego maneja
+        aparte.
       </p>
     </div>
   );
@@ -215,7 +255,9 @@ export function Convertidor() {
 function Dato({ etiqueta, valor }: { etiqueta: string; valor: string }) {
   return (
     <div className="rounded-xl border border-borde bg-panel-2 px-2 py-2.5">
-      <p className="text-[10px] uppercase tracking-[0.1em] text-tenue">{etiqueta}</p>
+      <p className="text-[10px] uppercase tracking-[0.1em] text-tenue">
+        {etiqueta}
+      </p>
       <p className="mt-0.5 font-bold tabular-nums">{valor}</p>
     </div>
   );

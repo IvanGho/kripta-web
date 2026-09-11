@@ -30,6 +30,7 @@ export type UbicacionDiscord =
   | "cabecera"
   | "hero"
   | "tarjeta-torneo"
+  | "ruta-inscripcion"
   | "cta-referidos"
   | "pie"
   | "pagina-404"

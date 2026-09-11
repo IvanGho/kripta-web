@@ -25,6 +25,8 @@ export function Pie() {
               <p className="mb-3 text-xs uppercase tracking-[0.14em] text-tenue">Comunidad</p>
               <ul className="space-y-2">
                 <li><BotonDiscord ubicacion="pie" variante="enlace" className="text-texto hover:text-acento-2">Discord</BotonDiscord></li>
+                <li><Link href="/mi-kripta" className="text-texto hover:text-acento-2">Mi Kripta</Link></li>
+                <li><Link href="/#empezar" className="text-texto hover:text-acento-2">Cómo participar</Link></li>
                 <li><Link href="/#ranking" className="text-texto hover:text-acento-2">Ranking</Link></li>
                 <li><Link href="/#torneos" className="text-texto hover:text-acento-2">Torneos</Link></li>
               </ul>
