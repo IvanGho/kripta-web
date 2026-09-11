@@ -2,6 +2,7 @@
 
 Para revisar cambios desde Orca, usar previews y entender los comandos, ver
 [GLOSARIO-FLUJO-DE-TRABAJO.md](GLOSARIO-FLUJO-DE-TRABAJO.md).
+Para verla en vivo desde el celular, ver [VISTA-LOCAL-EN-CELULAR.md](VISTA-LOCAL-EN-CELULAR.md).
 
 **Pase visual de septiembre de 2026:** la dirección vigente está en [IDENTIDAD.md](IDENTIDAD.md).
 La portada usa las cinco escenas generadas de `IMAGENES.md`, optimizadas en `public/imagenes/`;
