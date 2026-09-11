@@ -8,7 +8,7 @@ import { Lobo } from "./componentes/marca";
 import { BotonDiscord } from "./componentes/boton-discord";
 import { Brasas } from "./componentes/brasas";
 import { Insignia } from "./componentes/llave";
-import { AccionesAgendaTorneo } from "./componentes/acciones-agenda-torneo";
+import { AgendaTorneos } from "./componentes/agenda-torneos";
 import { DatosEstructurados } from "./componentes/datos-estructurados";
 import { obtenerDatos, formatoARS, fechaLinda } from "./lib/datos";
 import {
@@ -291,89 +291,7 @@ export default async function Inicio() {
           {torneos.length === 0 ? (
             <Vacio texto="Todavía no hay torneos abiertos. Entrá al Discord para enterarte del próximo." />
           ) : (
-            <div className="grid gap-4 md:grid-cols-3">
-              {torneos.map((t) => {
-                const gratis =
-                  t.inscripcionCentavos === 0 && t.premioCentavos === 0;
-                const lleno = t.inscriptos >= t.cupo;
-                return (
-                  <article
-                    key={t.id}
-                    className="tarjeta tarjeta-torneo tarjeta-viva flex flex-col p-5"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="sobre-titulo">
-                        {t.juego} · {t.formato}
-                      </span>
-                      <span className="estado-torneo">
-                        {gratis ? "Pista Libre" : "18+"}
-                      </span>
-                    </div>
-                    <h3 className="mt-5 text-xl font-bold leading-snug">
-                      {t.nombre}
-                    </h3>
-                    <p className="mt-2 text-sm text-tenue">
-                      {fechaLinda(t.empiezaEn)}
-                    </p>
-                    <dl className="torneo-datos">
-                      <div>
-                        <dt>Inscripción</dt>
-                        <dd>
-                          {t.inscripcionCentavos === 0
-                            ? "Gratis"
-                            : formatoARS(t.inscripcionCentavos)}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt>Premio fijo</dt>
-                        <dd>
-                          {t.premioCentavos === 0
-                            ? "Rol + puntos"
-                            : formatoARS(t.premioCentavos)}
-                        </dd>
-                      </div>
-                    </dl>
-                    <div className="mt-auto">
-                      <p className="mb-2 flex justify-between text-xs text-tenue">
-                        <span>
-                          {lleno ? "Cupo completo" : "Lugares ocupados"}
-                        </span>
-                        <span className="dato">
-                          {t.inscriptos}/{t.cupo}
-                        </span>
-                      </p>
-                      <div className="cupo-barra">
-                        <span
-                          style={{
-                            width: `${t.cupo > 0 ? Math.max(0, Math.min(100, (t.inscriptos / t.cupo) * 100)) : 0}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <BotonDiscord
-                      ubicacion="tarjeta-torneo"
-                      variante="secundario"
-                      className="mt-5 w-full text-sm"
-                    >
-                      {lleno ? "Anotarme a la lista de espera" : "Anotarme"}
-                      <span aria-hidden="true">↗</span>
-                    </BotonDiscord>
-                    <AccionesAgendaTorneo
-                      torneo={{
-                        id: t.id,
-                        nombre: t.nombre,
-                        empiezaEn: t.empiezaEn,
-                      }}
-                    />
-                    {!gratis && (
-                      <p className="mt-2 text-center text-[11px] text-tenue">
-                        Sólo mayores de 18
-                      </p>
-                    )}
-                  </article>
-                );
-              })}
-            </div>
+            <AgendaTorneos torneos={torneos} />
           )}
           <section
             id="empezar"

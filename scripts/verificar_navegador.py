@@ -210,6 +210,10 @@ with sync_playwright() as p:
 
     # La agenda es una accion concreta que no requiere registro ni datos personales.
     pagina.goto(BASE + "/", wait_until=LISTA)
+    # El contenido ya existe en HTML, pero los botones del filtro se hidratan despues. Sin esperar,
+    # Playwright puede tocar un boton antes de que React le conecte el evento y medir una pagina
+    # estatica como si fuera un fallo del filtro.
+    pagina.wait_for_timeout(ESPERA_HIDRATACION)
     enlace_google = pagina.locator('a[data-agenda-google="true"]').first
     chequear(
         "cada torneo permite abrir Google Calendar",
@@ -218,6 +222,32 @@ with sync_playwright() as p:
     )
     descarga_ics = pagina.locator('button:has-text("Descargar .ics")').first
     chequear("cada torneo permite descargar un recordatorio .ics", descarga_ics.count() == 1)
+
+    # El filtro tiene que cambiar la agenda de verdad y conservar la preferencia al volver. No se
+    # prueba un juego con nombre fijo: cuando el panel reemplace los datos de ejemplo, la lista de
+    # juegos sale de sus propios torneos y puede ser distinta.
+    filtros = pagina.locator("button.agenda-filtro-boton")
+    if filtros.count() > 1:
+        filtro_elegido = filtros.nth(1)
+        filtro_elegido.click()
+        pagina.wait_for_timeout(150)
+        activo = filtro_elegido.get_attribute("aria-pressed")
+        tarjetas_visibles = pagina.locator("article.tarjeta-torneo").count()
+        chequear(
+            "el filtro de agenda muestra el juego elegido",
+            activo == "true" and tarjetas_visibles > 0,
+            f'activo: {activo}; tarjetas: {tarjetas_visibles}',
+        )
+        pagina.reload(wait_until=LISTA)
+        pagina.wait_for_timeout(150)
+        chequear(
+            "la agenda recuerda el juego elegido",
+            pagina.locator("button.agenda-filtro-boton[aria-pressed=\"true\"]").count() == 1
+            and pagina.locator("button.agenda-filtro-boton[aria-pressed=\"true\"]").first.inner_text()
+            == filtro_elegido.inner_text(),
+        )
+    else:
+        chequear("la agenda sin torneos no muestra filtros falsos", filtros.count() == 0)
 
     # ---------------- foco visible ----------------
     print("\nfoco visible")
