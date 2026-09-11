@@ -9,7 +9,7 @@ import { iniciarSesion } from "./acciones";
 
 export const metadata: Metadata = {
   title: "Entrar a tu Kripta",
-  description: "Entrá de forma segura con Discord o Google para guardar tu lugar en Monsterland.",
+  description: "Entrá de forma segura con Discord, Google o Apple para guardar tu lugar en Monsterland.",
   alternates: { canonical: "/acceso" },
   robots: { index: false, follow: false },
 };
@@ -19,6 +19,7 @@ export default async function Acceso() {
 
   const discord = ACCESO_LISTO && PROVEEDORES_DISPONIBLES.includes("discord");
   const google = ACCESO_LISTO && PROVEEDORES_DISPONIBLES.includes("google");
+  const apple = ACCESO_LISTO && PROVEEDORES_DISPONIBLES.includes("apple");
 
   return (
     <>
@@ -53,11 +54,23 @@ export default async function Acceso() {
                 <span className="proveedor-flecha" aria-hidden="true">→</span>
               </button>
             </form>
+            <form action={iniciarSesion}>
+              <input type="hidden" name="proveedor" value="apple" />
+              <button type="submit" className="proveedor-boton proveedor-apple" disabled={!apple}>
+                <span className="proveedor-apple-icono" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor" focusable="false">
+                    <path d="M16.7 12.6c0-2.3 1.9-3.4 2-3.5a4.3 4.3 0 0 0-3.4-1.8c-1.4-.2-2.8.9-3.5.9-.7 0-1.8-.9-3-.9-1.5 0-3 .9-3.7 2.3-1.6 2.8-.4 6.9 1.1 9.1.8 1 1.7 2.2 2.9 2.1 1.2-.1 1.6-.8 3-.8 1.4 0 1.8.8 3 .8 1.3 0 2.1-1.1 2.9-2.2.9-1.2 1.3-2.4 1.3-2.5-.1 0-2.6-1-2.6-3.5Zm-2.3-6.8c.7-.9 1.1-2.1 1-3.3-1 .1-2.2.7-2.9 1.6-.6.7-1.2 1.9-1 3.1 1.1.1 2.2-.6 2.9-1.4Z" />
+                  </svg>
+                </span>
+                Continuar con Apple
+                <span className="proveedor-flecha" aria-hidden="true">→</span>
+              </button>
+            </form>
           </div>
 
           {ACCESO_LISTO ? (
             <p className="acceso-nota">
-              Discord te identifica para la comunidad. Google sólo simplifica el acceso. Nunca publicamos ni leemos tus mensajes.
+              Discord te identifica para la comunidad. Google y Apple sólo simplifican el acceso. Nunca publicamos ni leemos tus mensajes.
             </p>
           ) : (
             <p className="acceso-pendiente" role="status">

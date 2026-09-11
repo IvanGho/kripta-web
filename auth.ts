@@ -1,4 +1,5 @@
 import NextAuth from "next-auth";
+import Apple from "next-auth/providers/apple";
 import Discord from "next-auth/providers/discord";
 import Google from "next-auth/providers/google";
 import PostgresAdapter from "@auth/pg-adapter";
@@ -64,6 +65,16 @@ const proveedores = ACCESO_LISTO
         : []),
       ...(PROVEEDORES_DISPONIBLES.includes("google")
         ? [Google({ allowDangerousEmailAccountLinking: false })]
+        : []),
+      ...(PROVEEDORES_DISPONIBLES.includes("apple")
+        ? [
+            Apple({
+              // Apple puede entregar un email privado y el nombre sólo en el primer acceso. No se
+              // asume que coincide con otra identidad: vincular proveedores será una acción de la
+              // persona desde una sesión ya iniciada.
+              allowDangerousEmailAccountLinking: false,
+            }),
+          ]
         : []),
     ]
   : [];

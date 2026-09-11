@@ -31,7 +31,7 @@ Después, en **Settings → Environment Variables**, sólo una es importante:
 
 Después de cargarlas hay que hacer **Redeploy**: las variables se leen al compilar.
 
-### Acceso con Discord y Google
+### Acceso con Discord, Google y Apple
 
 El acceso personal usa Auth.js y Postgres. Es independiente de las tablas operativas del panel:
 si se usa la misma base, guarda sus cuatro tablas dentro del esquema `kripta_auth`.
@@ -52,13 +52,27 @@ si se usa la misma base, guarda sus cuatro tablas dentro del esquema `kripta_aut
 
    En local, las equivalentes usan `http://localhost:3000`.
 
-6. Hacé redeploy. Mientras falte la base, el secreto o al menos un proveedor, `/acceso` deja los
+6. Para Apple, en Apple Developer creá un **Services ID** asociado a un App ID primario con
+   Sign in with Apple. Registrá el dominio `kripta.infinixapp.com` y este retorno HTTPS:
+
+   ```text
+   https://kripta.infinixapp.com/api/auth/callback/apple
+   ```
+
+   Generá la clave privada de Sign in with Apple y ejecutá `npx auth add apple`; el asistente
+   crea los valores para `AUTH_APPLE_ID` y `AUTH_APPLE_SECRET`. Cargalos únicamente en el
+   entorno **Production** de Vercel. Apple no admite `localhost`/HTTP ni el mismo cliente para
+   previews, por eso se prueba sobre el dominio público cuando el deploy de producción esté listo.
+
+7. Hacé redeploy. Mientras falte la base, el secreto o al menos un proveedor, `/acceso` deja los
    botones apagados en lugar de simular una cuenta que no se puede guardar.
 
-Discord se pide solamente con el alcance `identify`. Google se usa para identidad y no para leer el
-calendario. Los tokens de ambos proveedores se descartan después de validar el acceso; la cuenta y
-la sesión se pueden revocar. Las cuentas no se unen automáticamente por tener el mismo mail: el
-enlace entre proveedores será una acción explícita desde una sesión ya iniciada.
+Discord se pide solamente con el alcance `identify`. Google y Apple se usan para identidad y no
+para leer calendarios, mensajes ni contactos. Apple puede dar el nombre y el email sólo durante el
+primer consentimiento; el sitio guarda la identidad que recibe en ese momento. Los tokens de los
+tres proveedores se descartan después de validar el acceso; la cuenta y la sesión se pueden
+revocar. Las cuentas no se unen automáticamente por tener el mismo mail: el enlace entre
+proveedores será una acción explícita desde una sesión ya iniciada.
 
 ### El dominio propio
 

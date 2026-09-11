@@ -728,6 +728,25 @@
   color: #202124;
   font-family: Arial, sans-serif;
 }
+.proveedor-apple {
+  border-color: #e7ebf04a;
+  color: #f7f8fa;
+  background: #050608;
+}
+.proveedor-boton.proveedor-apple:not(:disabled):is(:hover, :focus-visible) {
+  border-color: #f7f8faa8;
+  background: #15171b;
+}
+.proveedor-apple-icono {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+}
+.proveedor-apple-icono svg {
+  width: 18px;
+  height: 22px;
+}
 .proveedor-flecha {
   color: var(--acento-2);
   text-align: right;

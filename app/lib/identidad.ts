@@ -1,6 +1,6 @@
 import "server-only";
 
-export type ProveedorIdentidad = "discord" | "google";
+export type ProveedorIdentidad = "discord" | "google" | "apple";
 
 function primeraVariable(...nombres: string[]): string {
   for (const nombre of nombres) {
@@ -28,6 +28,9 @@ export const PROVEEDORES_DISPONIBLES: readonly ProveedorIdentidad[] = [
     : []),
   ...(primeraVariable("AUTH_GOOGLE_ID") && primeraVariable("AUTH_GOOGLE_SECRET")
     ? (["google"] as const)
+    : []),
+  ...(primeraVariable("AUTH_APPLE_ID") && primeraVariable("AUTH_APPLE_SECRET")
+    ? (["apple"] as const)
     : []),
 ];
 
