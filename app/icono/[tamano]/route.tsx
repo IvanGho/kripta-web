@@ -21,9 +21,9 @@ import { ImageResponse } from "next/og";
 // imágenes a pedido para cualquier número que alguien invente en la URL.
 const TAMANOS = new Set(["192", "512"]);
 
-const FONDO = "#050806";
-const ACENTO_2 = "#5dff86";
-const ACENTO = "#2fc94f";
+const FONDO = "#090b0f";
+const ACENTO_2 = "#d8ff8c";
+const ACENTO = "#b7f34a";
 
 export function generateStaticParams() {
   return [...TAMANOS].map((tamano) => ({ tamano }));

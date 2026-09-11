@@ -1,45 +1,57 @@
-# Kripta — portal de la comunidad
+# Kripta — identidad de producto V3
 
-Dirección V2 del 10 de septiembre de 2026. Referencias: lobo negro, verde eléctrico y cicatriz roja aportados por el dueño; jerarquía y acabado observados en plataformas de esports y SaaS, sin reproducir sus recursos.
+Dirección vigente desde el 11 de septiembre de 2026. Conserva la firma aportada por Monsterland:
+lobo negro, verde eléctrico y tres cicatrices rojas. Cambia el tratamiento para que la web se lea
+como un producto confiable y una comunidad real, no como un afiche genérico de gaming.
 
-La pieza distintiva es una entrada arquitectónica que toma las orejas y el hocico del lobo. La web invita a entrar; el panel usa el mismo mundo con menos protagonismo de la imagen para mantener legibles las tareas.
+## Posicionamiento visual
 
-## Paleta
+La Kripta es un **club competitivo nocturno**. La web pública invita, informa y lleva a Discord;
+el panel del staff prioriza decisiones, estados y velocidad. Comparten materiales y tokens, pero no
+la misma intensidad: la web puede usar arte editorial; el panel usa el color con más contención.
 
-| Rol | Color |
-| --- | --- |
-| Obsidiana / fondo | `#050806` |
-| Grafito / superficie | `#111813` |
-| Superficie elevada | `#1a251d` |
-| Borde | `#304335` |
-| Texto principal | `#eff7eb` |
-| Texto secundario | `#a6b5a8` |
-| Jade técnico / datos | `#00c9a7` |
-| Neón / acción | `#52f52b` |
-| Alta luz | `#a3ff73` |
-| Resuelto | `#69ed9a` |
-| Atención | `#f2c76a` |
-| Error / cicatriz | `#ff727c` |
+El lobo no se repite como mascota en cada bloque. Se reconoce en el portal arquitectónico, la marca
+y las tres cicatrices. Eso construye memoria sin transformar la interfaz en una pantalla de juego.
 
-Archivo conserva titulares y lectura en la web; IBM Plex Mono identifica datos. El jade organiza rótulos, líneas técnicas y puntos de datos; el neón se concentra en acciones y focos. La cicatriz roja aparece como firma puntual, nunca como alerta de rutina.
+## Paleta semántica
 
-## Composición
+| Rol | Token | Color | Uso |
+| --- | --- | --- | --- |
+| Base | `--fondo` | `#090B0F` | fondo de tinta |
+| Superficie | `--panel` | `#121722` | tarjetas y controles |
+| Elevación | `--panel-2` | `#19202B` | capas próximas y hover suave |
+| Separador | `--borde` | `#293341` | estructura, nunca texto |
+| Texto | `--texto` | `#F2F5F7` | lectura primaria |
+| Texto secundario | `--tenue` | `#AEB8C5` | contexto y ayuda |
+| Datos | `--jade` | `#74E2A0` | etiquetas técnicas y señales secundarias |
+| Acción | `--acento` | `#B7F34A` | CTA principal, foco y avance |
+| Alta luz | `--acento-2` | `#D8FF8C` | foco de teclado y jerarquía puntual |
+| Correcto | `--ok` | `#75E5A4` | éxito confirmado |
+| Atención | `--alerta` | `#F7CA70` | revisión necesaria |
+| Error / cicatriz | `--grave` | `#FF6B7A` | error o firma física limitada |
 
-```text
-WEB    [ invitación + acción | portal del lobo ]
-       [ juegos · horario · comunidad          ]
-       [ comunidad | tres pasos               ]
-       [ arena + torneos ] [ ranking ]
-       [ herramientas ilustradas ] [ sumarse  ]
-PANEL  [ navegación | cabecera del espacio    ]
-       [            | atención y tareas      ]
-       [            | métricas y tablas      ]
-```
+Cada color tiene un significado único. El lima Volt no se usa en tarjetas decorativas, enlaces
+inactivos o fondos enteros; conserva energía para una acción importante. El rojo no comunica éxito
+ni "en vivo". Los estados siempre suman texto, forma o icono: el color no es la única señal.
 
-Las escenas son ilustraciones del universo de marca: no representan un local físico ni fotografías de miembros reales. No se usan como prueba social. Los datos de ejemplo siguen identificados.
+## Tipografía y superficie
 
-## Movimiento y entrega
+Archivo en pesos altos y ancho expandido se usa para titulares. Archivo normal sirve para lectura.
+IBM Plex Mono identifica números, métricas y etiquetas cortas. Las capas oscuras se distinguen por
+elevación y borde, no por llenar cada bloque con un color nuevo.
 
-Entrada breve de la portada, respiración de luz, imágenes que se acercan sutilmente al enfocar tarjetas y transiciones de controles. Sin movimiento de filas o botones operativos. Todo respeta `prefers-reduced-motion`.
+Los fondos de imagen conservan una zona tranquila para HTML. El texto nunca se incrusta en una imagen.
+Las luces son líneas físicas, no halos que afecten toda la página.
 
-Generación con la herramienta integrada `imagegen`; base de los prompts: G1–G5 de IMAGENES.md. Los PNG originales V2 viven en assets/originales y sus derivados WebP en public/imagenes. Regenerar derivados con `node scripts/optimizar-imagenes.mjs`.
+## Movimiento
+
+Entradas breves, transiciones de control y acercamiento mínimo de una imagen al enfocar una tarjeta.
+No animar datos, filas ni acciones operativas. Todo respeta `prefers-reduced-motion` y la página debe
+permanecer comprensible si no se ejecuta una animación.
+
+## Producción
+
+Los prompts y los activos pertenecen a [IMAGENES.md](IMAGENES.md). Los PNG maestros V3 están en
+`assets/originales/`, los WebP de entrega en `public/imagenes/`, y
+`node scripts/optimizar-imagenes.mjs` crea sus derivados. Al rediseñar el panel, estos tokens se
+adoptan primero allí para mantener coherencia sin sacrificar densidad de datos.

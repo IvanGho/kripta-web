@@ -49,7 +49,7 @@ export default async function Inicio() {
         <section className="portal" aria-labelledby="titulo-portada">
           <div className="portal-escena" aria-hidden="true">
             <Image
-              src="/imagenes/hero-kripta-v2.webp"
+              src="/imagenes/hero-kripta-v3.webp"
               alt=""
               fill
               sizes="100vw"
@@ -124,7 +124,7 @@ export default async function Inicio() {
           <div className="comunidad-grid">
             <figure className="escena-comunidad">
               <Image
-                src="/imagenes/comunidad-kripta-v2.webp"
+                src="/imagenes/comunidad-kripta-v3.webp"
                 alt="Ilustración del universo Kripta: cuatro gamers reunidos en una sala de basalto con luz verde."
                 fill
                 sizes="(max-width: 767px) 100vw, 50vw"
@@ -255,7 +255,7 @@ export default async function Inicio() {
           </div>
           <div className="arena">
             <Image
-              src="/imagenes/torneos-kripta-v2.webp"
+              src="/imagenes/torneos-kripta-v3.webp"
               alt=""
               fill
               sizes="(max-width: 1152px) 100vw, 1152px"
@@ -548,7 +548,7 @@ export default async function Inicio() {
           <div className="grid gap-5 sm:grid-cols-2">
             <Herramienta
               href="/sensibilidad"
-              imagen="herramienta-sensibilidad-v2"
+              imagen="herramienta-sensibilidad-v3"
               numero="01"
               titulo="Encontrá tu sensibilidad."
               texto="Pasá tu configuración entre Valorant, CS2, Apex y Overwatch 2."
@@ -556,7 +556,7 @@ export default async function Inicio() {
             />
             <Herramienta
               href="/anotador"
-              imagen="herramienta-anotador-v2"
+              imagen="herramienta-anotador-v3"
               numero="02"
               titulo="La cuenta, siempre clara."
               texto="Anotá el Truco con fósforos. Malas, buenas y revancha."
@@ -567,7 +567,7 @@ export default async function Inicio() {
         <section className="cierre-kripta aparece mx-auto max-w-6xl px-5">
           <div className="cierre-interior">
             <Image
-              src="/imagenes/hero-kripta-v2.webp"
+            src="/imagenes/hero-kripta-v3.webp"
               alt=""
               fill
               sizes="(max-width: 1152px) 100vw, 1152px"

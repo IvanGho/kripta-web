@@ -33,12 +33,12 @@
   background:
     linear-gradient(
       90deg,
-      #050806 0%,
-      #050806f0 19%,
-      #050806b8 38%,
-      #05080610 69%
+      #090b0f 0%,
+      #090b0ff0 19%,
+      #090b0fb8 38%,
+      #090b0f10 69%
     ),
-    linear-gradient(0deg, #050806 0%, transparent 26%);
+    linear-gradient(0deg, #090b0f 0%, transparent 26%);
 }
 .portal-interior {
   position: relative;
@@ -66,7 +66,7 @@
   max-width: 460px;
   font-size: 17px;
   line-height: 1.75;
-  color: #d0dbcf;
+  color: #c5ced9;
 }
 .portal-acciones {
   display: flex;
@@ -89,7 +89,7 @@
   flex-wrap: wrap;
   gap: 8px 18px;
   margin-top: 20px;
-  color: #c5d5c3;
+  color: #c5ced9;
   font-size: 12px;
 }
 .portal-senales li {
@@ -128,7 +128,7 @@
   height: 7px;
   border-radius: 50%;
   background: var(--acento);
-  box-shadow: 0 0 15px #52f52b80;
+  box-shadow: 0 0 15px #b7f34a80;
 }
 .portal-pie b {
   color: var(--acento);
@@ -178,7 +178,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, #050806ed, transparent 50%);
+  background: linear-gradient(0deg, #090b0fed, transparent 50%);
   pointer-events: none;
 }
 .escena-comunidad figcaption {
@@ -189,7 +189,7 @@
   font: 10px var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  background: #050806db;
+  background: #090b0fdb;
   padding: 9px 12px;
   border: 1px solid color-mix(in srgb, var(--jade) 36%, transparent);
   border-radius: 3px;
@@ -364,7 +364,7 @@
 .arena-velo {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, #050806ed, #050806b5 40%, #05080610 80%);
+  background: linear-gradient(90deg, #090b0fed, #090b0fb5 40%, #090b0f10 80%);
 }
 .arena-info {
   position: relative;
@@ -385,7 +385,7 @@
   margin-top: 25px;
 }
 .arena-contador .tarjeta {
-  background: #101810cc;
+  background: #121722cc;
   backdrop-filter: blur(8px);
   border-radius: 7px;
 }
@@ -405,7 +405,7 @@
   border-radius: 10px;
 }
 .tarjeta-torneo {
-  border-top: 2px solid #52f52b55;
+  border-top: 2px solid #b7f34a55;
 }
 .tarjeta-torneo .sobre-titulo {
   font-size: 10px;
@@ -648,7 +648,7 @@
   font: 700 14px var(--font-mono);
 }
 .proveedor-google {
-  background: #eff7eb;
+  background: #f2f5f7;
   color: #202124;
   font-family: Arial, sans-serif;
 }
@@ -745,13 +745,13 @@
 }
 .tabla-ranking td {
   padding: 15px 16px;
-  border-bottom: 1px solid #30433570;
+  border-bottom: 1px solid #29334170;
 }
 .tabla-ranking tr:last-child td {
   border-bottom: 0;
 }
 .tabla-ranking tbody tr:first-child {
-  background: linear-gradient(90deg, #52f52b10, transparent);
+  background: linear-gradient(90deg, #b7f34a10, transparent);
 }
 .tabla-ranking tbody tr:hover {
   background-color: #ffffff04;
@@ -785,7 +785,7 @@
   font-size: 18px;
 }
 .campeon {
-  border-top-color: #a3ff7350;
+  border-top-color: #d8ff8c50;
 }
 .herramienta-visual {
   overflow: hidden;
@@ -849,7 +849,7 @@
 .cierre-interior {
   position: relative;
   overflow: hidden;
-  border: 1px solid #52f52b55;
+  border: 1px solid #b7f34a55;
   border-radius: 12px;
 }
 .cierre-interior > img {
@@ -859,7 +859,7 @@
 .cierre-velo {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, #0c160deb 15%, #0c160dda 45%, #05080635);
+  background: linear-gradient(90deg, #121722eb 15%, #121722da 45%, #090b0f35);
 }
 .cierre-texto {
   position: relative;
@@ -873,26 +873,26 @@
   margin: 20px 0;
 }
 .cierre-texto > p:not(.sobre-titulo) {
-  color: #c3d0c2;
+  color: #c5ced9;
   font-size: 14px;
   line-height: 1.8;
   margin-bottom: 28px;
 }
 .boton {
-  color: #081005;
-  background: linear-gradient(115deg, var(--acento), #8cff53);
-  box-shadow: 0 0 26px #52f52b18;
+  color: #111608;
+  background: linear-gradient(115deg, var(--acento), var(--acento-2));
+  box-shadow: 0 0 26px #b7f34a18;
 }
 .boton:hover {
-  box-shadow: 0 0 32px #52f52b35;
+  box-shadow: 0 0 32px #b7f34a35;
 }
 .boton-sec {
-  border-color: #57744e;
-  background: #07100870;
+  border-color: #44554a;
+  background: #111722b8;
 }
 .boton-no-disponible {
-  border-color: #61765e;
-  color: #c3d1bd;
+  border-color: #596575;
+  color: #c5ced9;
 }
 footer button[aria-disabled] {
   min-height: 28px;
@@ -929,7 +929,7 @@ footer button[aria-disabled] {
   }
   @keyframes luz-kripta {
     50% {
-      box-shadow: 0 0 22px #52f52ba0;
+      box-shadow: 0 0 22px #b7f34aa0;
       opacity: 0.7;
     }
   }
@@ -968,8 +968,8 @@ footer button[aria-disabled] {
   }
   .portal-velo {
     background:
-      linear-gradient(0deg, #050806 0%, #050806 40%, #05080600 84%),
-      linear-gradient(90deg, #05080655, transparent);
+      linear-gradient(0deg, #090b0f 0%, #090b0f 40%, #090b0f00 84%),
+      linear-gradient(90deg, #090b0f55, transparent);
   }
   .portal-texto {
     padding-bottom: 35px;
@@ -1047,7 +1047,7 @@ footer button[aria-disabled] {
     font-size: 23px;
   }
   .arena-velo {
-    background: linear-gradient(90deg, #050806ec, #05080680);
+    background: linear-gradient(90deg, #090b0fec, #090b0f80);
   }
   .arena-contador .tarjeta {
     min-width: 58px;
@@ -1109,7 +1109,7 @@ footer button[aria-disabled] {
     padding: 35px 23px;
   }
   .cierre-velo {
-    background: #050806cc;
+    background: #090b0fcc;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1152,7 +1152,7 @@ footer button[aria-disabled] {
    sirve antes de que la persona llegue al formulario, pero el control sigue siendo el centro. */
 .herramienta-pagina {
   background:
-    radial-gradient(ellipse 62% 23% at 50% 0%, #52f52b12, transparent 74%),
+    radial-gradient(ellipse 62% 23% at 50% 0%, #b7f34a12, transparent 74%),
     var(--fondo);
 }
 .herramienta-cabecera {
@@ -1219,7 +1219,7 @@ footer button[aria-disabled] {
   position: absolute;
   inset: 0;
   content: "";
-  background: linear-gradient(0deg, #050806d6, transparent 45%);
+  background: linear-gradient(0deg, #090b0fd6, transparent 45%);
   pointer-events: none;
 }
 .herramienta-escena:hover img {
@@ -1230,7 +1230,7 @@ footer button[aria-disabled] {
   z-index: 1;
   right: 1.25rem;
   bottom: 1.1rem;
-  color: #d7e4d4;
+  color: #d7dee7;
   font-family: var(--font-mono);
   font-size: 0.62rem;
   letter-spacing: 0.12em;
@@ -1259,24 +1259,24 @@ footer button[aria-disabled] {
 }
 .anotador-kripta .tarjeta,
 .convertidor-kripta > .tarjeta {
-  border-color: #52f52b35;
+  border-color: #b7f34a35;
   box-shadow:
-    inset 0 1px #a3ff7314,
+    inset 0 1px #d8ff8c14,
     0 20px 48px -35px #000;
 }
 .anotador-equipo {
   min-height: 335px;
-  background: linear-gradient(180deg, #52f52b09, transparent 38%), var(--panel);
+  background: linear-gradient(180deg, #b7f34a09, transparent 38%), var(--panel);
 }
 .anotador-kripta input {
-  border-bottom-color: #a3ff733d;
+  border-bottom-color: #d8ff8c3d;
 }
 .anotador-kripta input:focus-visible {
   border-bottom-color: var(--acento-2);
 }
 .anotador-kripta .texto-degradado,
 .convertidor-kripta .texto-degradado {
-  background: linear-gradient(125deg, #eff7eb 12%, var(--acento-2) 92%);
+  background: linear-gradient(125deg, #f2f5f7 12%, var(--acento-2) 92%);
   -webkit-background-clip: text;
   background-clip: text;
 }
@@ -1285,33 +1285,33 @@ footer button[aria-disabled] {
   border-radius: 7px;
 }
 .anotador-kripta .boton-sec {
-  background: #0a130d;
+  background: #111722;
 }
 .convertidor-kripta select,
 .convertidor-kripta input {
   min-height: 48px;
-  border-color: #a3ff7330;
-  background: #0a120d;
+  border-color: #d8ff8c30;
+  background: #111722;
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease;
 }
 .convertidor-kripta select:hover,
 .convertidor-kripta input:hover {
-  border-color: #a3ff7360;
+  border-color: #d8ff8c60;
 }
 .convertidor-kripta select:focus-visible,
 .convertidor-kripta input:focus-visible {
   border-color: var(--acento-2);
-  box-shadow: 0 0 0 3px #52f52b16;
+  box-shadow: 0 0 0 3px #b7f34a16;
 }
 .convertidor-kripta [aria-live] {
-  border-top-color: #a3ff7330;
+  border-top-color: #d8ff8c30;
 }
 .convertidor-kripta [aria-live] > div > div {
   border-radius: 7px;
-  border-color: #a3ff7328;
-  background: #0a120d;
+  border-color: #d8ff8c28;
+  background: #111722;
 }
 @media (max-width: 767px) {
   .herramienta-cabecera {

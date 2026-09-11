@@ -89,7 +89,7 @@ export default function Pagina() {
           </div>
           <figure className="herramienta-escena herramienta-escena-sensibilidad">
             <Image
-              src="/imagenes/herramienta-sensibilidad-v2.webp"
+              src="/imagenes/herramienta-sensibilidad-v3.webp"
               alt="Mouse de grafito con luz verde, símbolo de precisión en la Kripta."
               fill
               sizes="(max-width: 767px) 100vw, 50vw"

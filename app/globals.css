@@ -94,18 +94,18 @@
  * (monsterland-panel, src/web/plantilla.js). Si cambia un token, cambia en los dos lados.
  */
 :root {
-  --fondo: #050806;
-  --panel: #111813;
-  --panel-2: #1a251d;
-  --borde: #304335;
-  --texto: #eff7eb;
-  --tenue: #a6b5a8;
-  --jade: #00c9a7;
-  --acento: #52f52b;
-  --acento-2: #a3ff73;
-  --ok: #69ed9a;
-  --alerta: #f2c76a;
-  --grave: #ff727c;
+  --fondo: #090b0f;
+  --panel: #121722;
+  --panel-2: #19202b;
+  --borde: #293341;
+  --texto: #f2f5f7;
+  --tenue: #aeb8c5;
+  --jade: #74e2a0;
+  --acento: #b7f34a;
+  --acento-2: #d8ff8c;
+  --ok: #75e5a4;
+  --alerta: #f7ca70;
+  --grave: #ff6b7a;
 }
 
 @theme inline {

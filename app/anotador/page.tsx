@@ -91,7 +91,7 @@ export default function Pagina() {
           </div>
           <figure className="herramienta-escena herramienta-escena-truco">
             <Image
-              src="/imagenes/herramienta-anotador-v2.webp"
+              src="/imagenes/herramienta-anotador-v3.webp"
               alt="Cinco fósforos sobre una mesa de basalto forman la cuenta tradicional del Truco."
               fill
               sizes="(max-width: 767px) 100vw, 50vw"

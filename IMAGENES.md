@@ -1,142 +1,103 @@
-# Dirección de arte V2 — Kripta
+# Dirección de arte V3 — Monsterland / Kripta
 
-Esta es la guía vigente para cualquier imagen generada del proyecto. Reemplaza la primera
-dirección, que describía bien el mundo pero no daba a Monsterland una presencia competitiva
-inmediata.
+Esta guía reemplaza V2. La versión anterior era técnicamente buena, pero cayó en tres clichés: el
+guerrero enmascarado, el templo de ciencia ficción y el verde usado como iluminación de todo. Eso
+no explicaba que Monsterland es una comunidad donde se viene a competir, encontrar gente y quedarse.
 
-## Qué se toma de las referencias
+## Idea central
 
-La referencia de **STANDOFF** aportó contraste negro/jade, titulares geométricos de gran escala,
-marcos técnicos con esquinas recortadas, puntos de datos en el fondo y un personaje central como
-ancla emocional. Roarena aporta la prioridad de torneo, calendario y llave; Stromy, las capas
-cinematográficas y el uso de contenido en una portada.
+**Un club competitivo nocturno.** El mundo visual es una sede imaginaria de Monsterland: grafito,
+piedra oscura, vidrio ahumado, espacios habitables y tecnología discreta. El lobo aparece como una
+forma arquitectónica y las tres cicatrices escarlata como una firma física. Nunca hay un lobo literal
+ni un personaje genérico que se haga pasar por la identidad de la comunidad.
 
-Son referencias de lenguaje, no piezas a reproducir. Kripta no usa sus personajes, nombres,
-copy, interfaces, composición ni juegos. Su identidad nace del lobo negro de Monsterland, el verde
-eléctrico y la cicatriz roja aportados por el dueño.
+Las personas son adultas, naturales y secundarias; muestran pertenencia, no un supuesto equipo
+profesional. Las imágenes no constituyen prueba social ni representan a miembros reales.
 
-## Sistema visual
+## Paleta y roles
 
-| Rol | Color |
-| --- | --- |
-| Obsidiana | `#050806` |
-| Grafito | `#111813` |
-| Jade técnico | `#00c9a7` |
-| Verde del lobo / acción | `#62ff38` |
-| Blanco mineral | `#eef7eb` |
-| Cicatriz | `#ff5263` |
+| Rol | Color | Uso |
+| --- | --- | --- |
+| Tinta | `#090B0F` | Fondo y sombra profunda |
+| Grafito | `#121722` | Superficie operativa |
+| Elevación | `#19202B` | Tarjetas y capas cercanas |
+| Lima Volt | `#B7F34A` | Acción, ruta de torneo, foco |
+| Menta técnico | `#74E2A0` | Dato, reflejo y detalle secundario |
+| Escarlata | `#FF6B7A` | Una cicatriz física o error, nunca luz ambiente |
+| Blanco cálido | `#F2F5F7` | Lectura y luz práctica |
 
-El jade organiza líneas, puntos y etiquetas. El verde del lobo se reserva para acciones y focos.
-La cicatriz roja aparece una sola vez por escena, como firma y nunca como iluminación dominante.
-Los titulares se escriben con HTML: ninguna imagen contiene palabras, números o una interfaz.
+El verde no se usa para bañar una escena. Ilumina líneas integradas, indicadores y recorridos. La
+luz práctica es blanca cálida y tenue: hace que el lugar parezca habitable y reduce la estética de
+"render gamer".
 
-## Continuidad obligatoria
+## Reglas comunes para generar
 
-Para G2–G5, adjuntar `hero-kripta-v2.png` como referencia visual. Es una referencia de materiales,
-contraste y atmósfera, no de composición ni sujeto. Cada escena debe sentirse creada por el mismo
-equipo: basalto negro, metal grafito, luz jade y verde integrada, puntos de datos, profundidad
-cinematográfica y una arquitectura contemporánea de esports.
+- Sin texto, números, logos, marcas, interfaces legibles ni marcas de agua.
+- Sin guerreros enmascarados, armaduras, armas, neón saturado, ciudades cyberpunk, casinos, apuestas
+  o símbolos místicos.
+- No luz azul, violeta, naranja ni rojo ambiente. El escarlata sólo puede aparecer como tres cortes
+  grabados en una superficie.
+- Materiales físicos: piedra de basalto satinada, metal grafito cepillado, vidrio ahumado y textiles
+  oscuros. El resultado debe resistir un recorte móvil.
+- Los títulos y los datos viven en HTML. La imagen deja zona tranquila cuando el diseño la necesita.
 
-Excluir siempre: texto, logotipos, marcas, personajes de juegos, armas, dinero, apuestas, casino,
-fantasía medieval, calaveras, terror, ciudad cyberpunk, azul, violeta, naranja y marcas de agua.
+## Piezas de producción
 
-## Las cinco piezas de producción
+### G1 — Entrada de la Kripta
 
-### G1 — Guardián de la Kripta
+**Archivo:** `assets/originales/hero-kripta-v3.png` · 16:9 · hero y Open Graph.
 
-**Archivo:** `hero-kripta-v2.png` · 16:9 · hero y Open Graph.
+> Fotografía editorial arquitectónica nocturna de la entrada de un club gaming premium. A la derecha,
+> un portal de piedra grafito y vidrio ahumado insinúa orejas y hocico de lobo mediante su geometría;
+> detrás se ven estaciones compactas y un lounge acogedor. Tres cortes escarlata están grabados en un
+> panel de piedra. La izquierda queda oscura, limpia y con bajo detalle para el copy HTML. Luz práctica
+> cálida y líneas muy finas Lima Volt, tinta y grafito predominantes. Sin personas centrales, máscaras,
+> texto, logos, armas, símbolos ni luz neón excesiva. Composición horizontal 16:9, altura de ojos, 35 mm.
 
-```text
-Use case: stylized-concept. Asset type: premium wide key art for the hero of Monsterland / Kripta,
-an Argentine gaming community and tournament platform.
+### G2 — La mesa
 
-Create an original, high-end cinematic campaign image named “The Gatekeeper of Kripta”. A single
-anonymous adult esports competitor is shown from the waist up on the RIGHT half of the frame,
-wearing a black graphite technical jacket with clean angular panels and a matte geometric visor
-that subtly recalls a wolf without literal ears, fur, or an animal mask. The face is mostly in
-shadow; one restrained electric-green eye light and a short, thin red diagonal light mark across
-the visor are the only aggressive details. The person is calm, focused, and credible.
+**Archivo:** `assets/originales/comunidad-kripta-v3.png` · 3:2 · sección Comunidad.
 
-Behind them: a monumental contemporary esports chamber made from matte obsidian, smoked glass and
-brushed graphite. Integrated emerald seams create a minimal angular gateway and a few vertical
-halftone dot columns. The LEFT 42% is dark and intentionally quiet for live HTML copy.
+> Fotografía editorial de cuatro adultos compartiendo una sesión nocturna en una mesa junto a estaciones
+> de juego del club Monsterland. Risas y conversación natural, sin protagonista; monitores sólo muestran
+> formas verdes abstractas. El grupo vive a la derecha y el espacio conserva arquitectura tranquila a la
+> izquierda. Basalto, textiles oscuros, luz blanca cálida y pequeños reflejos Lima Volt / Menta técnico.
+> Tres cortes escarlata sutiles en una pared. Sin UI, texto, marcas, armaduras, poses de e-sports ni look
+> de discoteca. Horizontal 3:2, altura de ojos, 40 mm.
 
-Original cinematic 3D key art with photoreal materials and editorial polish. 16:9, eye-level 50 mm,
-subject sharply defined on the right, clean left negative space. Palette: #050806, #111813,
-#00c9a7, #62ff38, #eef7eb and #ff5263 only as a tiny scar. No text, brands, weapons, game IP,
-medieval motifs, blue, violet, orange, money, casino or watermark.
-```
+### G3 — Próxima llave
 
-### G2 — La mesa de la Kripta
+**Archivo:** `assets/originales/torneos-kripta-v3.png` · 16:9 · sección Torneos.
 
-**Archivo:** `comunidad-kripta-v2.png` · 3:2 · comunidad.
-
-```text
-Create “The Kripta Table”, an original image about belonging before competition. Four adult gamers
-in black contemporary technical streetwear gather around a low graphite table inside an elegant
-underground esports lounge. They are seen from a varied three-quarter back angle, sharing a relaxed
-strategic moment; no person dominates. Two thin monitors show abstract non-legible green forms.
-
-The room is orderly black basalt, smoked glass, a distant angular gateway, green dot-matrix light
-columns and integrated jade seams. The group and table occupy centre-right; upper left retains dark
-breathing room. 3:2 landscape, eye-level 35 mm, cinematic 3D campaign image, deep blacks, jade
-ambience, electric-green edge lights, one tiny red diagonal LED detail. No text, logos, game IP,
-weapons, masks, nightclub or watermark.
-```
-
-### G3 — Núcleo competitivo
-
-**Archivo:** `torneos-kripta-v2.png` · 3:2 · torneos y cabecera del panel.
-
-```text
-Create “The Competitive Core”, an original nonviolent esports arena. Two compact rows of adult
-competitors in anonymous black technical jackets sit at dark stations facing a central runway. The
-floor contains a precise abstract tournament bracket: thin jade-green branches converge on a
-suspended black-glass hexagonal beacon with an electric-green internal glow. People are secondary;
-the organized path toward competition is the focus.
-
-Refined subterranean chamber of basalt pillars and smoked glass, a tall angular gateway, dotted
-data-light and exactly one red diagonal architectural seam. 3:2 landscape, frontal 28 mm,
-premium cinematic 3D, crisp green guidance lines, black graphite surfaces and controlled low haze.
-No words, game brands, trophies, prize money, casino, weapons, fantasy, blue/violet/orange or
-watermark.
-```
+> Fotografía arquitectónica de un espacio de competencia organizado y humano. Dos filas de estaciones
+> compactas bordean un pasillo; las líneas Lima Volt incrustadas en el piso forman una llave abstracta
+> que converge a un círculo distante. Un arco de vidrio con orejas de lobo queda al fondo; jugadores
+> adultos son siluetas pequeñas preparando su partida. Reservar el 42 % izquierdo oscuro para la agenda
+> y el contador. Sin estadio monumental, trofeos, dinero, casino, armamento, interfaces ni texto.
+> Horizontal 16:9, 28 mm, grafito y tinta predominantes, luz práctica cálida.
 
 ### G4 — Precisión
 
-**Archivo:** `herramienta-sensibilidad-v2.png` · 1:1 · convertidor de sensibilidad.
+**Archivo:** `assets/originales/herramienta-sensibilidad-v3.png` · 1:1 · convertidor de sensibilidad.
 
-```text
-Create “Precision”, an original premium product portrait of an unbranded graphite gaming mouse on
-a matte obsidian surface. It has exactly one fine electric-green light seam. Behind it, out of
-focus, smoked glass projects an abstract jade target formed only by thin circles and short ticks;
-no numbers or interface. A braided cable traces one clean curve; one tiny red diagonal reflection
-appears on the desk edge.
-
-Square 1:1, low three-quarter 50 mm camera, complete mouse slightly right of centre and abundant
-black negative space. High-end cinematic 3D product photography with the Kripta material system.
-No text, logos, hands, measurements, game imagery, city cyberpunk or watermark.
-```
+> Fotografía de producto de un mouse de gaming original, sin marca, sobre basalto y mousepad grafito.
+> Detrás, un panel de vidrio desenfocado muestra dos círculos y cuatro marcas abstractas, sin números ni
+> interfaz. El mouse se ve completo, un poco a la derecha; una línea Lima Volt delgada y un grabado de
+> tres cortes escarlata son los únicos acentos. Escena calmada, precisa y material. Sin manos, texto,
+> logos, HUD, armas, RGB, humo o ciudad cyberpunk. Cuadrado 1:1, ángulo bajo de tres cuartos, 50 mm.
 
 ### G5 — Cinco marcas
 
-**Archivo:** `herramienta-anotador-v2.png` · 1:1 · anotador de Truco.
+**Archivo:** `assets/originales/herramienta-anotador-v3.png` · 1:1 · anotador de Truco.
 
-```text
-Create “Five Marks”, an original macro still-life for a modern Truco tool. EXACTLY FIVE short dark
-wooden matchsticks rest on a matte basalt table: four clearly form a square and the fifth lies
-cleanly across its diagonal. The match heads are not burning; each holds a tiny contained
-electric-green ember. In the deep blurred background, one dark Spanish-deck card back adds context
-without suits, numerals, text or recognizable pattern. One thin red diagonal inlay on the table edge
-is the only red detail.
+> Bodegón editorial en una mesa de basalto oscuro: exactamente cinco fósforos de madera totalmente
+> visibles; cuatro forman un cuadrado y el quinto lo cruza en diagonal. Un mazo español sin marca se ve
+> sólo de dorso y fuera de foco. El conteo es el protagonista y debe leerse en miniatura. Luz práctica
+> cálida, un borde Lima Volt y un pequeño clip de metal con tres cortes escarlata. Sin cartas abiertas,
+> números, texto, dinero, apuestas, fuego, humo o estereotipo gauchesco. Cuadrado 1:1, macro 50 mm.
 
-Square 1:1, overhead three-quarter 50 mm macro view, all five fully visible and sharp at thumbnail
-size, cinematic 3D product photography. No text, hands, flames, smoke, open cards, gambling,
-gaucho caricature, blue/violet/orange or watermark.
-```
+## Entrega
 
-## Archivos y uso
-
-Los PNG maestros viven en `assets/originales/`. `node scripts/optimizar-imagenes.mjs` crea los WebP
-de `public/imagenes/` y `assets/hero-social-v2.jpg`. Las páginas consumen los nombres con sufijo
-`-v2`, por lo que G1–G5 originales se conservan para comparación.
+Los PNG maestros se conservan en `assets/originales/`. Ejecutar
+`node scripts/optimizar-imagenes.mjs` para crear los WebP de `public/imagenes/` y el JPG social que
+usa Open Graph. La web consume los archivos `-v3`; V2 queda sólo como historial visual.

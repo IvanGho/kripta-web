@@ -85,7 +85,7 @@ function validarPartida(crudo: unknown): Partida | null {
  * están marcados.
  */
 function Grupo({ marcados }: { marcados: number }) {
-  const trazo = "#5dff86";
+  const trazo = "#d8ff8c";
   return (
     <svg viewBox="0 0 34 30" className="h-8 w-9" aria-hidden="true">
       {/* Los cuatro lados del cuadrado. */}

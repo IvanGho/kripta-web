@@ -16,8 +16,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Torneos de Valorant y Truco, ranking de temporada y anotador de Truco.",
     start_url: "/",
     display: "standalone",
-    background_color: "#050806",
-    theme_color: "#050806",
+    background_color: "#090b0f",
+    theme_color: "#090b0f",
     lang: "es-AR",
     orientation: "portrait",
     /*

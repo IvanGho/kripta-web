@@ -4,11 +4,11 @@ import { mkdir } from "node:fs/promises";
 // Los PNG maestros se conservan fuera de public; sólo se descargan las versiones web.
 await mkdir("public/imagenes", { recursive: true });
 for (const nombre of [
-  "hero-kripta-v2",
-  "comunidad-kripta-v2",
-  "torneos-kripta-v2",
-  "herramienta-sensibilidad-v2",
-  "herramienta-anotador-v2",
+  "hero-kripta-v3",
+  "comunidad-kripta-v3",
+  "torneos-kripta-v3",
+  "herramienta-sensibilidad-v3",
+  "herramienta-anotador-v3",
 ]) {
   await sharp(`assets/originales/${nombre}.png`)
     .resize({
@@ -19,7 +19,7 @@ for (const nombre of [
     .toFile(`public/imagenes/${nombre}.webp`);
 }
 // Satori usa JPEG/PNG; una copia chica evita cargar el PNG maestro al generar Open Graph.
-await sharp("assets/originales/hero-kripta-v2.png")
+await sharp("assets/originales/hero-kripta-v3.png")
   .resize({ width: 1200 })
   .jpeg({ quality: 78 })
-  .toFile("assets/hero-social-v2.jpg");
+  .toFile("assets/hero-social-v3.jpg");

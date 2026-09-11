@@ -8,7 +8,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function Imagen() {
-  const fondo = await readFile(join(process.cwd(), "assets/hero-social-v2.jpg"));
+  const fondo = await readFile(join(process.cwd(), "assets/hero-social-v3.jpg"));
   return new ImageResponse(
     (
       <div
@@ -17,8 +17,8 @@ export default async function Imagen() {
           height: "100%",
           display: "flex",
           position: "relative",
-          background: "#050806",
-          color: "#eff7eb",
+          background: "#090b0f",
+          color: "#f2f5f7",
         }}
       >
         {/* ImageResponse usa su propio motor de imágenes, no next/image. */}
@@ -36,7 +36,7 @@ export default async function Imagen() {
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(90deg, #050806 0%, #050806e8 30%, #05080620 80%)",
+              "linear-gradient(90deg, #090b0f 0%, #090b0fe8 30%, #090b0f20 80%)",
           }}
         />
         <div
@@ -49,7 +49,7 @@ export default async function Imagen() {
             width: "100%",
           }}
         >
-          <div style={{ color: "#a3ff73", fontSize: 23, letterSpacing: 6 }}>
+          <div style={{ color: "#d8ff8c", fontSize: 23, letterSpacing: 6 }}>
             KRIPTA / MONSTERLAND
           </div>
           <div
@@ -65,7 +65,7 @@ export default async function Imagen() {
             <div
               style={{
                 fontSize: 36,
-                color: "#52f52b",
+                color: "#b7f34a",
                 letterSpacing: -1,
                 marginTop: 22,
               }}
@@ -73,7 +73,7 @@ export default async function Imagen() {
               Entrá a la Kripta.
             </div>
           </div>
-          <div style={{ color: "#c3d0c2", fontSize: 22 }}>
+          <div style={{ color: "#c5ced9", fontSize: 22 }}>
             Valorant · Truco · Comunidad argentina en Discord
           </div>
         </div>

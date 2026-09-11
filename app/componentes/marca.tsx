@@ -47,8 +47,8 @@ export function Lobo({
     >
       <defs>
         <linearGradient id="lobo-verde" x1="50" y1="0" x2="50" y2="100" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#5dff86" />
-          <stop offset="100%" stopColor="#2fc94f" />
+          <stop offset="0%" stopColor="#d8ff8c" />
+          <stop offset="100%" stopColor="#b7f34a" />
         </linearGradient>
         <filter id="lobo-glow" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="2.5" result="b" />
