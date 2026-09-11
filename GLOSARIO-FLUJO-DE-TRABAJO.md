@@ -26,6 +26,7 @@ Si Orca no muestra un selector en el celular, no pasa nada: copiá el título vi
 | Para qué | Enlace |
 | --- | --- |
 | Producción pública | https://kripta-web.vercel.app |
+| Vista previa para Orca | https://kripta-web-git-vista-previa-monsterland.vercel.app |
 | Local en la PC | http://localhost:3000 |
 | Local de revisión temporal | http://localhost:3208 |
 | Panel Vercel | https://vercel.com/monsterland |
