@@ -5,11 +5,19 @@ Este flujo muestra el servidor local de desarrollo: los cambios aparecen al guar
 ## Inicio con un doble clic
 
 1. En la PC, hace doble clic en `abrir-kripta-en-celular.bat`.
-2. El archivo inicia Kripta si todavia no esta corriendo y crea una URL temporal `https://...lhr.life`.
+2. El archivo inicia Kripta si todavia no esta corriendo y crea una URL temporal `https://...trycloudflare.com`.
 3. Copia esa URL desde la ventana negra y pegala en Chrome del celular.
 4. Mantene abiertas las dos ventanas de la PC mientras revisas. Cuando cierres la ventana del enlace, la URL deja de funcionar.
 
-El enlace temporal sirve tambien cuando el celular usa datos moviles, como en la captura donde aparece 4G.
+El enlace temporal sirve tambien cuando el celular usa datos moviles, como en la captura donde aparece 4G. Mantene abierta la ventana: si se cierra, Cloudflare deja de exponer la web local.
+
+## Preparar la PC una sola vez
+
+Cloudflare Tunnel ya esta instalado en esta PC. Si alguna vez se trabaja desde otra, abrir PowerShell y ejecutar:
+
+```powershell
+winget install --id Cloudflare.cloudflared --exact --scope user
+```
 
 ## Si el celular y la PC usan el mismo Wi-Fi
 

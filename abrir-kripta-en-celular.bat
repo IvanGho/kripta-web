@@ -2,6 +2,17 @@
 setlocal
 cd /d "%~dp0"
 set "PORT=3000"
+set "CLOUDFLARED="
+
+for /f "delims=" %%i in ('where cloudflared 2^>nul') do if not defined CLOUDFLARED set "CLOUDFLARED=%%i"
+if not defined CLOUDFLARED set "CLOUDFLARED=%LOCALAPPDATA%\Microsoft\WinGet\Packages\Cloudflare.cloudflared_Microsoft.Winget.Source_8wekyb3d8bbwe\cloudflared.exe"
+
+if not exist "%CLOUDFLARED%" (
+  echo Falta Cloudflare Tunnel. Ejecuta una vez este comando en PowerShell:
+  echo winget install --id Cloudflare.cloudflared --exact --scope user
+  pause
+  exit /b 1
+)
 
 rem Inicia el servidor si Kripta no esta ya abierta en el puerto local.
 powershell.exe -NoProfile -Command "exit [int](-not (Test-NetConnection -ComputerName 127.0.0.1 -Port %PORT% -InformationLevel Quiet))"
@@ -26,5 +37,5 @@ echo Creando un enlace temporal para el celular...
 echo Copia la URL https que aparecera abajo y abrila en Chrome.
 echo Mantene esta ventana abierta mientras revisas la web.
 echo.
-ssh -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30 -R 80:localhost:%PORT% nokey@localhost.run
+"%CLOUDFLARED%" tunnel --url http://localhost:%PORT%
 pause
