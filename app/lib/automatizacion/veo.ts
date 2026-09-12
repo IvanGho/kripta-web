@@ -18,39 +18,55 @@ export async function iniciarVideoVeo(especificacion: EspecificacionEscena): Pro
     join(process.cwd(), "public", "marca", "kripta-lobo.png"),
   );
 
-  const respuesta = await fetch(`${API_BASE}/models/${encodeURIComponent(modelo)}:predictLongRunning`, {
+  const endpoint = `${API_BASE}/models/${encodeURIComponent(modelo)}:predictLongRunning`;
+  const parametros = {
+    aspectRatio: especificacion.relacionAspecto,
+    durationSeconds: String(especificacion.duracionSegundos),
+    resolution: especificacion.resolucion,
+    negativePrompt: especificacion.promptNegativo,
+  };
+  const cuerpoConImagen = {
+    instances: [
+      {
+        prompt: especificacion.promptVeo,
+        image: {
+          inlineData: {
+            mimeType: "image/png",
+            data: referencia.toString("base64"),
+          },
+        },
+      },
+    ],
+    parameters: parametros,
+  };
+
+  let respuesta = await fetch(endpoint, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       "x-goog-api-key": apiKey(),
     },
-    body: JSON.stringify({
-      instances: [
-        {
-          prompt: especificacion.promptVeo,
-          // Con una sola imagen del lobo usamos el primer fotograma: es compatible con
-          // todos los modelos Veo 3.1 de Gemini API. referenceImages + inlineData todavía
-          // no está habilitado de forma uniforme en el endpoint REST.
-          image: {
-            inlineData: {
-              mimeType: "image/png",
-              data: referencia.toString("base64"),
-            },
-          },
-        },
-      ],
-      parameters: {
-        aspectRatio: especificacion.relacionAspecto,
-        durationSeconds: String(especificacion.duracionSegundos),
-        resolution: especificacion.resolucion,
-        negativePrompt: especificacion.promptNegativo,
-      },
-    }),
+    body: JSON.stringify(cuerpoConImagen),
     signal: AbortSignal.timeout(45_000),
     cache: "no-store",
   });
 
-  const crudo = (await respuesta.json()) as { name?: unknown; error?: { message?: unknown } };
+  let crudo = (await respuesta.json()) as { name?: unknown; error?: { message?: unknown } };
+  const detalleInicial = typeof crudo.error?.message === "string" ? crudo.error.message : "";
+  if (!respuesta.ok && /inlineData|inline_data|image/i.test(detalleInicial)) {
+    console.warn("[automatizacion] Veo rechazó la imagen; reintentando sólo con prompt.");
+    respuesta = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-goog-api-key": apiKey(),
+      },
+      body: JSON.stringify({ instances: [{ prompt: especificacion.promptVeo }], parameters: parametros }),
+      signal: AbortSignal.timeout(45_000),
+      cache: "no-store",
+    });
+    crudo = (await respuesta.json()) as { name?: unknown; error?: { message?: unknown } };
+  }
   if (!respuesta.ok || typeof crudo.name !== "string") {
     const detalle = typeof crudo.error?.message === "string" ? crudo.error.message : respuesta.status;
     throw new Error(`Veo no inició la generación (${detalle}).`);
