@@ -23,6 +23,13 @@ const pool = URL_BASE_IDENTIDAD
       // En Vercel cada instancia caliente tiene su propio pool. Un único socket por instancia
       // evita agotar el pool de Supabase y basta para este flujo de identidad.
       max: 1,
+      // El pooler compartido de Supabase cifra la conexión pero presenta una cadena que el
+      // runtime serverless no puede validar sin instalar su CA. Esta excepción se habilita
+      // únicamente de forma explícita; cuando tengamos la CA, se elimina.
+      ssl:
+        process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false"
+          ? { rejectUnauthorized: false }
+          : undefined,
     }))
   : undefined;
 

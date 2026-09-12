@@ -14,6 +14,12 @@ const pool = URL_BASE_IDENTIDAD
       options: "-c search_path=kripta_automation,public",
       // Las funciones serverless se escalan por instancia; no por conexiones locales.
       max: 1,
+      // Mantiene TLS hacia Supabase cuando el runtime de Vercel no dispone de la CA del
+      // pooler compartido. Con una CA instalada debe usarse verify-full en su lugar.
+      ssl:
+        process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false"
+          ? { rejectUnauthorized: false }
+          : undefined,
     }))
   : undefined;
 
