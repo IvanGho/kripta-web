@@ -75,7 +75,11 @@ export async function generarPropuesta(tema: string): Promise<ResultadoPropuesta
   });
 
   if (!respuesta.ok) {
-    throw new Error(`Gemini rechazó la propuesta (${respuesta.status}).`);
+    // Gemini puede devolver 429/500 durante picos de demanda. La automatización no debe
+    // dejar al administrador sin respuesta: usamos el brief local validado y lo marcamos
+    // como tal en Telegram para que se pueda reintentar Gemini más tarde.
+    console.warn(`[automatizacion] Gemini no disponible (${respuesta.status}); usando brief local.`);
+    return { especificacion: especificacionLocal(tema), origen: "local" };
   }
 
   const texto = leerTextoRespuesta(await respuesta.json());
