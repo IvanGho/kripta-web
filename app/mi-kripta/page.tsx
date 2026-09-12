@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { auth } from "../../auth";
 import { Cabecera } from "../componentes/cabecera";
 import { Pie } from "../componentes/pie";
 import { ACCESO_LISTO } from "../lib/identidad";
-import { cerrarSesion } from "../acceso/acciones";
+import { sincronizarJugador } from "../lib/sincronizar-jugador";
+import { crearClienteServidor } from "../lib/supabase/server";
+import { cerrarSesion, vincularDiscord } from "../acceso/acciones";
 
 export const metadata: Metadata = {
   title: "Mi Kripta",
@@ -14,12 +15,32 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function MiKripta() {
+export default async function MiKripta({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
   if (!ACCESO_LISTO) redirect("/acceso");
-  const sesion = await auth();
-  if (!sesion?.user) redirect("/acceso");
+  const supabase = await crearClienteServidor();
+  const { data } = await supabase.auth.getUser();
+  const usuario = data.user;
+  if (!usuario) redirect("/acceso");
 
-  const nombre = sesion.user.name?.trim() || "Jugador";
+  const nombre = String(usuario.user_metadata?.full_name ?? usuario.user_metadata?.name ?? "Jugador").trim();
+  const proveedores = new Set(usuario.identities?.map((identidad) => identidad.provider) ?? []);
+  const tieneDiscord = proveedores.has("discord");
+  const tieneGoogle = proveedores.has("google");
+  const estado = await sincronizarJugador(usuario);
+  const errorVinculacion = (await searchParams).error === "vinculacion";
+  const mensajeDiscord = !tieneDiscord
+    ? "Podés entrar con Google, pero necesitás Discord para anotarte, recibir avisos y hacer check-in."
+    : estado === "sincronizado"
+      ? "Tu cuenta ya está vinculada al panel. El staff puede encontrarte sin cargar tus datos a mano."
+      : estado === "conflicto"
+        ? "Este Discord ya está asociado a otra cuenta. Pedile al staff que revise la vinculación antes de anotarte."
+        : estado === "no_disponible"
+          ? "Discord está confirmado, pero el panel no respondió. La vinculación se reintenta automáticamente al volver."
+          : "Discord está confirmado. La vinculación al panel se activará al publicar la integración.";
 
   return (
     <>
@@ -28,26 +49,31 @@ export default async function MiKripta() {
         <section className="mi-kripta-cabecera">
           <p className="sobre-titulo">Sesión protegida</p>
           <h1 className="titular-seccion">Bienvenido, <span className="text-acento-2">{nombre}.</span></h1>
-          <p>Tu cuenta ya tiene un lugar propio. A medida que se habiliten las próximas funciones, vas a encontrar acá tus torneos, avisos y agenda.</p>
+          <p>Tu cuenta concentra tu identidad, torneos y accesos. Discord es obligatorio para competir y coordinar con el staff.</p>
         </section>
 
         <div className="mi-kripta-grid">
-          <section className="tarjeta mi-kripta-paso" aria-labelledby="titulo-agenda">
-            <span>01</span>
-            <h2 id="titulo-agenda">Tu agenda</h2>
-            <p>Cuando guardes un torneo, este será el lugar para revisar los recordatorios y entrar al check-in.</p>
+          <section className={`tarjeta mi-kripta-paso ${tieneDiscord ? "identidad-lista" : "identidad-pendiente"}`} aria-labelledby="titulo-discord">
+            <span>01 · Identidad competitiva</span>
+            <h2 id="titulo-discord">{tieneDiscord ? "Discord conectado" : "Conectá Discord"}</h2>
+            <p>{mensajeDiscord}</p>
+            {!tieneDiscord && (
+              <form action={vincularDiscord}>
+                <button type="submit" className="boton text-sm">Vincular Discord</button>
+              </form>
+            )}
+            {errorVinculacion && <p className="identidad-error" role="alert">No se pudo vincular. Revisaremos la configuración de Supabase.</p>}
+          </section>
+          <section className="tarjeta mi-kripta-paso" aria-labelledby="titulo-accesos">
+            <span>02 · Accesos</span>
+            <h2 id="titulo-accesos">Tus conexiones</h2>
+            <p>Discord: <strong>{tieneDiscord ? "conectado" : "pendiente"}</strong><br />Google: <strong>{tieneGoogle ? "conectado" : "no conectado"}</strong></p>
             <Link href="/#torneos" className="boton-sec text-sm">Explorar torneos <b aria-hidden="true">↓</b></Link>
           </section>
-          <section className="tarjeta mi-kripta-paso" aria-labelledby="titulo-perfil">
-            <span>02</span>
-            <h2 id="titulo-perfil">Tu perfil competitivo</h2>
-            <p>La inscripción seguirá confirmándose en Discord para que el torneo use la misma identidad que el servidor.</p>
-            <Link href="/#empezar" className="boton-sec text-sm">Ver cómo participar <b aria-hidden="true">↓</b></Link>
-          </section>
           <section className="tarjeta mi-kripta-paso" aria-labelledby="titulo-sesion">
-            <span>03</span>
+            <span>03 · Seguridad</span>
             <h2 id="titulo-sesion">Tu sesión</h2>
-            <p>Podés cerrar esta sesión en cualquier momento desde este dispositivo.</p>
+            <p>La sesión se guarda en una cookie segura. Podés cerrarla en cualquier momento desde este dispositivo.</p>
             <form action={cerrarSesion}>
               <button type="submit" className="boton-sec text-sm">Cerrar sesión</button>
             </form>

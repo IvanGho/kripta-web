@@ -21,58 +21,46 @@ Es el segundo de los dos proyectos: la operación (torneos, pagos, ranking, caja
 Importalo en [vercel.com/new](https://vercel.com/new) y dale **Deploy**. No hay nada que
 configurar: Vercel reconoce Next.js solo. Se despliega y funciona con datos de ejemplo.
 
-Después, en **Settings → Environment Variables**, sólo una es importante:
+Después, en **Settings → Environment Variables**, se conectan estas piezas:
 
 | Variable | Para qué |
 |---|---|
 | `NEXT_PUBLIC_URL_DISCORD` | El link de invitación. **Es la conversión del sitio**: sin esto el botón principal no lleva a ningún lado. Usá una invitación que **no expire**. |
 | `NEXT_PUBLIC_URL_SITIO` | El dominio, para los links de compartir y el SEO. Ya viene por defecto en `https://kripta.infinixapp.com`, así que sólo hace falta si el dominio cambia. |
 | `PANEL_API_URL` | La URL del panel, para mostrar el ranking y los torneos de verdad. Sin esto usa datos de ejemplo. |
+| `NEXT_PUBLIC_SUPABASE_URL` | La URL pública del proyecto `monsterland-prod`. |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Clave pública de Supabase Auth. Nunca usar `service_role`. |
+| `KRIPTA_SYNC_SECRET` | Secreto servidor a servidor; tiene que coincidir con el del panel. |
 
 Después de cargarlas hay que hacer **Redeploy**: las variables se leen al compilar.
 
-### Acceso con Discord, Google y Apple
+### Acceso con Discord y Google mediante Supabase
 
-El acceso personal usa Auth.js y Postgres. Es independiente de las tablas operativas del panel:
-si se usa la misma base, guarda sus cuatro tablas dentro del esquema `kripta_auth`.
+Supabase es la autoridad de identidad. `kripta-web` usa sesiones SSR con PKCE y cookies seguras;
+el panel recibe sólo la identidad mínima de Discord mediante una ruta privada servidor a servidor.
 
-1. Conectá una base Postgres al proyecto web y cargá su URL como `DATABASE_URL`.
-2. Ejecutá una vez `npm run preparar-auth` con esa variable cargada. Sólo crea el esquema y tablas
-   idempotentes de cuentas y sesiones; no toca torneos, jugadores ni caja del panel.
-3. Generá `AUTH_SECRET` con `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
-   y cargalo como variable de entorno del proyecto web.
-4. Creá una aplicación OAuth de Discord y una de Google. Cargá `AUTH_DISCORD_ID`,
-   `AUTH_DISCORD_SECRET`, `AUTH_GOOGLE_ID` y `AUTH_GOOGLE_SECRET`.
-5. En ambos proveedores declarás exactamente estas URL de retorno:
-
-   ```text
-   https://kripta.infinixapp.com/api/auth/callback/discord
-   https://kripta.infinixapp.com/api/auth/callback/google
-   ```
-
-   En local, las equivalentes usan `http://localhost:3000`.
-
-6. Para Apple, en Apple Developer creá un **Services ID** asociado a un App ID primario con
-   Sign in with Apple. Registrá el dominio `kripta.infinixapp.com` y este retorno HTTPS:
+1. En Vercel cargá `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, tomadas
+   del diálogo **Connect** de `monsterland-prod`. La publishable key puede estar en el navegador;
+   la `service_role` nunca se carga en este proyecto.
+2. En Supabase → **Authentication → URL Configuration**, poné como Site URL
+   `https://kripta.infinixapp.com` y permití `https://kripta.infinixapp.com/auth/callback`.
+3. En **Authentication → Providers**, habilitá Discord y Google. La URL que se registra en ambos
+   proveedores es la callback que muestra Supabase:
 
    ```text
-   https://kripta.infinixapp.com/api/auth/callback/apple
+   https://<project-ref>.supabase.co/auth/v1/callback
    ```
 
-   Generá la clave privada de Sign in with Apple y ejecutá `npx auth add apple`; el asistente
-   crea los valores para `AUTH_APPLE_ID` y `AUTH_APPLE_SECRET`. Cargalos únicamente en el
-   entorno **Production** de Vercel. Apple no admite `localhost`/HTTP ni el mismo cliente para
-   previews, por eso se prueba sobre el dominio público cuando el deploy de producción esté listo.
+4. Activá **Manual identity linking** en la configuración de Auth. Esto permite que quien entró
+   con Google conecte su Discord desde una sesión ya validada.
+5. Generá un secreto largo y aleatorio. Cargalo como `KRIPTA_SYNC_SECRET` en `kripta-web` y en
+   `monsterland-panel`, siempre como valor secreto y sólo del lado servidor.
+6. En la web cargá `PANEL_API_URL=https://dashboard.infinixapp.com`. En el panel, además de su
+   `DATABASE_URL`, cargá el mismo `KRIPTA_SYNC_SECRET`. Hacé redeploy de ambos.
 
-7. Hacé redeploy. Mientras falte la base, el secreto o al menos un proveedor, `/acceso` deja los
-   botones apagados en lugar de simular una cuenta que no se puede guardar.
-
-Discord se pide solamente con el alcance `identify`. Google y Apple se usan para identidad y no
-para leer calendarios, mensajes ni contactos. Apple puede dar el nombre y el email sólo durante el
-primer consentimiento; el sitio guarda la identidad que recibe en ese momento. Los tokens de los
-tres proveedores se descartan después de validar el acceso; la cuenta y la sesión se pueden
-revocar. Las cuentas no se unen automáticamente por tener el mismo mail: el enlace entre
-proveedores será una acción explícita desde una sesión ya iniciada.
+Discord es obligatorio para competir. Entrar con Google crea una cuenta válida, pero `/mi-kripta`
+mantiene la inscripción pendiente hasta que se vincula Discord. La sincronización nunca confirma
+mayoría de edad, pagos ni elegibilidad: esas decisiones siguen en el panel y bajo revisión del staff.
 
 ### El dominio propio
 
@@ -81,8 +69,8 @@ dominios propios de fábrica. En el proyecto, **Settings → Domains → Add**, 
 y Vercel muestra el registro DNS que hay que crear en Spaceship (un `CNAME` apuntando a
 `cname.vercel-dns.com`). El certificado HTTPS lo emite y lo renueva Vercel solo.
 
-El panel se queda en su URL `.vercel.app`, **sin subdominio propio**, a propósito: `PANEL_API_URL`
-se consume del lado del servidor y nunca llega al navegador de nadie.
+El panel usa **`dashboard.infinixapp.com`**. `PANEL_API_URL` se consume del lado del servidor y
+nunca llega al navegador de nadie.
 
 ### Analítica
 
@@ -91,13 +79,14 @@ El sitio incluye Vercel Web Analytics, que hay que **activar una vez** en el pro
 página entró cada persona al Discord (ver `app/lib/medicion.ts`). Es el único instrumento que va a
 decir si una campaña de anuncios sirvió.
 
-No usa cookies, así que no hace falta cartel de consentimiento. Y el script se inyecta **sólo**
-corriendo en Vercel: en local esa ruta no existe y pedirla daría 404 en cada carga.
+Vercel Web Analytics no usa cookies. Las únicas cookies del sitio aparecen cuando alguien inicia
+sesión y son técnicas, no publicitarias. El script se inyecta **sólo** corriendo en Vercel: en
+local esa ruta no existe y pedirla daría 404 en cada carga.
 
 ## Datos: por qué no lee la base directamente
 
-El sitio **no** calcula reglas de negocio ni consulta Postgres. Le pide al panel un JSON ya
-resuelto (ver `app/lib/datos.ts`).
+El sitio **no** calcula reglas de negocio ni consulta las tablas operativas. Supabase Auth resuelve
+la sesión; para torneos y ranking le pide al panel un JSON ya resuelto (ver `app/lib/datos.ts`).
 
 El ranking, los puestos y las llaves son lógica de negocio y viven en el dominio del panel.
 Si el sitio los recalculara habría dos implementaciones de la misma regla, y tarde o temprano
@@ -262,11 +251,11 @@ reclamo identificable, un formulario obligaría a debilitar la afirmación más 
 privacidad, y sería la primera entrada de datos del sitio, de la que dependen la decisión de no tener
 base ni sesiones y el `unsafe-inline` del CSP.
 
-### Por qué no hay cartel de cookies
+### Cookies
 
-Porque **el sitio no usa cookies**, ni propias ni de terceros, y Vercel Web Analytics tampoco.
-Un cartel pidiendo consentimiento donde no hay nada que consentir le dice al visitante algo que no es
-cierto, y mete un modal delante de una página que recibe tráfico pago.
+La visita anónima y Vercel Web Analytics no usan cookies publicitarias. Cuando una persona decide
+entrar, Supabase usa cookies técnicas imprescindibles para mantener y renovar esa sesión. No se usan
+para anuncios ni seguimiento entre sitios; la política de privacidad describe esa diferencia.
 
 **Cambia el día que se agregue un píxel de publicidad.** Un píxel de Meta o de Google sí requiere
 consentimiento previo, y en ese momento el cartel deja de ser opcional: hay que construirlo *antes*

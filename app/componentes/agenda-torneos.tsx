@@ -26,14 +26,18 @@ export function AgendaTorneos({ torneos }: { torneos: Torneo[] }) {
   const [juego, setJuego] = useState(TODOS);
 
   useEffect(() => {
+    let temporizador: number | undefined;
     try {
       const guardado = window.localStorage.getItem(CLAVE_JUEGO);
       if (guardado === TODOS || (guardado && juegos.includes(guardado))) {
-        setJuego(guardado);
+        temporizador = window.setTimeout(() => setJuego(guardado), 0);
       }
     } catch {
       // La agenda sigue funcionando aunque el navegador bloquee el almacenamiento local.
     }
+    return () => {
+      if (temporizador !== undefined) window.clearTimeout(temporizador);
+    };
   }, [juegos]);
 
   const visibles = juego === TODOS

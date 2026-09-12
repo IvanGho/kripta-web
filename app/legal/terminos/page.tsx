@@ -14,7 +14,7 @@ export default function Pagina() {
       titulo="Términos y"
       resaltado="condiciones"
       bajada="Cómo funciona la comunidad, qué podés esperar y qué se espera de vos."
-      actualizado="2026-09-11"
+      actualizado="2026-09-12"
     >
       <h2>Qué es Kripta</h2>
       <p>
@@ -24,9 +24,8 @@ export default function Pagina() {
 
       <h2>Cuenta personal</h2>
       <p>
-        Crear una cuenta es opcional y se hace con Discord o Google. Sirve para las funciones personales
-        del sitio. No reemplaza el registro de jugador ni la identidad que se confirma en Discord para
-        participar de un torneo.
+        Crear una cuenta es opcional y se hace con Discord o Google. Para participar de un torneo la
+        cuenta debe tener Discord vinculado: es la identidad con la que se coordinan avisos y check-in.
       </p>
       <p>
         Cuidá la cuenta con la que entrás y cerrá la sesión si usás un dispositivo compartido. Podés
@@ -35,7 +34,7 @@ export default function Pagina() {
 
       <h2>Cómo se participa</h2>
       <ol>
-        <li>Entrá al servidor de Discord y registrate con <strong>/registrarme</strong>.</li>
+        <li>Entrá con Discord o vinculalo desde tu cuenta de Kripta.</li>
         <li>Anotate siguiendo el anuncio del torneo.</li>
         <li>Hacé check-in el día del encuentro para confirmar que vas a jugar.</li>
       </ol>

@@ -14,7 +14,7 @@ export default function Pagina() {
       titulo="Política de"
       resaltado="privacidad"
       bajada="Qué datos se recolectan, quién los ve y cómo pedir que se borren."
-      actualizado="2026-09-11"
+      actualizado="2026-09-12"
     >
       <h2>Lo corto</h2>
       <p>
@@ -23,8 +23,8 @@ export default function Pagina() {
         contraseña nunca pasa por nuestros servidores.
       </p>
       <p>
-        La cuenta sirve para construir una agenda y un perfil personal. La inscripción, el check-in
-        y la confirmación de mayoría de edad para competir siguen pasando <strong>dentro de Discord</strong>.
+        La cuenta sirve para construir una agenda y un perfil personal. Discord es obligatorio para
+        competir; la confirmación de mayoría de edad y de pagos sigue en manos del staff.
       </p>
 
       <h2>Información de visita</h2>
@@ -49,11 +49,18 @@ export default function Pagina() {
         </li>
       </ul>
 
+      <h2>Cookies de sesión</h2>
+      <p>
+        Navegar el sitio no crea cookies publicitarias. Si decidís entrar, Supabase guarda cookies
+        técnicas necesarias para iniciar, mantener y renovar tu sesión. No se usan para anuncios ni
+        para seguirte entre sitios, y se eliminan al cerrar sesión o cuando vencen.
+      </p>
+
       <h2>Información de tu cuenta</h2>
       <p>
         Sólo existe si entrás. Guardamos la identidad que devuelve el proveedor elegido, tu nombre
         visible, la imagen de perfil si la comparte y, en el caso de Google, el mail que entrega esa
-        cuenta verificada. Guardamos además una sesión revocable que vence a los 30 días.
+        cuenta verificada. Supabase mantiene una sesión revocable para no pedirte acceso en cada visita.
       </p>
       <p>
         Discord se usa con el permiso mínimo de identificación: no leemos mensajes, contactos ni
@@ -64,10 +71,10 @@ export default function Pagina() {
 
       <h2>Datos de quienes compiten</h2>
       <p>
-        Al registrarte con <strong>/registrarme</strong> dentro de Discord, la organización puede guardar
-        tu identidad de Discord, nombre de juego, confirmación de mayoría de edad, alias para acreditar
-        un premio cuando corresponda y resultados de competencia. El ranking puede mostrar tu nombre,
-        puntos, torneos y títulos.
+        Al vincular Discord desde la web o registrarte con <strong>/registrarme</strong>, la organización
+        puede guardar tu identidad de Discord y nombre visible. La mayoría de edad se registra por
+        separado después de revisarla; también pueden guardarse tu nombre de juego, alias para acreditar
+        un premio cuando corresponda y resultados. El ranking puede mostrar nombre, puntos y títulos.
       </p>
       <p>
         El resto de la ficha de jugador no se publica. La web pública recibe datos agregados y resultados
@@ -78,8 +85,8 @@ export default function Pagina() {
       <h2>Quién accede</h2>
       <p>
         La administración y la moderación de torneos acceden a la información operativa necesaria.
-        Vercel aloja el sitio y la base de datos guarda las sesiones. Si elegís entrar, Discord o Google
-        procesan la autenticación según su propia política de privacidad. No vendemos ni cedemos datos.
+        Vercel aloja el sitio y Supabase presta la base de datos y autenticación. Si elegís entrar,
+        Discord o Google también procesan el acceso según sus políticas. No vendemos ni cedemos datos.
       </p>
 
       <h2>Conservación y eliminación</h2>

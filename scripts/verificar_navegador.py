@@ -456,7 +456,7 @@ with sync_playwright() as p:
         pagina.locator('meta[name="robots"][content*="noindex"]').count() == 1,
     )
     proveedores = pagina.locator("button.proveedor-boton")
-    chequear("el acceso ofrece Discord, Google y Apple", proveedores.count() == 3, f"{proveedores.count()} botones")
+    chequear("el acceso ofrece Discord y Google", proveedores.count() == 2, f"{proveedores.count()} botones")
     pagina.goto(BASE + "/mi-kripta", wait_until=LISTA)
     chequear(
         "Mi Kripta pide iniciar sesion cuando no hay una sesion",

@@ -761,6 +761,13 @@
   font-size: 12px;
   line-height: 1.6;
 }
+.acceso-error,
+.identidad-error {
+  margin-top: 12px;
+  color: #ffb4b4;
+  font-size: 12px;
+  line-height: 1.55;
+}
 .acceso-pendiente {
   border-color: var(--alerta);
   background: color-mix(in srgb, var(--alerta) 6%, transparent);
@@ -824,6 +831,25 @@
   width: 100%;
   margin-top: auto;
   padding: 10px 12px;
+}
+.mi-kripta-paso form {
+  width: 100%;
+  margin-top: auto;
+}
+.mi-kripta-paso form .boton,
+.mi-kripta-paso form .boton-sec {
+  width: 100%;
+  padding: 10px 12px;
+}
+.mi-kripta-paso strong {
+  color: var(--texto);
+}
+.identidad-lista {
+  border-color: color-mix(in srgb, var(--jade) 55%, var(--borde));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--jade) 9%, transparent), transparent 60%), var(--panel);
+}
+.identidad-pendiente {
+  border-color: color-mix(in srgb, var(--alerta) 55%, var(--borde));
 }
 .ranking-grid {
   display: grid;
