@@ -28,17 +28,15 @@ export async function iniciarVideoVeo(especificacion: EspecificacionEscena): Pro
       instances: [
         {
           prompt: especificacion.promptVeo,
-          referenceImages: [
-            {
-              image: {
-                inlineData: {
-                  mimeType: "image/png",
-                  data: referencia.toString("base64"),
-                },
-              },
-              referenceType: "asset",
+          // Con una sola imagen del lobo usamos el primer fotograma: es compatible con
+          // todos los modelos Veo 3.1 de Gemini API. referenceImages + inlineData todavía
+          // no está habilitado de forma uniforme en el endpoint REST.
+          image: {
+            inlineData: {
+              mimeType: "image/png",
+              data: referencia.toString("base64"),
             },
-          ],
+          },
         },
       ],
       parameters: {
