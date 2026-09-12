@@ -17,11 +17,13 @@ import {
   organizacion,
 } from "./lib/datos-estructurados";
 import { HAY_DISCORD } from "./lib/enlaces";
+import { obtenerEscenaActiva } from "./lib/escena-activa";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 export const revalidate = 60;
 
 export default async function Inicio() {
+  const escena = obtenerEscenaActiva();
   const datos = await obtenerDatos();
   const {
     proximoTorneo,
@@ -49,7 +51,7 @@ export default async function Inicio() {
         <section className="portal" aria-labelledby="titulo-portada">
           <div className="portal-escena" aria-hidden="true">
             <Image
-              src="/imagenes/hero-kripta-v3.webp"
+              src={escena.poster}
               alt=""
               fill
               sizes="100vw"
@@ -58,32 +60,48 @@ export default async function Inicio() {
           </div>
           <div className="portal-velo" />
           <Brasas />
+          <div className="portal-mascota" aria-hidden="true">
+            <span className="portal-mascota-anillo" />
+            <Image
+              src="/marca/kripta-lobo.png"
+              alt=""
+              width={1024}
+              height={1024}
+              sizes="(max-width: 767px) 255px, (max-width: 1100px) 34vw, 430px"
+              preload
+            />
+            {(escena.videoWebm || escena.videoMp4) && (
+              <video autoPlay muted loop playsInline preload="metadata" poster={escena.poster}>
+                {escena.videoWebm && <source src={escena.videoWebm} type="video/webm" />}
+                {escena.videoMp4 && <source src={escena.videoMp4} type="video/mp4" />}
+              </video>
+            )}
+          </div>
           <div className="portal-interior mx-auto max-w-6xl px-5">
             <div className="portal-texto">
               <p className="sobre-titulo">
                 <span className="cortes" aria-hidden="true">
                   {"///"}
                 </span>{" "}
-                Monsterland · comunidad argentina
+                Monsterland · comunidad y torneos
               </p>
               <h1 id="titulo-portada" className="titular">
-                La noche
+                Tu próxima
                 <br />
-                es nuestra.
-                <span className="portal-nombre">Entrá a la Kripta.</span>
+                partida empieza acá.
+                <span className="portal-nombre">Competí. Sumá puntos. Subí en el ranking.</span>
               </h1>
               <p className="portal-bajada">
-                Una partida más. Un equipo que te espera.
-                <br className="hidden sm:block" /> Valorant, Truco y noches que
-                se comparten en Discord.
+                Encontrá torneos, armá equipo y coordiná partidas dentro de
+                Monsterland.
               </p>
               <div className="portal-acciones">
-                <BotonDiscord ubicacion="hero" className="text-base">
+                <a href="#torneos" className="boton text-base">
+                  Ver torneos <span aria-hidden="true">↓</span>
+                </a>
+                <BotonDiscord ubicacion="hero" variante="secundario" className="text-base">
                   Entrar al Discord <span aria-hidden="true">↗</span>
                 </BotonDiscord>
-                <a href="#torneos" className="boton-sec text-base">
-                  Explorar torneos <span aria-hidden="true">↓</span>
-                </a>
               </div>
               <ul className="portal-senales" aria-label="Cómo funciona la comunidad">
                 <li>
@@ -98,8 +116,8 @@ export default async function Inicio() {
               </ul>
               <p className="portal-nota">
                 {HAY_DISCORD
-                  ? "Sumarte es gratis. Tu próxima comunidad empieza acá."
-                  : "La invitación se publicará pronto. Mientras tanto, conocé la comunidad."}
+                  ? "Sumarte es gratis. Revisá los torneos o entrá a la comunidad."
+                  : "La invitación se publicará pronto. Mientras tanto, revisá los torneos disponibles."}
               </p>
             </div>
             <div className="portal-pie">

@@ -1,38 +1,41 @@
-# Kripta — identidad de producto V3
+# Kripta — identidad de producto V4
 
 Dirección vigente desde el 11 de septiembre de 2026. Conserva la firma aportada por Monsterland:
-lobo negro, verde eléctrico y tres cicatrices rojas. Cambia el tratamiento para que la web se lea
-como un producto confiable y una comunidad real, no como un afiche genérico de gaming.
+lobo oscuro, verde espectral y tres cicatrices rojas apagadas. La web se lee como un producto
+confiable y una comunidad real, no como un afiche genérico de gaming.
 
 ## Posicionamiento visual
 
-La Kripta es un **club competitivo nocturno**. La web pública invita, informa y lleva a Discord;
-el panel del staff prioriza decisiones, estados y velocidad. Comparten materiales y tokens, pero no
-la misma intensidad: la web puede usar arte editorial; el panel usa el color con más contención.
+La Kripta es una **plataforma competitiva y social**. La web pública invita, informa y lleva a
+Discord; el panel del staff prioriza decisiones, estados y velocidad. Comparten materiales y tokens,
+pero no la misma intensidad: la web puede usar arte editorial; el panel usa el color con más
+contención.
 
-El lobo no se repite como mascota en cada bloque. Se reconoce en el portal arquitectónico, la marca
-y las tres cicatrices. Eso construye memoria sin transformar la interfaz en una pantalla de juego.
+El lobo no se repite como mascota en cada bloque. Se reconoce en el avatar original del hero, la
+marca y las tres cicatrices. Eso construye memoria sin transformar la interfaz en una pantalla de
+juego.
 
 ## Paleta semántica
 
 | Rol | Token | Color | Uso |
 | --- | --- | --- | --- |
-| Base | `--fondo` | `#090B0F` | fondo de tinta |
-| Superficie | `--panel` | `#121722` | tarjetas y controles |
-| Elevación | `--panel-2` | `#19202B` | capas próximas y hover suave |
-| Separador | `--borde` | `#293341` | estructura, nunca texto |
-| Texto | `--texto` | `#F2F5F7` | lectura primaria |
-| Texto secundario | `--tenue` | `#AEB8C5` | contexto y ayuda |
-| Datos | `--jade` | `#74E2A0` | etiquetas técnicas y señales secundarias |
-| Acción | `--acento` | `#B7F34A` | CTA principal, foco y avance |
-| Alta luz | `--acento-2` | `#D8FF8C` | foco de teclado y jerarquía puntual |
-| Correcto | `--ok` | `#75E5A4` | éxito confirmado |
-| Atención | `--alerta` | `#F7CA70` | revisión necesaria |
-| Error / cicatriz | `--grave` | `#FF6B7A` | error o firma física limitada |
+| Base | `--fondo` | `#090C0A` | fondo de basalto |
+| Superficie | `--panel` | `#141C17` | tarjetas y controles |
+| Elevación | `--panel-2` | `#1A241E` | capas próximas y hover suave |
+| Separador | `--borde` | `#29352E` | estructura, nunca texto |
+| Texto | `--texto` | `#F3F6F1` | lectura primaria |
+| Texto secundario | `--tenue` | `#A9B5AD` | contexto y ayuda |
+| Marca / dato | `--jade` | `#5DFF86` | señal de marca y datos secundarios |
+| Acción | `--acento` | `#7CFF4F` | CTA principal, foco y avance |
+| Alta luz | `--acento-2` | `#A0FF78` | hover y jerarquía puntual |
+| Correcto | `--ok` | `#5DFF86` | éxito confirmado |
+| Atención | `--alerta` | `#D6A94D` | revisión necesaria |
+| Error / cicatriz | `--grave` | `#E05A68` | error o firma física limitada |
 
-Cada color tiene un significado único. El lima Volt no se usa en tarjetas decorativas, enlaces
+Cada color tiene un significado único. El verde de acción no se usa en tarjetas decorativas, enlaces
 inactivos o fondos enteros; conserva energía para una acción importante. El rojo no comunica éxito
-ni "en vivo". Los estados siempre suman texto, forma o icono: el color no es la única señal.
+ni "en vivo". Los estados siempre suman texto, forma o icono: el color no es la única señal. Los
+componentes también tienen equivalentes light mode con los mismos tokens semánticos.
 
 ## Tipografía y superficie
 

@@ -90,22 +90,41 @@
  */
 
 /*
- * Paleta Kripta: lobo verde neón sobre negro. Son los mismos valores que usa el panel
- * (monsterland-panel, src/web/plantilla.js). Si cambia un token, cambia en los dos lados.
+ * Paleta V4: basalto, grafito, verde espectral y rojo apagado. Los valores son semánticos:
+ * si cambia un token, no se usa un hex suelto para inventar otro significado visual.
  */
 :root {
-  --fondo: #090b0f;
-  --panel: #121722;
-  --panel-2: #19202b;
-  --borde: #293341;
-  --texto: #f2f5f7;
-  --tenue: #aeb8c5;
-  --jade: #74e2a0;
-  --acento: #b7f34a;
-  --acento-2: #d8ff8c;
-  --ok: #75e5a4;
-  --alerta: #f7ca70;
-  --grave: #ff6b7a;
+  color-scheme: dark;
+  --fondo: #090c0a;
+  --panel: #141c17;
+  --panel-2: #1a241e;
+  --borde: #29352e;
+  --texto: #f3f6f1;
+  --tenue: #a9b5ad;
+  --jade: #5dff86;
+  --acento: #7cff4f;
+  --acento-2: #a0ff78;
+  --ok: #5dff86;
+  --alerta: #d6a94d;
+  --grave: #e05a68;
+}
+
+/* La paleta queda preparada para que un selector de tema pueda usar los mismos componentes
+   sin inventar una segunda identidad visual. Dark sigue siendo el valor inicial del producto. */
+[data-theme="light"] {
+  color-scheme: light;
+  --fondo: #f6f7f2;
+  --panel: #ffffff;
+  --panel-2: #e5ebe5;
+  --borde: #cbd5ce;
+  --texto: #152019;
+  --tenue: #59675f;
+  --jade: #1f6b3a;
+  --acento: #247a43;
+  --acento-2: #174e2e;
+  --ok: #1f6b3a;
+  --alerta: #a57425;
+  --grave: #b64755;
 }
 
 @theme inline {

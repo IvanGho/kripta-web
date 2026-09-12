@@ -1,0 +1,7 @@
+# Los masters se conservan para edición local. La aplicación utiliza sus derivados
+# optimizados en public/, incluido el lobo de referencia que Veo lee en runtime.
+assets/originales/
+
+# Artefactos locales que no son parte del runtime de Vercel.
+capturas/
+.next/

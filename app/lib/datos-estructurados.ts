@@ -34,10 +34,10 @@ export function organizacion(): Json {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Kripta",
-    alternateName: "Monsterland",
+    name: "Monsterland",
+    alternateName: "Kripta",
     url: URL_SITIO,
-    logo: `${URL_SITIO}/icon.svg`,
+    logo: `${URL_SITIO}/marca/kripta-lobo.png`,
     description:
       "Comunidad argentina de gaming con torneos semanales de Valorant y Truco, ranking de temporada y premios fijos.",
     areaServed: { "@type": "Country", name: "Argentina" },
@@ -70,7 +70,7 @@ export function eventosDeTorneos(torneos: Torneo[], esEjemplo: boolean): Json[] 
       "@type": "VirtualLocation",
       url: URL_SITIO,
     },
-    organizer: { "@type": "Organization", name: "Kripta", url: URL_SITIO },
+    organizer: { "@type": "Organization", name: "Monsterland · Kripta", url: URL_SITIO },
     description: `Torneo de ${t.juego} en formato ${t.formato}. El premio es fijo y se anuncia antes de abrir la inscripción.`,
     maximumAttendeeCapacity: t.cupo,
     offers: {

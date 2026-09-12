@@ -20,7 +20,9 @@ const pool = URL_BASE_IDENTIDAD
       connectionString: URL_BASE_IDENTIDAD,
       // Las tablas del acceso viven aisladas de las tablas del panel aunque compartan Postgres.
       options: "-c search_path=kripta_auth,public",
-      max: 4,
+      // En Vercel cada instancia caliente tiene su propio pool. Un único socket por instancia
+      // evita agotar el pool de Supabase y basta para este flujo de identidad.
+      max: 1,
     }))
   : undefined;
 

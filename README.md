@@ -139,11 +139,10 @@ Lo esencial:
 
 ## El logo
 
-`app/componentes/marca.tsx` tiene un lobo geométrico **escrito en SVG a mano**. Es un vector de
-verdad: se ve nítido en cualquier tamaño y pesa menos de 1 KB.
+`app/componentes/marca.tsx` usa el emblema PNG transparente de `public/marca/kripta-lobo.png`.
+La pieza se diseñó para conservar la silueta y las tres cicatrices al reducirse a favicon.
 
-Cuando esté el logo definitivo del servidor, se reemplaza **sólo ese archivo** y cambia en todo
-el sitio, incluido el ícono de la app.
+El mismo símbolo se comparte en cabecera, pie, favicon, PWA y datos estructurados.
 
 ## Paleta
 
@@ -182,6 +181,12 @@ navegador de cientos de megas a un repo cuyo stack son cuatro dependencias. Requ
 pip install playwright && python -m playwright install chromium
 ```
 
+## Escenas estacionales y bot
+
+El flujo Gemini/Veo + Telegram, sus variables privadas, la aprobación y el publicador FFmpeg están
+documentados en [`AUTOMATIZACION_ESCENAS.md`](AUTOMATIZACION_ESCENAS.md). Sin esas variables la web
+sigue funcionando normalmente con su poster estático.
+
 ## Estructura
 
 ```
@@ -192,12 +197,12 @@ app/
   not-found.tsx         el 404 propio, con la identidad del sitio
   error.tsx             la pantalla si falla el renderizado
   manifest.ts           PWA: se instala en el celular como app
-  icon.svg              ícono
+  icon.png              ícono de la pestaña
   legal/
     privacidad/         qué datos se recolectan y cuáles no
     terminos/           cómo funcionan los torneos
     derechos/           cómo ejercer los derechos de la Ley 25.326
-  componentes/          marca (logo SVG), cabecera, pie, contador, documento
+  componentes/          marca, cabecera, pie, contador, documento
   lib/                  datos, enlaces, sitio y medición
   anotador/             anotador de Truco
   sensibilidad/         convertidor de sensibilidad

@@ -3,12 +3,12 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 export const alt =
-  "Kripta · La noche es nuestra. Comunidad argentina de Valorant y Truco.";
+  "Kripta · Tu próxima partida empieza acá. Comunidad argentina de Valorant y Truco.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function Imagen() {
-  const fondo = await readFile(join(process.cwd(), "assets/hero-social-v3.jpg"));
+  const fondo = await readFile(join(process.cwd(), "assets/hero-social-v4.jpg"));
   return new ImageResponse(
     (
       <div
@@ -17,8 +17,8 @@ export default async function Imagen() {
           height: "100%",
           display: "flex",
           position: "relative",
-          background: "#090b0f",
-          color: "#f2f5f7",
+          background: "#090c0a",
+          color: "#f3f6f1",
         }}
       >
         {/* ImageResponse usa su propio motor de imágenes, no next/image. */}
@@ -36,7 +36,7 @@ export default async function Imagen() {
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(90deg, #090b0f 0%, #090b0fe8 30%, #090b0f20 80%)",
+              "linear-gradient(90deg, #090c0a 0%, #090c0ae8 30%, #090c0a20 80%)",
           }}
         />
         <div
@@ -49,8 +49,8 @@ export default async function Imagen() {
             width: "100%",
           }}
         >
-          <div style={{ color: "#d8ff8c", fontSize: 23, letterSpacing: 6 }}>
-            KRIPTA / MONSTERLAND
+          <div style={{ color: "#a0ff78", fontSize: 23, letterSpacing: 6 }}>
+            MONSTERLAND / KRIPTA
           </div>
           <div
             style={{
@@ -60,12 +60,12 @@ export default async function Imagen() {
               letterSpacing: -3,
             }}
           >
-            <div style={{ fontSize: 85, lineHeight: 1.02 }}>LA NOCHE</div>
-            <div style={{ fontSize: 85, lineHeight: 1.02 }}>ES NUESTRA.</div>
+            <div style={{ fontSize: 78, lineHeight: 1.02 }}>TU PRÓXIMA</div>
+            <div style={{ fontSize: 78, lineHeight: 1.02 }}>PARTIDA EMPIEZA ACÁ.</div>
             <div
               style={{
                 fontSize: 36,
-                color: "#b7f34a",
+                color: "#7cff4f",
                 letterSpacing: -1,
                 marginTop: 22,
               }}
@@ -73,7 +73,7 @@ export default async function Imagen() {
               Entrá a la Kripta.
             </div>
           </div>
-          <div style={{ color: "#c5ced9", fontSize: 22 }}>
+          <div style={{ color: "#a9b5ad", fontSize: 22 }}>
             Valorant · Truco · Comunidad argentina en Discord
           </div>
         </div>

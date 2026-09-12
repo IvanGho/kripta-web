@@ -1,13 +1,14 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 
 /**
  * Íconos PNG del manifiesto, generados por código.
  *
- * Por qué hacen falta si ya hay un `icon.svg`: el manifiesto declaraba **un solo ícono SVG** con
- * `sizes: "any"`. Chrome lo acepta para instalar, pero Android necesita un PNG para el ícono
- * adaptativo, y sin la variante `maskable` el sistema recorta el ícono a la forma del launcher
- * (círculo, cuadrado redondeado, según el teléfono) y puede comerse el hocico del lobo o
- * rellenar los bordes con blanco sobre un logo pensado para fondo negro.
+ * Se generan en dos tamaños porque Android necesita PNG para el ícono adaptativo, y sin la variante
+ * `maskable` el sistema recorta el ícono a la forma del launcher (círculo, cuadrado redondeado,
+ * según el teléfono) y puede comerse el hocico del lobo o rellenar los bordes con blanco sobre un
+ * logo pensado para fondo negro.
  *
  * Se generan en vez de guardarse como archivos por lo mismo que la imagen para compartir: si
  * cambia la paleta o el logo, cambia acá y no hay que exportar nada a mano.
@@ -21,9 +22,7 @@ import { ImageResponse } from "next/og";
 // imágenes a pedido para cualquier número que alguien invente en la URL.
 const TAMANOS = new Set(["192", "512"]);
 
-const FONDO = "#090b0f";
-const ACENTO_2 = "#d8ff8c";
-const ACENTO = "#b7f34a";
+const FONDO = "#090c0a";
 
 export function generateStaticParams() {
   return [...TAMANOS].map((tamano) => ({ tamano }));
@@ -38,6 +37,7 @@ export async function GET(_pedido: Request, { params }: { params: Promise<{ tama
   const lado = Number(tamano);
   // 60% del lienzo: deja el 20% de margen por lado que el recorte adaptativo puede comerse.
   const lobo = Math.round(lado * 0.6);
+  const imagen = await readFile(join(process.cwd(), "public", "marca", "kripta-lobo.png"));
 
   return new ImageResponse(
     (
@@ -51,24 +51,15 @@ export async function GET(_pedido: Request, { params }: { params: Promise<{ tama
           background: FONDO,
         }}
       >
-        <svg width={lobo} height={lobo} viewBox="0 0 100 100">
-          <path
-            d="M18 36 L25 6 L43 25 L57 25 L75 6 L82 36 L73 60 L50 90 L27 60 Z"
-            fill="none"
-            stroke={ACENTO_2}
-            strokeWidth="6"
-            strokeLinejoin="round"
-          />
-          <path d="M34 43 L45 47 L34 52 Z" fill={ACENTO} />
-          <path d="M66 43 L55 47 L66 52 Z" fill={ACENTO} />
-          <path
-            d="M50 63 L43 73 L50 80 L57 73 Z"
-            fill="none"
-            stroke={ACENTO_2}
-            strokeWidth="5"
-            strokeLinejoin="round"
-          />
-        </svg>
+        {/* El símbolo se comparte con la cabecera para que favicon y marca no diverjan. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`data:image/png;base64,${imagen.toString("base64")}`}
+          width={lobo}
+          height={lobo}
+          alt=""
+          style={{ objectFit: "contain" }}
+        />
       </div>
     ),
     { width: lado, height: lado },

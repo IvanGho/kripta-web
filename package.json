@@ -9,7 +9,10 @@
     "lint": "eslint",
     "verificar-navegador": "python scripts/verificar_navegador.py",
     "capturas": "python scripts/capturas.py",
-    "preparar-auth": "node scripts/preparar-auth.mjs"
+    "preparar-auth": "node scripts/preparar-auth.mjs",
+    "preparar-automatizacion": "node scripts/preparar-automatizacion.mjs",
+    "publicar-escena": "node scripts/publicar-escena.mjs",
+    "configurar-bot": "node scripts/configurar-bot-telegram.mjs"
   },
   "dependencies": {
     "@auth/pg-adapter": "1.11.3",

@@ -56,8 +56,8 @@ const mono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(URL_SITIO),
   title: {
-    default: "Kripta · Torneos de Valorant y Truco en Discord",
-    template: "%s · Kripta",
+    default: "Monsterland · Torneos de Valorant y Truco en Discord",
+    template: "%s · Monsterland",
   },
   description:
     "Comunidad argentina de gaming con torneos semanales de Valorant y Truco, ranking de temporada y premios fijos. Entrá al Discord y jugá esta semana.",
@@ -66,8 +66,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_AR",
     url: URL_SITIO,
-    siteName: "Kripta · Monsterland",
-    title: "Kripta · Torneos de Valorant y Truco en Discord",
+    siteName: "Monsterland · Kripta",
+    title: "Monsterland · Torneos de Valorant y Truco en Discord",
     description:
       "Torneos semanales, ranking de temporada y premios fijos. Comunidad argentina, de 20 a 05.",
   },
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#090b0f",
+  themeColor: "#090c0a",
   width: "device-width",
   initialScale: 1,
 };

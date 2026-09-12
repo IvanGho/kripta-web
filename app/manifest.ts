@@ -11,13 +11,13 @@ import type { MetadataRoute } from "next";
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Kripta · Monsterland",
-    short_name: "Kripta",
+    name: "Monsterland · Kripta",
+    short_name: "Monsterland",
     description: "Torneos de Valorant y Truco, ranking de temporada y anotador de Truco.",
     start_url: "/",
     display: "standalone",
-    background_color: "#090b0f",
-    theme_color: "#090b0f",
+    background_color: "#090c0a",
+    theme_color: "#090c0a",
     lang: "es-AR",
     orientation: "portrait",
     /*
@@ -26,12 +26,11 @@ export default function manifest(): MetadataRoute.Manifest {
      * recorta el logo a la forma del launcher del teléfono: se puede comer el hocico del lobo o
      * rellenar los bordes con blanco sobre un logo pensado para fondo negro.
      *
-     * Los PNG los genera `app/icono/[tamano]/route.tsx` con el lobo al 60% del lienzo, que es la
-     * zona segura del recorte adaptativo. El SVG se deja porque es el que se ve nítido en la
-     * pestaña del navegador a cualquier tamaño.
+     * Los PNG los genera `app/icono/[tamano]/route.tsx` con el nuevo emblema al 60% del lienzo,
+     * que es la zona segura del recorte adaptativo.
      */
     icons: [
-      { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
+      { src: "/icon.png", sizes: "512x512", type: "image/png", purpose: "any" },
       { src: "/icono/192", sizes: "192x192", type: "image/png", purpose: "any" },
       { src: "/icono/512", sizes: "512x512", type: "image/png", purpose: "any" },
       { src: "/icono/512", sizes: "512x512", type: "image/png", purpose: "maskable" },

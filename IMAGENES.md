@@ -101,3 +101,31 @@ luz práctica es blanca cálida y tenue: hace que el lugar parezca habitable y r
 Los PNG maestros se conservan en `assets/originales/`. Ejecutar
 `node scripts/optimizar-imagenes.mjs` para crear los WebP de `public/imagenes/` y el JPG social que
 usa Open Graph. La web consume los archivos `-v3`; V2 queda sólo como historial visual.
+
+## V4 — Avatar de entrada
+
+La primera pieza de portada cambia de una entrada arquitectónica a un avatar original de lobo
+guerrero. Es la única imagen donde el lobo puede aparecer de forma literal: sostiene la esencia de
+la marca sin convertir el resto de la interfaz en una temática de fantasía.
+
+**Archivos:** `assets/originales/hero-lobo-kripta-v4.png`,
+`public/imagenes/hero-lobo-kripta-v4.webp` y `assets/hero-social-v4.jpg`.
+
+- El personaje se ubica a la derecha y la mitad izquierda queda limpia para contenido HTML.
+- Predominan basalto y grafito; el verde espectral sólo perfila, y las tres cicatrices rojas son el
+  único acento rojo.
+- No se incorporan logos, texto dentro de la imagen, armas, máscaras ni referencias a marcas de
+  terceros.
+- Será el póster de un futuro loop local de video; la especificación de entrega está en
+  `assets/loop-lobo-v4.md`.
+
+## V7 — Mascot logo de cabecera
+
+El lobo del Discord define la identidad: mirada neón, pelaje oscuro y tres cicatrices. Para la
+cabecera y los tamaños pequeños se creó una versión mascot de alto contraste, con las cicatrices
+separadas y una silueta más clara. El nombre queda como texto HTML (`MONSTERLAND / KRIPTA`) para
+mantener accesibilidad y nitidez en cualquier escala.
+
+**Archivos:** `assets/originales/kripta-mascot-v7.png`, `public/marca/kripta-lobo.png`,
+`public/marca/kripta-lobo-192.png`, `public/marca/kripta-lobo-512.png`,
+`public/marca/kripta-lobo-social.png` y `app/icon.png`.

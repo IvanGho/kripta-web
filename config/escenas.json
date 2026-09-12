@@ -1,0 +1,15 @@
+{
+  "predeterminada": "lobo-v4",
+  "escenas": [
+    {
+      "slug": "lobo-v4",
+      "titulo": "La manada despierta",
+      "poster": "/imagenes/hero-lobo-kripta-v4.webp",
+      "videoWebm": null,
+      "videoMp4": null,
+      "activaDesde": null,
+      "activaHasta": null,
+      "publicadaEn": "2026-09-12T00:00:00.000Z"
+    }
+  ]
+}

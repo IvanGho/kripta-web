@@ -5,6 +5,7 @@ import { mkdir } from "node:fs/promises";
 await mkdir("public/imagenes", { recursive: true });
 for (const nombre of [
   "hero-kripta-v3",
+  "hero-lobo-kripta-v4",
   "comunidad-kripta-v3",
   "torneos-kripta-v3",
   "herramienta-sensibilidad-v3",
@@ -19,7 +20,7 @@ for (const nombre of [
     .toFile(`public/imagenes/${nombre}.webp`);
 }
 // Satori usa JPEG/PNG; una copia chica evita cargar el PNG maestro al generar Open Graph.
-await sharp("assets/originales/hero-kripta-v3.png")
+await sharp("assets/originales/hero-lobo-kripta-v4.png")
   .resize({ width: 1200 })
   .jpeg({ quality: 78 })
-  .toFile("assets/hero-social-v3.jpg");
+  .toFile("assets/hero-social-v4.jpg");

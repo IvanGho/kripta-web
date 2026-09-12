@@ -707,6 +707,21 @@ with sync_playwright() as p:
         f'x-powered-by: {recibidas.get("x-powered-by")}',
     )
 
+    # La automatizacion puede generar costo real. Sin los secretos correctos tiene que fallar
+    # antes de leer el body o tocar Gemini, Telegram o la base.
+    webhook_sin_secreto = pagina.request.post(BASE + "/api/automatizacion/telegram", data={})
+    chequear(
+        "el webhook de Telegram falla cerrado sin secreto",
+        webhook_sin_secreto.status == 401,
+        f"status {webhook_sin_secreto.status}",
+    )
+    poll_sin_secreto = pagina.request.get(BASE + "/api/automatizacion/poll")
+    chequear(
+        "el poll de Veo falla cerrado sin token",
+        poll_sin_secreto.status == 401,
+        f"status {poll_sin_secreto.status}",
+    )
+
     # ---------------- presupuesto de JavaScript ----------------
     #
     # La direccion visual de globals.css declara un techo: el JavaScript servido no pasa de

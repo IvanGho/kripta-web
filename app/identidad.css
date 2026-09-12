@@ -25,20 +25,51 @@
   inset: 0;
   pointer-events: none;
 }
-.portal-escena img {
+.portal-escena img,
+.portal-escena video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  object-position: 72% 52%;
+  object-position: 72% 44%;
+}
+.portal-escena video {
+  z-index: 1;
 }
 .portal-velo {
   background:
     linear-gradient(
       90deg,
-      #090b0f 0%,
-      #090b0ff0 19%,
-      #090b0fb8 38%,
-      #090b0f10 69%
+      #090c0a 0%,
+      #090c0af0 19%,
+      #090c0ab8 38%,
+      #090c0a10 69%
     ),
-    linear-gradient(0deg, #090b0f 0%, transparent 26%);
+    linear-gradient(0deg, #090c0a 0%, transparent 26%);
+}
+.portal-mascota {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: max(3vw, calc((100vw - 1180px) / 2));
+  width: min(34vw, 430px);
+  transform: translateY(-48%);
+  pointer-events: none;
+}
+.portal-mascota img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 16px 34px #020503cc) drop-shadow(0 0 22px #5dff8640);
+}
+.portal-mascota-anillo {
+  position: absolute;
+  inset: 15%;
+  border: 1px solid color-mix(in srgb, var(--jade) 42%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 34px #5dff8629, inset 0 0 42px #5dff8612;
 }
 .portal-interior {
   position: relative;
@@ -66,7 +97,7 @@
   max-width: 460px;
   font-size: 17px;
   line-height: 1.75;
-  color: #c5ced9;
+  color: var(--tenue);
 }
 .portal-acciones {
   display: flex;
@@ -513,7 +544,7 @@
 #ranking,
 #explorar {
   /* La cabecera móvil ocupa dos filas. Los anclajes tienen que aterrizar debajo de ambas. */
-  scroll-margin-top: 10rem;
+  scroll-margin-top: 11.5rem;
 }
 .ruta-intro h3 {
   margin: 12px 0 10px;
@@ -904,6 +935,12 @@ footer button[aria-disabled] {
   .portal-escena {
     animation: abrir-portal 1400ms ease-out both;
   }
+  .portal-mascota img {
+    animation: lobo-vigila 5.5s ease-in-out infinite;
+  }
+  .portal-mascota-anillo {
+    animation: pulso-mascota 4s ease-in-out infinite;
+  }
   .portal-pie i {
     animation: luz-kripta 4s ease-in-out infinite;
   }
@@ -933,8 +970,30 @@ footer button[aria-disabled] {
       opacity: 0.7;
     }
   }
+  @keyframes lobo-vigila {
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+      filter: drop-shadow(0 16px 34px #020503cc) drop-shadow(0 0 22px #5dff8640);
+    }
+    50% {
+      transform: translateY(-8px) scale(1.018);
+      filter: drop-shadow(0 20px 38px #020503cc) drop-shadow(0 0 30px #5dff8670);
+    }
+  }
+  @keyframes pulso-mascota {
+    50% {
+      transform: scale(1.08);
+      opacity: 0.45;
+      box-shadow: 0 0 52px #5dff8652, inset 0 0 56px #5dff861f;
+    }
+  }
 }
 @media (max-width: 1000px) {
+  .portal-mascota {
+    right: 3vw;
+    width: min(38vw, 360px);
+  }
   .portal-interior {
     padding-top: 75px;
   }
@@ -956,20 +1015,29 @@ footer button[aria-disabled] {
   }
 }
 @media (max-width: 767px) {
+  .portal-mascota {
+    top: 24px;
+    right: 50%;
+    width: min(66vw, 255px);
+    transform: translateX(50%);
+  }
   .portal-interior {
-    padding-top: 250px;
+    /* En teléfono el avatar es la primera señal de marca: necesita aire antes del copy, no un
+       recorte decorativo detrás del título. */
+    padding-top: 292px;
   }
   .portal-escena {
-    height: 400px;
+    height: 470px;
     mask-image: linear-gradient(#000 58%, transparent 100%);
   }
-  .portal-escena img {
-    object-position: 78% center;
+  .portal-escena img,
+  .portal-escena video {
+    object-position: 72% 31%;
   }
   .portal-velo {
     background:
-      linear-gradient(0deg, #090b0f 0%, #090b0f 40%, #090b0f00 84%),
-      linear-gradient(90deg, #090b0f55, transparent);
+      linear-gradient(0deg, #090c0a 0%, #090c0a 40%, #090c0a00 84%),
+      linear-gradient(90deg, #090c0a55, transparent);
   }
   .portal-texto {
     padding-bottom: 35px;
@@ -1113,6 +1181,13 @@ footer button[aria-disabled] {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .portal-escena video {
+    display: none;
+  }
+  .portal-mascota img,
+  .portal-mascota-anillo {
+    animation: none;
+  }
   .herramienta-imagen img,
   .tarjeta,
   .boton,
@@ -1130,6 +1205,7 @@ footer button[aria-disabled] {
 @media (forced-colors: active) {
   .portal-escena,
   .portal-velo,
+  .portal-mascota,
   .arena > img,
   .arena-velo,
   .cierre-interior > img,
