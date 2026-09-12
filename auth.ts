@@ -15,9 +15,20 @@ declare global {
   var kriptaPoolIdentidad: Pool | undefined;
 }
 
+const sslPoolerSinCA = process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false";
+
+function conexionPooler(url: string): string {
+  if (!sslPoolerSinCA) return url;
+  // node-postgres deja que sslmode de la URI pise la opción ssl del cliente. Lo retiramos
+  // únicamente cuando la compatibilidad explícita de este pooler está habilitada.
+  const uri = new URL(url);
+  uri.searchParams.delete("sslmode");
+  return uri.toString();
+}
+
 const pool = URL_BASE_IDENTIDAD
   ? (globalThis.kriptaPoolIdentidad ??= new Pool({
-      connectionString: URL_BASE_IDENTIDAD,
+      connectionString: conexionPooler(URL_BASE_IDENTIDAD),
       // Las tablas del acceso viven aisladas de las tablas del panel aunque compartan Postgres.
       options: "-c search_path=kripta_auth,public",
       // En Vercel cada instancia caliente tiene su propio pool. Un único socket por instancia
@@ -27,7 +38,7 @@ const pool = URL_BASE_IDENTIDAD
       // runtime serverless no puede validar sin instalar su CA. Esta excepción se habilita
       // únicamente de forma explícita; cuando tengamos la CA, se elimina.
       ssl:
-        process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false"
+        sslPoolerSinCA
           ? { rejectUnauthorized: false }
           : undefined,
     }))

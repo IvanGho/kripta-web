@@ -8,16 +8,26 @@ declare global {
   var kriptaPoolAutomatizacion: Pool | undefined;
 }
 
+const sslPoolerSinCA = process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false";
+
+function conexionPooler(url: string): string {
+  if (!sslPoolerSinCA) return url;
+  // node-postgres permite que sslmode de la URI reemplace la opción ssl del cliente.
+  const uri = new URL(url);
+  uri.searchParams.delete("sslmode");
+  return uri.toString();
+}
+
 const pool = URL_BASE_IDENTIDAD
   ? (globalThis.kriptaPoolAutomatizacion ??= new Pool({
-      connectionString: URL_BASE_IDENTIDAD,
+      connectionString: conexionPooler(URL_BASE_IDENTIDAD),
       options: "-c search_path=kripta_automation,public",
       // Las funciones serverless se escalan por instancia; no por conexiones locales.
       max: 1,
       // Mantiene TLS hacia Supabase cuando el runtime de Vercel no dispone de la CA del
       // pooler compartido. Con una CA instalada debe usarse verify-full en su lugar.
       ssl:
-        process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false"
+        sslPoolerSinCA
           ? { rejectUnauthorized: false }
           : undefined,
     }))
