@@ -10,6 +10,7 @@ import {
 } from "@/app/lib/automatizacion/repositorio";
 import { enviarTexto, responderCallback, usuarioAutorizado } from "@/app/lib/automatizacion/telegram";
 import { iniciarVideoVeo } from "@/app/lib/automatizacion/veo";
+import { revisarVideosPendientes } from "@/app/lib/automatizacion/poll";
 import { normalizarTema } from "@/app/lib/automatizacion/tipos";
 
 export const runtime = "nodejs";
@@ -54,6 +55,7 @@ async function procesarMensaje(mensaje: MensajeTelegram): Promise<void> {
 
   const texto = mensaje.text?.trim() ?? "";
   if (texto === "/estado") {
+    await revisarVideosPendientes();
     const trabajo = await ultimoTrabajo(usuarioId);
     await enviarTexto(
       chatId,
