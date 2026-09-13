@@ -7,7 +7,7 @@ El flujo no publica una generación a ciegas. Separa propuesta, generación, rev
    key se genera un borrador local, útil para probar sin gastar.
 3. Telegram muestra el prompt y pide confirmación.
 4. `Generar video` inicia un trabajo asíncrono de Veo con el mascot V7 como referencia.
-5. Un cron consulta `/api/automatizacion/poll`; cuando termina, sube el MP4 a Telegram.
+5. GitHub Actions consulta `/api/automatizacion/poll` cada diez minutos; `/estado` consulta de inmediato. Cuando termina, sube el MP4 a Telegram.
 6. El administrador aprueba o rechaza el preview.
 7. El video aprobado puede pasar por CapCut y luego por `npm run publicar-escena`, que produce los
    formatos web y lo agenda por fecha.
@@ -57,7 +57,7 @@ la imagen.
 - El webhook valida `X-Telegram-Bot-Api-Secret-Token` con comparación de tiempo constante.
 - Sólo actúan los IDs de `TELEGRAM_ADMIN_IDS`.
 - Cada `update_id` se registra una vez para evitar trabajos duplicados por reintentos.
-- `AUTOMATION_DAILY_LIMIT` limita costo por administrador; el valor predeterminado es 3.
+- `AUTOMATION_DAILY_LIMIT` limita costo por administrador; el contador se reinicia a las 00:00 de Argentina y el valor predeterminado es 3.
 - Los callbacks cambian estado de forma atómica: tocar dos veces no crea dos videos.
 - Gemini y Veo tienen timeout y sus respuestas se validan antes de persistirlas.
 - La publicación final sigue requiriendo aprobación humana.

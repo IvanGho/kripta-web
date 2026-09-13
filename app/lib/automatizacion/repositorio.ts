@@ -129,7 +129,11 @@ export async function contarTrabajosRecientes(usuarioId: string): Promise<number
   const resultado = await exigirPool().query<{ cantidad: string }>(
     `SELECT COUNT(*)::text AS cantidad
        FROM trabajos_escena
-      WHERE usuario_id = $1 AND creado_en >= NOW() - INTERVAL '24 hours'`,
+       WHERE usuario_id = $1
+         AND creado_en >= (
+           (NOW() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date::timestamp
+           AT TIME ZONE 'America/Argentina/Buenos_Aires'
+         )`,
     [usuarioId],
   );
   return Number(resultado.rows[0]?.cantidad ?? 0);

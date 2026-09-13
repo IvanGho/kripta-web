@@ -57,6 +57,12 @@ export default async function Inicio() {
               sizes="100vw"
               preload
             />
+            {(escena.videoWebm || escena.videoMp4) && (
+              <video autoPlay muted loop playsInline preload="metadata" poster={escena.poster}>
+                {escena.videoWebm && <source src={escena.videoWebm} type="video/webm" />}
+                {escena.videoMp4 && <source src={escena.videoMp4} type="video/mp4" />}
+              </video>
+            )}
           </div>
           <div className="portal-velo" />
           <Brasas />
@@ -70,12 +76,6 @@ export default async function Inicio() {
               sizes="(max-width: 767px) 255px, (max-width: 1100px) 34vw, 430px"
               preload
             />
-            {(escena.videoWebm || escena.videoMp4) && (
-              <video autoPlay muted loop playsInline preload="metadata" poster={escena.poster}>
-                {escena.videoWebm && <source src={escena.videoWebm} type="video/webm" />}
-                {escena.videoMp4 && <source src={escena.videoMp4} type="video/mp4" />}
-              </video>
-            )}
           </div>
           <div className="portal-interior mx-auto max-w-6xl px-5">
             <div className="portal-texto">
