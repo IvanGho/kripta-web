@@ -11,6 +11,7 @@ import {
 import { enviarTexto, responderCallback, usuarioAutorizado } from "@/app/lib/automatizacion/telegram";
 import { iniciarVideoVeo } from "@/app/lib/automatizacion/veo";
 import { revisarVideosPendientes } from "@/app/lib/automatizacion/poll";
+import { crearPromptCapCut } from "@/app/lib/automatizacion/capcut";
 import { normalizarTema, type TrabajoEscena } from "@/app/lib/automatizacion/tipos";
 
 export const runtime = "nodejs";
@@ -94,6 +95,16 @@ async function procesarMensaje(mensaje: MensajeTelegram): Promise<void> {
     return;
   }
 
+  if (texto === "/capcut") {
+    const trabajo = await ultimoTrabajo(usuarioId);
+    if (!trabajo) {
+      await enviarTexto(chatId, "Todavia no hay una escena. Usa /escena <tema> primero.");
+      return;
+    }
+    await enviarTexto(chatId, crearPromptCapCut(trabajo.especificacion));
+    return;
+  }
+
   if (!texto.startsWith("/escena")) {
     await enviarTexto(chatId, "Comandos: /escena <tema> · /estado");
     return;
@@ -118,6 +129,9 @@ async function procesarMensaje(mensaje: MensajeTelegram): Promise<void> {
     [
       [
         { text: "Generar video", callback_data: `escena:generar:${trabajo.id}` },
+        { text: "Prompt CapCut", callback_data: `escena:capcut:${trabajo.id}` },
+      ],
+      [
         { text: "Rechazar", callback_data: `escena:rechazar:${trabajo.id}` },
       ],
     ],
@@ -130,7 +144,7 @@ async function procesarCallback(callback: CallbackTelegram): Promise<void> {
   const chatId = String(callback.message?.chat?.id ?? "");
   if (!callbackId || !usuarioAutorizado(usuarioId) || !chatId) return;
 
-  const coincidencia = /^escena:(generar|aprobar|rechazar):([0-9a-f-]{36})$/.exec(callback.data ?? "");
+  const coincidencia = /^escena:(generar|capcut|aprobar|rechazar):([0-9a-f-]{36})$/.exec(callback.data ?? "");
   if (!coincidencia) {
     await responderCallback(callbackId, "Acción inválida.");
     return;
@@ -139,6 +153,12 @@ async function procesarCallback(callback: CallbackTelegram): Promise<void> {
   const trabajo = await buscarTrabajo(id);
   if (!trabajo || trabajo.chatId !== chatId) {
     await responderCallback(callbackId, "La escena no existe o pertenece a otro chat.");
+    return;
+  }
+
+  if (accion === "capcut") {
+    await responderCallback(callbackId, "Prompt CapCut enviado.");
+    await enviarTexto(chatId, crearPromptCapCut(trabajo.especificacion));
     return;
   }
 
