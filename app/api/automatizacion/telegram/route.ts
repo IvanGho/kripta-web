@@ -11,7 +11,7 @@ import {
 import { enviarTexto, responderCallback, usuarioAutorizado } from "@/app/lib/automatizacion/telegram";
 import { iniciarVideoVeo } from "@/app/lib/automatizacion/veo";
 import { revisarVideosPendientes } from "@/app/lib/automatizacion/poll";
-import { normalizarTema } from "@/app/lib/automatizacion/tipos";
+import { normalizarTema, type TrabajoEscena } from "@/app/lib/automatizacion/tipos";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -48,6 +48,18 @@ function resumenPrompt(prompt: string): string {
   return prompt.length <= 2700 ? prompt : `${prompt.slice(0, 2690)}…`;
 }
 
+async function reintentarGeneracion(trabajo: TrabajoEscena): Promise<void> {
+  try {
+    const operacionVeo = await iniciarVideoVeo(trabajo.especificacion);
+    await cambiarEstado({ id: trabajo.id, desde: "generando", hacia: "generando", operacionVeo });
+    await enviarTexto(trabajo.chatId, `Veo esta generando "${trabajo.especificacion.titulo}". Consulta /estado en unos minutos.`);
+  } catch (error) {
+    await cambiarEstado({ id: trabajo.id, desde: "generando", hacia: "fallido" });
+    const detalle = error instanceof Error ? error.message : "Error desconocido";
+    await enviarTexto(trabajo.chatId, `No se pudo iniciar Veo: ${detalle.slice(0, 500)}`);
+  }
+}
+
 async function procesarMensaje(mensaje: MensajeTelegram): Promise<void> {
   const usuarioId = String(mensaje.from?.id ?? "");
   const chatId = String(mensaje.chat?.id ?? "");
@@ -63,6 +75,22 @@ async function procesarMensaje(mensaje: MensajeTelegram): Promise<void> {
         ? `Última escena: ${trabajo.especificacion.titulo}\nEstado: ${trabajo.estado}\nID: ${trabajo.id}`
         : "Todavía no hay escenas solicitadas.",
     );
+    return;
+  }
+
+  if (texto === "/reintentar") {
+    const trabajo = await ultimoTrabajo(usuarioId);
+    if (!trabajo || trabajo.estado !== "fallido") {
+      await enviarTexto(chatId, "No hay una escena fallida para reintentar. Usa /escena <tema> para crear una nueva.");
+      return;
+    }
+    const reservado = await cambiarEstado({ id: trabajo.id, desde: "fallido", hacia: "generando" });
+    if (!reservado) {
+      await enviarTexto(chatId, "La escena ya fue procesada. Consulta /estado.");
+      return;
+    }
+    await enviarTexto(chatId, `Reintentando "${reservado.especificacion.titulo}" sin crear una propuesta nueva.`);
+    await reintentarGeneracion(reservado);
     return;
   }
 

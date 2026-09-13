@@ -21,7 +21,7 @@ export async function iniciarVideoVeo(especificacion: EspecificacionEscena): Pro
   const endpoint = `${API_BASE}/models/${encodeURIComponent(modelo)}:predictLongRunning`;
   const parametros = {
     aspectRatio: especificacion.relacionAspecto,
-    durationSeconds: String(especificacion.duracionSegundos),
+    durationSeconds: especificacion.duracionSegundos,
     resolution: especificacion.resolucion,
     negativePrompt: especificacion.promptNegativo,
   };
