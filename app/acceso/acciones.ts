@@ -42,6 +42,18 @@ export async function vincularDiscord() {
   redirect(data.url);
 }
 
+/** Une Google a la sesión existente; no inicia una cuenta independiente. */
+export async function vincularGoogle() {
+  if (!ACCESO_LISTO) return;
+  const supabase = await crearClienteServidor();
+  const { data, error } = await supabase.auth.linkIdentity({
+    provider: "google",
+    options: { redirectTo: `${await origenActual()}/auth/callback?next=/mi-kripta` },
+  });
+  if (error || !data.url) redirect("/mi-kripta?error=vinculacion");
+  redirect(data.url);
+}
+
 export async function cerrarSesion() {
   if (ACCESO_LISTO) {
     const supabase = await crearClienteServidor();

@@ -777,6 +777,18 @@
   width: 100%;
   padding: 10px 12px;
 }
+.mi-kripta-acciones {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+}
+.mi-kripta-acciones form {
+  margin-top: 0;
+}
+.mi-kripta-acciones .boton-sec {
+  margin-top: 0;
+}
 .mi-kripta-paso strong {
   color: var(--texto);
 }

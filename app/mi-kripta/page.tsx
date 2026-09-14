@@ -6,7 +6,7 @@ import { Pie } from "../componentes/pie";
 import { ACCESO_LISTO } from "../lib/identidad";
 import { sincronizarJugador } from "../lib/sincronizar-jugador";
 import { crearClienteServidor } from "../lib/supabase/server";
-import { cerrarSesion, vincularDiscord } from "../acceso/acciones";
+import { cerrarSesion, vincularDiscord, vincularGoogle } from "../acceso/acciones";
 
 export const metadata: Metadata = {
   title: "Mi Kripta",
@@ -68,7 +68,14 @@ export default async function MiKripta({
             <span>02 · Accesos</span>
             <h2 id="titulo-accesos">Tus conexiones</h2>
             <p>Discord: <strong>{tieneDiscord ? "conectado" : "pendiente"}</strong><br />Google: <strong>{tieneGoogle ? "conectado" : "no conectado"}</strong></p>
-            <Link href="/#torneos" className="boton-sec text-sm">Explorar torneos <b aria-hidden="true">↓</b></Link>
+            <div className="mi-kripta-acciones">
+              {!tieneGoogle && (
+                <form action={vincularGoogle}>
+                  <button type="submit" className="boton-sec text-sm">Vincular Google</button>
+                </form>
+              )}
+              <Link href="/#torneos" className="boton-sec text-sm">Explorar torneos <b aria-hidden="true">↓</b></Link>
+            </div>
           </section>
           <section className="tarjeta mi-kripta-paso" aria-labelledby="titulo-sesion">
             <span>03 · Seguridad</span>
