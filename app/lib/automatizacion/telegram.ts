@@ -36,6 +36,36 @@ export async function enviarTexto(chatId: string, texto: string, botones?: Boton
   });
 }
 
+export async function enviarTextoHtml(chatId: string, texto: string, botones?: Boton[][]): Promise<void> {
+  await llamarTelegram("sendMessage", {
+    chat_id: chatId,
+    text: texto.slice(0, 4096),
+    parse_mode: "HTML",
+    disable_web_page_preview: true,
+    ...(botones ? { reply_markup: { inline_keyboard: botones } } : {}),
+  });
+}
+
+export async function enviarDocumento(
+  chatId: string,
+  contenido: ArrayBuffer,
+  nombreArchivo: string,
+  texto: string,
+): Promise<void> {
+  const formulario = new FormData();
+  formulario.set("chat_id", chatId);
+  formulario.set("caption", texto.slice(0, 1024));
+  formulario.set("document", new Blob([contenido], { type: "image/png" }), nombreArchivo);
+
+  const respuesta = await fetch(`https://api.telegram.org/bot${token()}/sendDocument`, {
+    method: "POST",
+    body: formulario,
+    signal: AbortSignal.timeout(30_000),
+    cache: "no-store",
+  });
+  if (!respuesta.ok) throw new Error(`Telegram sendDocument respondiÃ³ ${respuesta.status}.`);
+}
+
 export async function responderCallback(callbackId: string, texto: string): Promise<void> {
   await llamarTelegram("answerCallbackQuery", {
     callback_query_id: callbackId,

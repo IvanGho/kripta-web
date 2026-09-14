@@ -1,4 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { generarPropuesta } from "@/app/lib/automatizacion/gemini";
 import {
   buscarTrabajo,
@@ -8,10 +10,10 @@ import {
   registrarUpdateTelegram,
   ultimoTrabajo,
 } from "@/app/lib/automatizacion/repositorio";
-import { enviarTexto, responderCallback, usuarioAutorizado } from "@/app/lib/automatizacion/telegram";
+import { enviarDocumento, enviarTexto, enviarTextoHtml, responderCallback, usuarioAutorizado } from "@/app/lib/automatizacion/telegram";
 import { iniciarVideoVeo } from "@/app/lib/automatizacion/veo";
 import { revisarVideosPendientes } from "@/app/lib/automatizacion/poll";
-import { crearPromptCapCut } from "@/app/lib/automatizacion/capcut";
+import { crearGuiaCapCut, crearPromptCapCut, crearTarjetaCapCut } from "@/app/lib/automatizacion/capcut";
 import { normalizarTema, type TrabajoEscena } from "@/app/lib/automatizacion/tipos";
 
 export const runtime = "nodejs";
@@ -47,6 +49,27 @@ function limiteDiario(): number {
 
 function resumenPrompt(prompt: string): string {
   return prompt.length <= 2700 ? prompt : `${prompt.slice(0, 2690)}…`;
+}
+
+function botonesCapCut(id: string) {
+  return [
+    [
+      { text: "📋 Prompt limpio", callback_data: `escena:capcutcopy:${id}` },
+      { text: "🖼️ Enviar lobo", callback_data: `escena:capcutfile:${id}` },
+    ],
+    [{ text: "🧭 Guia CapCut", callback_data: `escena:capcutguide:${id}` }],
+  ];
+}
+
+async function enviarTarjetaCapCut(chatId: string, trabajo: TrabajoEscena): Promise<void> {
+  await enviarTextoHtml(chatId, crearTarjetaCapCut(trabajo.especificacion), botonesCapCut(trabajo.id));
+}
+
+async function enviarArchivoLobo(chatId: string): Promise<void> {
+  const lobo = await readFile(join(process.cwd(), "public", "marca", "kripta-lobo.png"));
+  const contenido = new ArrayBuffer(lobo.byteLength);
+  new Uint8Array(contenido).set(lobo);
+  await enviarDocumento(chatId, contenido, "kripta-lobo-referencia.png", "Referencia oficial: subi este PNG en CapCut como Image to Video.");
 }
 
 async function reintentarGeneracion(trabajo: TrabajoEscena): Promise<void> {
@@ -101,7 +124,7 @@ async function procesarMensaje(mensaje: MensajeTelegram): Promise<void> {
       await enviarTexto(chatId, "Todavia no hay una escena. Usa /escena <tema> primero.");
       return;
     }
-    await enviarTexto(chatId, crearPromptCapCut(trabajo.especificacion));
+    await enviarTarjetaCapCut(chatId, trabajo);
     return;
   }
 
@@ -144,7 +167,7 @@ async function procesarCallback(callback: CallbackTelegram): Promise<void> {
   const chatId = String(callback.message?.chat?.id ?? "");
   if (!callbackId || !usuarioAutorizado(usuarioId) || !chatId) return;
 
-  const coincidencia = /^escena:(generar|capcut|aprobar|rechazar):([0-9a-f-]{36})$/.exec(callback.data ?? "");
+  const coincidencia = /^escena:(generar|capcut|capcutcopy|capcutfile|capcutguide|aprobar|rechazar):([0-9a-f-]{36})$/.exec(callback.data ?? "");
   if (!coincidencia) {
     await responderCallback(callbackId, "Acción inválida.");
     return;
@@ -158,7 +181,25 @@ async function procesarCallback(callback: CallbackTelegram): Promise<void> {
 
   if (accion === "capcut") {
     await responderCallback(callbackId, "Prompt CapCut enviado.");
-    await enviarTexto(chatId, crearPromptCapCut(trabajo.especificacion));
+    await enviarTarjetaCapCut(chatId, trabajo);
+    return;
+  }
+
+  if (accion === "capcutcopy") {
+    await responderCallback(callbackId, "Prompt limpio enviado.");
+    await enviarTextoHtml(chatId, `<b>PROMPT CAPCUT - COPIAR</b>\n\n<pre>${crearPromptCapCut(trabajo.especificacion).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</pre>`);
+    return;
+  }
+
+  if (accion === "capcutfile") {
+    await responderCallback(callbackId, "Enviando imagen de referencia.");
+    await enviarArchivoLobo(chatId);
+    return;
+  }
+
+  if (accion === "capcutguide") {
+    await responderCallback(callbackId, "Guia CapCut enviada.");
+    await enviarTextoHtml(chatId, crearGuiaCapCut());
     return;
   }
 
