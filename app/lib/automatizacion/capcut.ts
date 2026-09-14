@@ -33,43 +33,42 @@ export function crearPromptCapCut(escena: EspecificacionEscena): string {
 
 export function crearTarjetaPipelineCapCut(escena: EspecificacionEscena): string {
   return [
-    "🐺 <b>CAPCUT · PIPELINE DE ESCENA</b>",
+    "\u{1F3AC} <b>CAPCUT \u00B7 PIPELINE DE ESCENA</b>",
     `<blockquote><b>${escaparHtml(escena.titulo)}</b>\n${escaparHtml(escena.tema)}</blockquote>`,
-    "<b>1. Imagen de referencia</b>\nCreamos una imagen cinematografica para el hero. No animamos el logo de Discord directamente.",
-    "<b>2. Revision humana</b>\nVos aprobas la imagen final en CapCut.",
-    "<b>3. Video</b>\nEl bot devuelve un prompt para animar exactamente esa imagen con Sora, Seedance o Veo.",
-    "💡 <i>Veo directo sigue disponible desde el boton Generar video del borrador.</i>",
+    "<b>FLUJO</b>\n1. Crear key art \u2192 2. Aprobar imagen \u2192 3. Animar con Sora.",
+    "<b>ESTADO</b>\nEsperando una imagen cinematografica aprobada.",
+    "\u{1F4A1} <i>No animes el logo de Discord directamente: es solo la guia de identidad.</i>",
   ].join("\n\n");
 }
 
 export function crearTarjetaImagenCapCut(escena: EspecificacionEscena): string {
   return [
-    "🖼️ <b>PASO 1 · IMAGEN DE REFERENCIA</b>",
+    "\u{1F5BC}\u{FE0F} <b>PASO 1 \u00B7 IMAGEN DE REFERENCIA</b>",
     "Usa <b>Imagen de IA / Seedream</b> en CapCut. Para esta etapa no subas el logo del Discord como imagen inicial: queremos salir de la estetica de sticker.",
-    "🌐 <b>PROMPT EN INGLES</b>",
+    "\u{1F310} <b>PROMPT EN INGLES</b>",
     `<pre>${escaparHtml(crearPromptImagenCapCut(escena))}</pre>`,
-    "⚙️ <b>AJUSTES</b>\n• 16:9 · 2K · 1 resultado\n• Objetivo: key art cinematografico, no logo\n• Revisa: tres cicatrices rojas y aire oscuro a la izquierda.",
+    "\u{2699}\u{FE0F} <b>AJUSTES</b>\n\u2022 16:9 \u00B7 2K \u00B7 1 resultado\n\u2022 Objetivo: key art cinematografico, no logo\n\u2022 Revisa: tres cicatrices rojas y aire oscuro a la izquierda.",
   ].join("\n\n");
 }
 
 export function crearTarjetaVideoCapCut(escena: EspecificacionEscena): string {
   const prompt = escaparHtml(crearPromptCapCut(escena));
   return [
-    "🎬 <b>PASO 2 · ANIMAR IMAGEN APROBADA</b>",
+    "\u{1F3AC} <b>PASO 2 \u00B7 ANIMAR IMAGEN APROBADA</b>",
     `<blockquote><b>${escaparHtml(escena.titulo)}</b>\n${escaparHtml(escena.tema)}</blockquote>`,
-    "🌐 <b>PROMPT EN INGLES</b>",
+    "\u{1F310} <b>PROMPT EN INGLES</b>",
     `<pre>${prompt}</pre>`,
-    "⚙️ <b>AJUSTES RECOMENDADOS</b>",
-    "• AI Video &gt; Image to Video\n• Sora: 16:9 · 8 segundos · 720p si es el limite de tu plan\n• Sin voz, texto, subtitulos ni watermark\n• Exportar MP4 · 24 fps",
-    "💡 <i>Subi la imagen que acabas de aprobar. No vuelvas a usar el logo frontal como fuente de video.</i>",
+    "\u{2699}\u{FE0F} <b>AJUSTES RECOMENDADOS</b>",
+    "\u2022 AI Video &gt; Image to Video\n\u2022 Sora: 16:9 \u00B7 8 segundos \u00B7 720p si es el limite de tu plan\n\u2022 Sin voz, texto, subtitulos ni watermark\n\u2022 Exportar MP4 \u00B7 24 fps",
+    "\u{1F4A1} <i>Subi la imagen que acabas de aprobar. No vuelvas a usar el logo frontal como fuente de video.</i>",
   ].join("\n\n");
 }
 
 export function crearGuiaCapCut(): string {
   return [
-    "🧭 <b>GUIA RAPIDA PARA CAPCUT</b>",
+    "\u{1F9ED} <b>GUIA RAPIDA PARA CAPCUT</b>",
     "<b>1.</b> En Imagen de IA, usa el prompt de imagen con 16:9 y 2K. No cargues el logo frontal como fuente de esa imagen.",
-    "<b>2.</b> Elegi una imagen con lobo realista a la derecha, tres cicatrices rojas y espacio oscuro a la izquierda.",
+    "<b>2.</b> Elegi una imagen con lobo 3D estilizado a la derecha, tres cicatrices rojas y espacio oscuro a la izquierda.",
     "<b>3.</b> Toca Imagen aprobada en el bot. Luego, en AI Video &gt; Image to Video, subi esa nueva imagen.",
     "<b>4.</b> Pega el prompt de video. En Sora usa 16:9, 8 segundos, 720p y audio apagado.",
     "<b>5.</b> Exporta MP4 a 24 fps. Cuando lo tengas, me pasas el archivo para publicarlo en la web.",

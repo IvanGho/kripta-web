@@ -62,7 +62,7 @@ function botonesPipelineCapCut(id: string) {
   return [
     [
       { text: "🖼️ 1. Crear imagen", callback_data: `escena:capcutimage:${id}` },
-      { text: "🐺 Ver lobo", callback_data: `escena:capcutfile:${id}` },
+      { text: "🐺 Ver referencia", callback_data: `escena:capcutfile:${id}` },
     ],
     [
       { text: "✅ 2. Imagen aprobada", callback_data: `escena:capcutapprove:${id}` },
@@ -73,7 +73,7 @@ function botonesPipelineCapCut(id: string) {
 
 function botonesImagenCapCut(id: string) {
   return [
-    [{ text: "📋 Prompt imagen", callback_data: `escena:capcutimagecopy:${id}` }],
+    [{ text: "📋 Copiar prompt imagen", callback_data: `escena:capcutimagecopy:${id}` }],
     [
       { text: "✅ Imagen aprobada", callback_data: `escena:capcutapprove:${id}` },
       { text: "↩️ Pipeline", callback_data: `escena:capcut:${id}` },
@@ -83,7 +83,7 @@ function botonesImagenCapCut(id: string) {
 
 function botonesVideoCapCut(id: string) {
   return [
-    [{ text: "📋 Prompt video", callback_data: `escena:capcutcopy:${id}` }],
+    [{ text: "📋 Copiar prompt video", callback_data: `escena:capcutcopy:${id}` }],
     [
       { text: "↩️ Cambiar imagen", callback_data: `escena:capcutimage:${id}` },
       { text: "🧭 Guia", callback_data: `escena:capcutguide:${id}` },
