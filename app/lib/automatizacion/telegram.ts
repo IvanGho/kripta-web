@@ -46,6 +46,37 @@ export async function enviarTextoHtml(chatId: string, texto: string, botones?: B
   });
 }
 
+export async function editarTextoHtml(
+  chatId: string,
+  messageId: number,
+  texto: string,
+  botones?: Boton[][],
+): Promise<void> {
+  await llamarTelegram("editMessageText", {
+    chat_id: chatId,
+    message_id: messageId,
+    text: texto.slice(0, 4096),
+    parse_mode: "HTML",
+    disable_web_page_preview: true,
+    ...(botones ? { reply_markup: { inline_keyboard: botones } } : {}),
+  });
+}
+
+export async function editarCaptionHtml(
+  chatId: string,
+  messageId: number,
+  texto: string,
+  botones?: Boton[][],
+): Promise<void> {
+  await llamarTelegram("editMessageCaption", {
+    chat_id: chatId,
+    message_id: messageId,
+    caption: texto.slice(0, 1024),
+    parse_mode: "HTML",
+    ...(botones ? { reply_markup: { inline_keyboard: botones } } : {}),
+  });
+}
+
 export async function enviarDocumento(
   chatId: string,
   contenido: ArrayBuffer,

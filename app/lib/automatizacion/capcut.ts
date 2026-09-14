@@ -52,15 +52,12 @@ export function crearTarjetaImagenCapCut(escena: EspecificacionEscena): string {
 }
 
 export function crearTarjetaVideoCapCut(escena: EspecificacionEscena): string {
-  const prompt = escaparHtml(crearPromptCapCut(escena));
   return [
-    "\u{1F3AC} <b>PASO 2 \u00B7 ANIMAR IMAGEN APROBADA</b>",
+    "\u{1F3AC} <b>PASO 2 \u00B7 VIDEO</b>",
     `<blockquote><b>${escaparHtml(escena.titulo)}</b>\n${escaparHtml(escena.tema)}</blockquote>`,
-    "\u{1F310} <b>PROMPT EN INGLES</b>",
-    `<pre>${prompt}</pre>`,
-    "\u{2699}\u{FE0F} <b>AJUSTES RECOMENDADOS</b>",
-    "\u2022 AI Video &gt; Image to Video\n\u2022 Sora: 16:9 \u00B7 8 segundos \u00B7 720p si es el limite de tu plan\n\u2022 Sin voz, texto, subtitulos ni watermark\n\u2022 Exportar MP4 \u00B7 24 fps",
-    "\u{1F4A1} <i>Subi a CapCut la candidata aprobada desde Telegram. Cuando exportes el MP4, envialo a este chat para su revision final.</i>",
+    "<b>IMAGEN APROBADA</b>\nLa base visual ya esta definida. Elegi Sora/CapCut para usar el prompt o Veo para la ruta directa de Google.",
+    "<b>CUANDO TERMINES</b>\nEnvia el MP4 exportado a este chat. El bot abrira la revision final con Aprobar o Regenerar.",
+    "\u{1F4A1} <i>El prompt se abre solo al tocar Copiar prompt Sora; no ensuciamos este panel con texto tecnico.</i>",
   ].join("\n\n");
 }
 
@@ -68,7 +65,7 @@ export function crearGuiaCapCut(): string {
   return [
     "\u{1F9ED} <b>GUIA RAPIDA PARA CAPCUT</b>",
     "<b>1.</b> En Imagen de IA, usa el prompt de imagen con 16:9 y 2K. No cargues el logo frontal como fuente de esa imagen.",
-    "<b>2.</b> Elegi una imagen con lobo 3D estilizado a la derecha, tres cicatrices rojas y espacio oscuro a la izquierda.",
+    "<b>2.</b> Elegi una imagen con lobo fotorrealista a la derecha, tres cicatrices rojas y espacio oscuro a la izquierda.",
     "<b>3.</b> Toca Imagen aprobada en el bot. Luego, en AI Video &gt; Image to Video, subi esa nueva imagen.",
     "<b>4.</b> Pega el prompt de video. En Sora usa 16:9, 8 segundos, 720p y audio apagado.",
     "<b>5.</b> Exporta MP4 a 24 fps. Cuando lo tengas, me pasas el archivo para publicarlo en la web.",

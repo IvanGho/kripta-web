@@ -11,7 +11,7 @@ import {
   registrarUpdateTelegram,
   ultimoTrabajo,
 } from "@/app/lib/automatizacion/repositorio";
-import { enviarDocumento, enviarFoto, enviarTexto, enviarTextoHtml, responderCallback, usuarioAutorizado } from "@/app/lib/automatizacion/telegram";
+import { editarCaptionHtml, editarTextoHtml, enviarDocumento, enviarFoto, enviarTexto, enviarTextoHtml, responderCallback, usuarioAutorizado } from "@/app/lib/automatizacion/telegram";
 import { generarImagenCandidata } from "@/app/lib/automatizacion/imagen";
 import { iniciarVideoVeo } from "@/app/lib/automatizacion/veo";
 import { revisarVideosPendientes } from "@/app/lib/automatizacion/poll";
@@ -40,7 +40,7 @@ type CallbackTelegram = {
   id?: string;
   data?: string;
   from?: UsuarioTelegram;
-  message?: { chat?: ChatTelegram };
+  message?: { chat?: ChatTelegram; message_id?: number };
 };
 type UpdateTelegram = {
   update_id?: number;
@@ -59,10 +59,6 @@ function secretoValido(recibido: string | null): boolean {
 function limiteDiario(): number {
   const configurado = Number(process.env.AUTOMATION_DAILY_LIMIT ?? "3");
   return Number.isInteger(configurado) && configurado > 0 ? Math.min(configurado, 20) : 3;
-}
-
-function resumenPrompt(prompt: string): string {
-  return prompt.length <= 2700 ? prompt : `${prompt.slice(0, 2690)}…`;
 }
 
 function botonesPipelineCapCut(id: string) {
@@ -118,6 +114,14 @@ async function enviarPanelCapCut(chatId: string, trabajo: TrabajoEscena): Promis
   await enviarTextoHtml(chatId, crearTarjetaPipelineCapCut(trabajo.especificacion), botonesPipelineCapCut(trabajo.id));
 }
 
+function textoRenderizando(trabajo: TrabajoEscena, intento: number): string {
+  return `\u{1F9EA} <b>KEY ART EN PROCESO</b>\n\n<b>${trabajo.especificacion.titulo}</b>\n\nRenderizando candidata ${intento}. El resultado aparecera debajo con los botones de aprobar o regenerar.`;
+}
+
+function textoCandidataLista(trabajo: TrabajoEscena, intento: number): string {
+  return `\u{1F3A8} <b>KEY ART LISTO</b>\n\n<b>${trabajo.especificacion.titulo}</b>\n\nCandidata ${intento} enviada debajo. Revisala y usa sus botones; no escribas <code>/escena aprobada</code>.`;
+}
+
 async function enviarTarjetaImagenCapCut(chatId: string, trabajo: TrabajoEscena): Promise<void> {
   await enviarTextoHtml(chatId, crearTarjetaImagenCapCut(trabajo.especificacion), botonesImagenCapCut(trabajo.id));
 }
@@ -126,21 +130,36 @@ async function enviarTarjetaVideoCapCut(chatId: string, trabajo: TrabajoEscena):
   await enviarTextoHtml(chatId, crearTarjetaVideoCapCut(trabajo.especificacion), botonesVideoCapCut(trabajo.id));
 }
 
-async function generarYEnviarImagen(chatId: string, trabajo: TrabajoEscena): Promise<void> {
-  await enviarTextoHtml(chatId, "✨ <b>GENERANDO KEY ART</b>\n\nEstoy creando una unica candidata cinematografica para que la revises aca. Esto puede tardar hasta un minuto y no inicia Veo.");
+async function generarYEnviarImagen(
+  chatId: string,
+  trabajo: TrabajoEscena,
+  contexto?: { messageId: number; esFoto: boolean },
+): Promise<void> {
+  const intento = trabajo.imagenIntentos + 1;
+  if (contexto) {
+    if (contexto.esFoto) await editarCaptionHtml(chatId, contexto.messageId, textoRenderizando(trabajo, intento));
+    else await editarTextoHtml(chatId, contexto.messageId, textoRenderizando(trabajo, intento));
+  }
   try {
-    const imagen = await generarImagenCandidata(trabajo.especificacion, trabajo.imagenIntentos + 1);
+    const imagen = await generarImagenCandidata(trabajo.especificacion, intento);
     const fileId = await enviarFoto(
       chatId,
       imagen,
       `${trabajo.especificacion.slug}-key-art.png`,
-      `🎨 CANDIDATA ${trabajo.imagenIntentos + 1}\n\n${trabajo.especificacion.titulo}\n\nRevisar: tres cicatrices rojas, lobo a la derecha, aire oscuro a la izquierda y sin texto.`,
+      `\u{1F3A8} <b>CANDIDATA ${intento}</b>\n\n${trabajo.especificacion.titulo}\n\nRevisa: 3 cicatrices rojas, lobo a la derecha, aire oscuro a la izquierda y sin texto. Elegi una accion abajo.`,
       botonesRevisionImagen(trabajo.id),
     );
     await guardarImagenCandidata({ id: trabajo.id, fileId });
+    if (contexto && !contexto.esFoto) {
+      await editarTextoHtml(chatId, contexto.messageId, textoCandidataLista(trabajo, intento), botonesPipelineCapCut(trabajo.id));
+    }
   } catch (error) {
     const detalle = error instanceof Error ? error.message : "Error desconocido";
-    await enviarTextoHtml(chatId, `⚠️ <b>NO SE PUDO GENERAR LA IMAGEN</b>\n\n${detalle.slice(0, 700)}\n\nPodes usar <b>Prompt manual</b> y crearla en CapCut. No se inicio ningun video.`);
+    const texto = `\u{26A0}\u{FE0F} <b>NO SE PUDO GENERAR LA IMAGEN</b>\n\n${detalle.slice(0, 700)}\n\nNo se inicio ningun video. Podes reintentar o usar el prompt manual.`;
+    if (contexto) {
+      if (contexto.esFoto) await editarCaptionHtml(chatId, contexto.messageId, texto, botonesRevisionImagen(trabajo.id));
+      else await editarTextoHtml(chatId, contexto.messageId, texto, botonesPipelineCapCut(trabajo.id));
+    } else await enviarTextoHtml(chatId, texto, botonesPipelineCapCut(trabajo.id));
   }
 }
 
@@ -242,6 +261,11 @@ async function procesarMensaje(mensaje: MensajeTelegram): Promise<void> {
     return;
   }
 
+  if (/^(aproba(?:da|do)?|rechaza(?:da|do)?|regenera(?:r)?)$/i.test(tema)) {
+    await enviarTextoHtml(chatId, "\u{1F4A1} <b>USA LOS BOTONES DE LA TARJETA</b>\n\nLos textos como <code>/escena aprobada</code> crean una escena nueva. Para aprobar o regenerar, toca los botones debajo de la imagen o el video.");
+    return;
+  }
+
   if ((await contarTrabajosRecientes(usuarioId)) >= limiteDiario()) {
     await enviarTexto(chatId, "Alcanzaste el límite diario de propuestas. Probá nuevamente mañana.");
     return;
@@ -249,25 +273,14 @@ async function procesarMensaje(mensaje: MensajeTelegram): Promise<void> {
 
   const propuesta = await generarPropuesta(tema);
   const trabajo = await guardarBorrador({ chatId, usuarioId, especificacion: propuesta.especificacion });
-  await enviarTexto(
-    chatId,
-    `Borrador ${propuesta.origen === "gemini" ? "Gemini" : "local"}\n\n${propuesta.especificacion.titulo}\n\n${resumenPrompt(propuesta.especificacion.promptVeo)}\n\nID: ${trabajo.id}`,
-    [
-      [
-        { text: "Generar video", callback_data: `escena:generar:${trabajo.id}` },
-        { text: "Prompt CapCut", callback_data: `escena:capcut:${trabajo.id}` },
-      ],
-      [
-        { text: "Rechazar", callback_data: `escena:rechazar:${trabajo.id}` },
-      ],
-    ],
-  );
+  await enviarPanelCapCut(chatId, trabajo);
 }
 
 async function procesarCallback(callback: CallbackTelegram): Promise<void> {
   const callbackId = callback.id ?? "";
   const usuarioId = String(callback.from?.id ?? "");
   const chatId = String(callback.message?.chat?.id ?? "");
+  const messageId = callback.message?.message_id;
   if (!callbackId || !usuarioAutorizado(usuarioId) || !chatId) return;
 
   const coincidencia = /^escena:(generar|capcut|capcutimage|capcutimagecopy|capcutapprove|capcutcopy|capcutfile|capcutguide|imagegenerate|imageregenerate|videoretry|aprobar|rechazar):([0-9a-f-]{36})$/.exec(callback.data ?? "");
@@ -290,7 +303,11 @@ async function procesarCallback(callback: CallbackTelegram): Promise<void> {
 
   if (accion === "imagegenerate" || accion === "imageregenerate") {
     await responderCallback(callbackId, accion === "imageregenerate" ? "Regenerando candidata..." : "Generando candidata...");
-    await generarYEnviarImagen(chatId, trabajo);
+    await generarYEnviarImagen(
+      chatId,
+      trabajo,
+      messageId ? { messageId, esFoto: accion === "imageregenerate" } : undefined,
+    );
     return;
   }
 
