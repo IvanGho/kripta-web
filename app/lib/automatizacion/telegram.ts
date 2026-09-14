@@ -66,6 +66,34 @@ export async function enviarDocumento(
   if (!respuesta.ok) throw new Error(`Telegram sendDocument respondiÃ³ ${respuesta.status}.`);
 }
 
+export async function enviarFoto(
+  chatId: string,
+  contenido: ArrayBuffer,
+  nombreArchivo: string,
+  texto: string,
+  botones?: Boton[][],
+): Promise<string> {
+  const formulario = new FormData();
+  formulario.set("chat_id", chatId);
+  formulario.set("caption", texto.slice(0, 1024));
+  formulario.set("photo", new Blob([contenido], { type: "image/png" }), nombreArchivo);
+  if (botones) formulario.set("reply_markup", JSON.stringify({ inline_keyboard: botones }));
+
+  const respuesta = await fetch(`https://api.telegram.org/bot${token()}/sendPhoto`, {
+    method: "POST",
+    body: formulario,
+    signal: AbortSignal.timeout(30_000),
+    cache: "no-store",
+  });
+  const cuerpo = (await respuesta.json()) as {
+    ok?: boolean;
+    result?: { photo?: Array<{ file_id?: string }> };
+  };
+  const archivo = cuerpo.result?.photo?.at(-1)?.file_id;
+  if (!respuesta.ok || !cuerpo.ok || !archivo) throw new Error(`Telegram sendPhoto respondio ${respuesta.status}.`);
+  return archivo;
+}
+
 export async function responderCallback(callbackId: string, texto: string): Promise<void> {
   await llamarTelegram("answerCallbackQuery", {
     callback_query_id: callbackId,

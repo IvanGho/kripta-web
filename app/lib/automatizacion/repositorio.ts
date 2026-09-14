@@ -56,6 +56,8 @@ type FilaTrabajo = {
   especificacion: EspecificacionEscena;
   operacion_veo: string | null;
   video_origen_url: string | null;
+  imagen_telegram_file_id: string | null;
+  imagen_intentos: number;
   creado_en: Date;
   actualizado_en: Date;
 };
@@ -69,6 +71,8 @@ function desdeFila(fila: FilaTrabajo): TrabajoEscena {
     especificacion: fila.especificacion,
     operacionVeo: fila.operacion_veo,
     videoOrigenUrl: fila.video_origen_url,
+    imagenTelegramFileId: fila.imagen_telegram_file_id,
+    imagenIntentos: fila.imagen_intentos,
     creadoEn: fila.creado_en.toISOString(),
     actualizadoEn: fila.actualizado_en.toISOString(),
   };
@@ -113,6 +117,22 @@ export async function cambiarEstado(params: {
      WHERE id = $1 AND estado = $2
      RETURNING *`,
     [params.id, params.desde, params.hacia, params.operacionVeo ?? null, params.videoOrigenUrl ?? null],
+  );
+  return resultado.rows[0] ? desdeFila(resultado.rows[0]) : null;
+}
+
+export async function guardarImagenCandidata(params: {
+  id: string;
+  fileId: string;
+}): Promise<TrabajoEscena | null> {
+  const resultado = await exigirPool().query<FilaTrabajo>(
+    `UPDATE trabajos_escena
+       SET imagen_telegram_file_id = $2,
+           imagen_intentos = imagen_intentos + 1,
+           actualizado_en = NOW()
+     WHERE id = $1
+     RETURNING *`,
+    [params.id, params.fileId],
   );
   return resultado.rows[0] ? desdeFila(resultado.rows[0]) : null;
 }

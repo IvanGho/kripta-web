@@ -31,6 +31,8 @@ export type TrabajoEscena = {
   especificacion: EspecificacionEscena;
   operacionVeo: string | null;
   videoOrigenUrl: string | null;
+  imagenTelegramFileId: string | null;
+  imagenIntentos: number;
   creadoEn: string;
   actualizadoEn: string;
 };

@@ -19,7 +19,13 @@ if (!url) {
   process.exit(0);
 }
 
-const pool = new Pool({ connectionString: url });
+const sslSinCA = process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false";
+const uri = new URL(url);
+if (sslSinCA) uri.searchParams.delete("sslmode");
+const pool = new Pool({
+  connectionString: uri.toString(),
+  ssl: sslSinCA ? { rejectUnauthorized: false } : undefined,
+});
 
 const sql = `
   CREATE SCHEMA IF NOT EXISTS kripta_automation;
@@ -33,11 +39,16 @@ const sql = `
     especificacion JSONB NOT NULL,
     operacion_veo TEXT,
     video_origen_url TEXT,
+    imagen_telegram_file_id TEXT,
+    imagen_intentos INTEGER NOT NULL DEFAULT 0,
     creado_en TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     actualizado_en TIMESTAMPTZ NOT NULL DEFAULT NOW()
   );
 
   CREATE INDEX IF NOT EXISTS trabajos_estado_idx ON trabajos_escena (estado, creado_en);
+
+  ALTER TABLE trabajos_escena ADD COLUMN IF NOT EXISTS imagen_telegram_file_id TEXT;
+  ALTER TABLE trabajos_escena ADD COLUMN IF NOT EXISTS imagen_intentos INTEGER NOT NULL DEFAULT 0;
 
   CREATE TABLE IF NOT EXISTS telegram_updates (
     update_id BIGINT PRIMARY KEY,

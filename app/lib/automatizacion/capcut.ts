@@ -60,7 +60,7 @@ export function crearTarjetaVideoCapCut(escena: EspecificacionEscena): string {
     `<pre>${prompt}</pre>`,
     "\u{2699}\u{FE0F} <b>AJUSTES RECOMENDADOS</b>",
     "\u2022 AI Video &gt; Image to Video\n\u2022 Sora: 16:9 \u00B7 8 segundos \u00B7 720p si es el limite de tu plan\n\u2022 Sin voz, texto, subtitulos ni watermark\n\u2022 Exportar MP4 \u00B7 24 fps",
-    "\u{1F4A1} <i>Subi la imagen que acabas de aprobar. No vuelvas a usar el logo frontal como fuente de video.</i>",
+    "\u{1F4A1} <i>Subi a CapCut la candidata aprobada desde Telegram. Cuando exportes el MP4, envialo a este chat para su revision final.</i>",
   ].join("\n\n");
 }
 

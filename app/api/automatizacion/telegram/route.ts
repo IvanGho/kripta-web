@@ -7,10 +7,12 @@ import {
   cambiarEstado,
   contarTrabajosRecientes,
   guardarBorrador,
+  guardarImagenCandidata,
   registrarUpdateTelegram,
   ultimoTrabajo,
 } from "@/app/lib/automatizacion/repositorio";
-import { enviarDocumento, enviarTexto, enviarTextoHtml, responderCallback, usuarioAutorizado } from "@/app/lib/automatizacion/telegram";
+import { enviarDocumento, enviarFoto, enviarTexto, enviarTextoHtml, responderCallback, usuarioAutorizado } from "@/app/lib/automatizacion/telegram";
+import { generarImagenCandidata } from "@/app/lib/automatizacion/imagen";
 import { iniciarVideoVeo } from "@/app/lib/automatizacion/veo";
 import { revisarVideosPendientes } from "@/app/lib/automatizacion/poll";
 import {
@@ -28,7 +30,12 @@ export const dynamic = "force-dynamic";
 
 type UsuarioTelegram = { id?: number };
 type ChatTelegram = { id?: number };
-type MensajeTelegram = { text?: string; from?: UsuarioTelegram; chat?: ChatTelegram };
+type MensajeTelegram = {
+  text?: string;
+  video?: { file_id?: string; file_name?: string };
+  from?: UsuarioTelegram;
+  chat?: ChatTelegram;
+};
 type CallbackTelegram = {
   id?: string;
   data?: string;
@@ -61,11 +68,11 @@ function resumenPrompt(prompt: string): string {
 function botonesPipelineCapCut(id: string) {
   return [
     [
-      { text: "🖼️ 1. Crear imagen", callback_data: `escena:capcutimage:${id}` },
+      { text: "✨ Generar imagen IA", callback_data: `escena:imagegenerate:${id}` },
       { text: "🐺 Ver referencia", callback_data: `escena:capcutfile:${id}` },
     ],
     [
-      { text: "✅ 2. Imagen aprobada", callback_data: `escena:capcutapprove:${id}` },
+      { text: "📋 Prompt manual", callback_data: `escena:capcutimage:${id}` },
       { text: "🧭 Guia", callback_data: `escena:capcutguide:${id}` },
     ],
   ];
@@ -81,11 +88,27 @@ function botonesImagenCapCut(id: string) {
   ];
 }
 
+function botonesRevisionImagen(id: string) {
+  return [
+    [
+      { text: "✅ Aprobar imagen", callback_data: `escena:capcutapprove:${id}` },
+      { text: "🔄 Regenerar", callback_data: `escena:imageregenerate:${id}` },
+    ],
+    [
+      { text: "📋 Ver prompt", callback_data: `escena:capcutimagecopy:${id}` },
+      { text: "↩️ Pipeline", callback_data: `escena:capcut:${id}` },
+    ],
+  ];
+}
+
 function botonesVideoCapCut(id: string) {
   return [
-    [{ text: "📋 Copiar prompt video", callback_data: `escena:capcutcopy:${id}` }],
     [
-      { text: "↩️ Cambiar imagen", callback_data: `escena:capcutimage:${id}` },
+      { text: "📋 Copiar prompt Sora", callback_data: `escena:capcutcopy:${id}` },
+      { text: "✨ Veo directo", callback_data: `escena:generar:${id}` },
+    ],
+    [
+      { text: "🔄 Regenerar imagen", callback_data: `escena:imageregenerate:${id}` },
       { text: "🧭 Guia", callback_data: `escena:capcutguide:${id}` },
     ],
   ];
@@ -101,6 +124,24 @@ async function enviarTarjetaImagenCapCut(chatId: string, trabajo: TrabajoEscena)
 
 async function enviarTarjetaVideoCapCut(chatId: string, trabajo: TrabajoEscena): Promise<void> {
   await enviarTextoHtml(chatId, crearTarjetaVideoCapCut(trabajo.especificacion), botonesVideoCapCut(trabajo.id));
+}
+
+async function generarYEnviarImagen(chatId: string, trabajo: TrabajoEscena): Promise<void> {
+  await enviarTextoHtml(chatId, "✨ <b>GENERANDO KEY ART</b>\n\nEstoy creando una unica candidata cinematografica para que la revises aca. Esto puede tardar hasta un minuto y no inicia Veo.");
+  try {
+    const imagen = await generarImagenCandidata(trabajo.especificacion, trabajo.imagenIntentos + 1);
+    const fileId = await enviarFoto(
+      chatId,
+      imagen,
+      `${trabajo.especificacion.slug}-key-art.png`,
+      `🎨 CANDIDATA ${trabajo.imagenIntentos + 1}\n\n${trabajo.especificacion.titulo}\n\nRevisar: tres cicatrices rojas, lobo a la derecha, aire oscuro a la izquierda y sin texto.`,
+      botonesRevisionImagen(trabajo.id),
+    );
+    await guardarImagenCandidata({ id: trabajo.id, fileId });
+  } catch (error) {
+    const detalle = error instanceof Error ? error.message : "Error desconocido";
+    await enviarTextoHtml(chatId, `⚠️ <b>NO SE PUDO GENERAR LA IMAGEN</b>\n\n${detalle.slice(0, 700)}\n\nPodes usar <b>Prompt manual</b> y crearla en CapCut. No se inicio ningun video.`);
+  }
 }
 
 async function enviarArchivoLobo(chatId: string): Promise<void> {
@@ -126,6 +167,30 @@ async function procesarMensaje(mensaje: MensajeTelegram): Promise<void> {
   const usuarioId = String(mensaje.from?.id ?? "");
   const chatId = String(mensaje.chat?.id ?? "");
   if (!usuarioAutorizado(usuarioId) || !chatId) return;
+
+  if (mensaje.video?.file_id) {
+    const trabajo = await ultimoTrabajo(usuarioId);
+    if (!trabajo || !trabajo.imagenTelegramFileId) {
+      await enviarTexto(chatId, "Primero crea y aproba una imagen para asociar el video exportado.");
+      return;
+    }
+    const listo =
+      (await cambiarEstado({ id: trabajo.id, desde: "borrador", hacia: "listo" })) ??
+      (await cambiarEstado({ id: trabajo.id, desde: "generando", hacia: "listo" }));
+    if (!listo) {
+      await enviarTexto(chatId, "Ese video no se puede asociar al estado actual. Usa /capcut para retomar la escena.");
+      return;
+    }
+    await enviarTextoHtml(
+      chatId,
+      `\u{1F3AC} <b>VIDEO RECIBIDO PARA REVISION</b>\n\n${listo.especificacion.titulo}\n\nSi lo aprobas, queda marcado como listo para publicar. Si no, volves al prompt sin perder la imagen aprobada.`,
+      [[
+        { text: "✅ Aprobar para publicar", callback_data: `escena:aprobar:${listo.id}` },
+        { text: "🔄 Regenerar video", callback_data: `escena:videoretry:${listo.id}` },
+      ]],
+    );
+    return;
+  }
 
   const texto = mensaje.text?.trim() ?? "";
   if (texto === "/estado") {
@@ -205,7 +270,7 @@ async function procesarCallback(callback: CallbackTelegram): Promise<void> {
   const chatId = String(callback.message?.chat?.id ?? "");
   if (!callbackId || !usuarioAutorizado(usuarioId) || !chatId) return;
 
-  const coincidencia = /^escena:(generar|capcut|capcutimage|capcutimagecopy|capcutapprove|capcutcopy|capcutfile|capcutguide|aprobar|rechazar):([0-9a-f-]{36})$/.exec(callback.data ?? "");
+  const coincidencia = /^escena:(generar|capcut|capcutimage|capcutimagecopy|capcutapprove|capcutcopy|capcutfile|capcutguide|imagegenerate|imageregenerate|videoretry|aprobar|rechazar):([0-9a-f-]{36})$/.exec(callback.data ?? "");
   if (!coincidencia) {
     await responderCallback(callbackId, "Acción inválida.");
     return;
@@ -223,6 +288,12 @@ async function procesarCallback(callback: CallbackTelegram): Promise<void> {
     return;
   }
 
+  if (accion === "imagegenerate" || accion === "imageregenerate") {
+    await responderCallback(callbackId, accion === "imageregenerate" ? "Regenerando candidata..." : "Generando candidata...");
+    await generarYEnviarImagen(chatId, trabajo);
+    return;
+  }
+
   if (accion === "capcutimage") {
     await responderCallback(callbackId, "Prompt de imagen enviado.");
     await enviarTarjetaImagenCapCut(chatId, trabajo);
@@ -236,8 +307,19 @@ async function procesarCallback(callback: CallbackTelegram): Promise<void> {
   }
 
   if (accion === "capcutapprove") {
+    if (!trabajo.imagenTelegramFileId) {
+      await responderCallback(callbackId, "Primero genera o envia una imagen candidata.");
+      return;
+    }
     await responderCallback(callbackId, "Prompt para animar imagen enviado.");
     await enviarTarjetaVideoCapCut(chatId, trabajo);
+    return;
+  }
+
+  if (accion === "videoretry") {
+    const reabierto = await cambiarEstado({ id, desde: "listo", hacia: "borrador" });
+    await responderCallback(callbackId, reabierto ? "Video reabierto para regenerar." : "El video ya fue procesado.");
+    if (reabierto) await enviarTarjetaVideoCapCut(chatId, reabierto);
     return;
   }
 
