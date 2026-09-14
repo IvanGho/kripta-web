@@ -32,6 +32,7 @@ type UsuarioTelegram = { id?: number };
 type ChatTelegram = { id?: number };
 type MensajeTelegram = {
   text?: string;
+  photo?: Array<{ file_id?: string }>;
   video?: { file_id?: string; file_name?: string };
   from?: UsuarioTelegram;
   chat?: ChatTelegram;
@@ -65,11 +66,11 @@ function botonesPipelineCapCut(id: string) {
   return [
     [
       { text: "✨ Generar imagen IA", callback_data: `escena:imagegenerate:${id}` },
-      { text: "🐺 Ver referencia", callback_data: `escena:capcutfile:${id}` },
+      { text: "📎 Enviar imagen", callback_data: `escena:imageuploadhelp:${id}` },
     ],
     [
       { text: "📋 Prompt manual", callback_data: `escena:capcutimage:${id}` },
-      { text: "🧭 Guia", callback_data: `escena:capcutguide:${id}` },
+      { text: "🐺 Ver referencia", callback_data: `escena:capcutfile:${id}` },
     ],
   ];
 }
@@ -78,7 +79,7 @@ function botonesImagenCapCut(id: string) {
   return [
     [{ text: "📋 Copiar prompt imagen", callback_data: `escena:capcutimagecopy:${id}` }],
     [
-      { text: "✅ Imagen aprobada", callback_data: `escena:capcutapprove:${id}` },
+      { text: "📎 Enviar imagen", callback_data: `escena:imageuploadhelp:${id}` },
       { text: "↩️ Pipeline", callback_data: `escena:capcut:${id}` },
     ],
   ];
@@ -187,6 +188,26 @@ async function procesarMensaje(mensaje: MensajeTelegram): Promise<void> {
   const chatId = String(mensaje.chat?.id ?? "");
   if (!usuarioAutorizado(usuarioId) || !chatId) return;
 
+  const imagenManual = mensaje.photo?.at(-1)?.file_id;
+  if (imagenManual) {
+    const trabajo = await ultimoTrabajo(usuarioId);
+    if (!trabajo) {
+      await enviarTexto(chatId, "Primero crea una escena con /escena <tema>, luego envia la imagen candidata.");
+      return;
+    }
+    const registrada = await guardarImagenCandidata({ id: trabajo.id, fileId: imagenManual });
+    if (!registrada) {
+      await enviarTexto(chatId, "No pude asociar esa imagen a la escena actual. Usa /capcut y reintenta.");
+      return;
+    }
+    await enviarTextoHtml(
+      chatId,
+      `\u{1F5BC}\u{FE0F} <b>IMAGEN MANUAL RECIBIDA</b>\n\n<b>${registrada.especificacion.titulo}</b>\n\nLa imagen queda registrada como candidata ${registrada.imagenIntentos}. Ahora elegi aprobarla para abrir el panel de video o regenerarla.`,
+      botonesRevisionImagen(registrada.id),
+    );
+    return;
+  }
+
   if (mensaje.video?.file_id) {
     const trabajo = await ultimoTrabajo(usuarioId);
     if (!trabajo || !trabajo.imagenTelegramFileId) {
@@ -283,7 +304,7 @@ async function procesarCallback(callback: CallbackTelegram): Promise<void> {
   const messageId = callback.message?.message_id;
   if (!callbackId || !usuarioAutorizado(usuarioId) || !chatId) return;
 
-  const coincidencia = /^escena:(generar|capcut|capcutimage|capcutimagecopy|capcutapprove|capcutcopy|capcutfile|capcutguide|imagegenerate|imageregenerate|videoretry|aprobar|rechazar):([0-9a-f-]{36})$/.exec(callback.data ?? "");
+  const coincidencia = /^escena:(generar|capcut|capcutimage|capcutimagecopy|capcutapprove|capcutcopy|capcutfile|capcutguide|imagegenerate|imageregenerate|imageuploadhelp|videoretry|aprobar|rechazar):([0-9a-f-]{36})$/.exec(callback.data ?? "");
   if (!coincidencia) {
     await responderCallback(callbackId, "Acción inválida.");
     return;
@@ -307,6 +328,15 @@ async function procesarCallback(callback: CallbackTelegram): Promise<void> {
       chatId,
       trabajo,
       messageId ? { messageId, esFoto: accion === "imageregenerate" } : undefined,
+    );
+    return;
+  }
+
+  if (accion === "imageuploadhelp") {
+    await responderCallback(callbackId, "Envia la imagen como foto en este chat.");
+    await enviarTextoHtml(
+      chatId,
+      "\u{1F4CE} <b>ENVIAR IMAGEN CANDIDATA</b>\n\nAdjunta ahora la imagen generada como <b>foto</b> en este mismo chat (no como documento). El bot la vincula con esta escena y devuelve los botones <b>Aprobar imagen</b> y <b>Regenerar</b>.",
     );
     return;
   }
