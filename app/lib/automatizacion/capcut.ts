@@ -11,12 +11,12 @@ function escaparHtml(valor: string): string {
 /** Brief local: pedirlo nunca usa cuota de Gemini o Veo. */
 export function crearPromptImagenCapCut(escena: EspecificacionEscena): string {
   return [
-    "Create cinematic key art for a premium gaming community website hero, 16:9 landscape.",
+    "Create original high-end stylized 3D cinematic key art for a premium dark gaming community website hero, 16:9 landscape.",
     `Scene theme: ${escena.tema}.`,
-    "Subject: one mature dark-gray wolf warrior, chest-up, realistic detailed fur, calm intense expression, mouth closed. Neon green eyes and a subtle electric-green edge light. Keep EXACTLY three thin diagonal red scars across the right side of the face.",
-    "Composition: the wolf is on the right third of the frame. Reserve clean dark negative space on the left for a website headline. The wolf is not centered and does not fill the whole frame.",
-    "Lighting and mood: graphite-black stormy environment, cinematic 35mm key art, deep controlled shadows, faint smoke, sparse embers, premium adult gaming aesthetic. Green is a restrained accent; red appears only in the scars.",
-    "Do not create a logo, mascot badge, sticker, vector illustration, thick neon outline, white or transparent background, roaring open mouth, exaggerated teeth, symmetric centered face, text, watermark, game brands, weapons, extra scars, childish cartoon style, or excessive particles.",
+    "Subject: one original mature wolf guardian, chest-up, dark charcoal fur, sculpted stylized 3D features and grounded anatomy. He radiates quiet menace and authority: mouth closed, lowered brow, direct green gaze. Keep EXACTLY three thin diagonal red scars across the right side of the face. He wears only subtle weathered dark armor shapes with no recognizable symbols.",
+    "Composition: the wolf occupies the right third of the frame, seen in a three-quarter view looking slightly toward camera. Reserve clean, near-black negative space on the left for a website headline. The wolf is not centered and does not fill the whole frame.",
+    "Lighting and mood: premium adult dark-fantasy animated short film, cinematic 35mm framing, graphite storm clouds, deep controlled shadows, a faint green rim light, thin drifting smoke and only a few distant embers. Green is a restrained accent; red appears only in the scars. Rich material detail, filmic contrast, elegant and intimidating.",
+    "Do not create photoreal wildlife photography, a logo, mascot badge, sticker, vector illustration, thick neon outline, white or transparent background, roaring open mouth, exaggerated teeth, symmetric centered face, text, watermark, game brands, recognizable characters, weapons, extra scars, childish cartoon style, anime style, or excessive particles.",
   ].join("\n\n");
 }
 
@@ -24,10 +24,10 @@ export function crearPromptCapCut(escena: EspecificacionEscena): string {
   return [
     "Animate the uploaded approved cinematic wolf key-art image into an 8-second seamless website hero loop.",
     `Scene theme: ${escena.tema}.`,
-    "Preserve the exact approved wolf identity, fur, face, three red scars, composition, lighting and dark left-side negative space. Do not redesign the character or turn it into a logo or sticker.",
-    "Motion: slow breathing, one natural blink, faint green energy moving along the silhouette, thin smoke and a few distant embers. Locked camera with only minimal parallax. Calm, controlled, premium cinematic movement.",
+    "Preserve the exact approved original stylized 3D wolf identity, fur, face, three red scars, composition, lighting and dark left-side negative space. Do not redesign the character or turn it into a logo or sticker.",
+    "Motion: a subtle chest breath, one slow controlled blink, a barely perceptible eye focus shift, faint green rim energy pulsing once along the silhouette, thin smoke crossing the depth of frame and a few distant embers. Locked cinematic camera with only minimal parallax. Calm, restrained, intimidating premium animated-short-film movement.",
     "Loop: first and final frame must feel visually equivalent for a smooth infinite loop.",
-    "Avoid: text, subtitles, logos, watermark, game brands, fast zoom, shaky camera, facial distortion, extra scars, open roaring mouth, exaggerated teeth, cartoon style, or excessive particles.",
+    "Avoid: text, subtitles, logos, watermark, game brands, recognizable characters, fast zoom, shaky camera, facial distortion, extra scars, open roaring mouth, exaggerated teeth, photoreal wildlife footage, childish cartoon style, anime style, or excessive particles.",
   ].join("\n\n");
 }
 
