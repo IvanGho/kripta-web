@@ -1,7 +1,7 @@
 import "server-only";
 
 import { Pool } from "pg";
-import { URL_BASE_IDENTIDAD } from "../identidad";
+import { URL_BASE_AUTOMATIZACION } from "../identidad";
 import type { EspecificacionEscena, EstadoTrabajo, TrabajoEscena } from "./tipos";
 
 declare global {
@@ -18,9 +18,9 @@ function conexionPooler(url: string): string {
   return uri.toString();
 }
 
-const pool = URL_BASE_IDENTIDAD
+const pool = URL_BASE_AUTOMATIZACION
   ? (globalThis.kriptaPoolAutomatizacion ??= new Pool({
-      connectionString: conexionPooler(URL_BASE_IDENTIDAD),
+      connectionString: conexionPooler(URL_BASE_AUTOMATIZACION),
       options: "-c search_path=kripta_automation,public",
       // Las funciones serverless se escalan por instancia; no por conexiones locales.
       max: 1,

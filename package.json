@@ -9,16 +9,15 @@
     "lint": "eslint",
     "verificar-navegador": "python scripts/verificar_navegador.py",
     "capturas": "python scripts/capturas.py",
-    "preparar-auth": "node scripts/preparar-auth.mjs",
     "preparar-automatizacion": "node scripts/preparar-automatizacion.mjs",
     "publicar-escena": "node scripts/publicar-escena.mjs",
     "configurar-bot": "node scripts/configurar-bot-telegram.mjs"
   },
   "dependencies": {
-    "@auth/pg-adapter": "1.11.3",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.116.0",
     "@vercel/analytics": "2.0.1",
     "next": "16.3.4",
-    "next-auth": "5.0.0-beta.32",
     "pg": "8.16.3",
     "react": "19.2.8",
     "react-dom": "19.2.8"

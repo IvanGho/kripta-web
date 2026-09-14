@@ -17,44 +17,41 @@ Es el segundo de los dos proyectos: la operación (torneos, pagos, ranking, caja
 Importalo en [vercel.com/new](https://vercel.com/new) y dale **Deploy**. No hay nada que
 configurar: Vercel reconoce Next.js solo. Se despliega y funciona con datos de ejemplo.
 
-Después, en **Settings → Environment Variables**, sólo una es importante:
+Después, en **Settings → Environment Variables**, cargá las variables de abajo según la función que actives:
 
 | Variable | Para qué |
 |---|---|
 | `NEXT_PUBLIC_URL_DISCORD` | El link de invitación. **Es la conversión del sitio**: sin esto el botón principal no lleva a ningún lado. Usá una invitación que **no expire**. |
 | `NEXT_PUBLIC_URL_SITIO` | El dominio, para los links de compartir y el SEO. Ya viene por defecto en `https://kripta.infinixapp.com`, así que sólo hace falta si el dominio cambia. |
 | `PANEL_API_URL` | La URL del panel, para mostrar el ranking y los torneos de verdad. Sin esto usa datos de ejemplo. |
+| `NEXT_PUBLIC_SUPABASE_URL` | La URL del proyecto Supabase que autentica a los jugadores. |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Clave pública de Supabase para crear la sesión del navegador. |
+| `KRIPTA_SYNC_SECRET` | Secreto privado, igual al del panel, para vincular jugadores después de verificar Discord. |
 
 Después de cargarlas hay que hacer **Redeploy**: las variables se leen al compilar.
 
 ### Acceso con Discord y Google
 
-El acceso personal usa Auth.js y Postgres. Es independiente de las tablas operativas del panel:
-si se usa la misma base, guarda sus cuatro tablas dentro del esquema `kripta_auth`.
+El acceso personal usa **Supabase Auth**. Discord es la identidad competitiva; Google sirve para
+entrar rápido y luego Kripta ofrece vincular Discord desde una sesión ya iniciada.
 
-1. Conectá una base Postgres al proyecto web y cargá su URL como `DATABASE_URL`.
-2. Ejecutá una vez `npm run preparar-auth` con esa variable cargada. Sólo crea el esquema y tablas
-   idempotentes de cuentas y sesiones; no toca torneos, jugadores ni caja del panel.
-3. Generá `AUTH_SECRET` con `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
-   y cargalo como variable de entorno del proyecto web.
-4. Creá una aplicación OAuth de Discord y una de Google. Cargá `AUTH_DISCORD_ID`,
-   `AUTH_DISCORD_SECRET`, `AUTH_GOOGLE_ID` y `AUTH_GOOGLE_SECRET`.
-5. En ambos proveedores declarás exactamente estas URL de retorno:
+1. Cargá `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` en Vercel.
+2. En Supabase, permití esta URL de redirección:
 
    ```text
-   https://kripta.infinixapp.com/api/auth/callback/discord
-   https://kripta.infinixapp.com/api/auth/callback/google
+   https://kripta.infinixapp.com/auth/callback
    ```
 
-   En local, las equivalentes usan `http://localhost:3000`.
-
-6. Hacé redeploy. Mientras falte la base, el secreto o al menos un proveedor, `/acceso` deja los
-   botones apagados en lugar de simular una cuenta que no se puede guardar.
+3. En los proveedores Discord y Google de Supabase, usá el callback que muestra el proyecto:
+   `https://TU-PROYECTO.supabase.co/auth/v1/callback`.
+4. Generá `KRIPTA_SYNC_SECRET` y cargalo exactamente igual en Kripta y en el panel. No se muestra
+   nunca al navegador: sirve sólo para crear la ficha mínima de un Discord ya validado.
+5. Hacé redeploy. Mientras falte la URL o clave pública de Supabase, `/acceso` deja los botones
+   apagados en lugar de simular una cuenta que no se puede guardar.
 
 Discord se pide solamente con el alcance `identify`. Google se usa para identidad y no para leer el
-calendario. Los tokens de ambos proveedores se descartan después de validar el acceso; la cuenta y
-la sesión se pueden revocar. Las cuentas no se unen automáticamente por tener el mismo mail: el
-enlace entre proveedores será una acción explícita desde una sesión ya iniciada.
+calendario. Supabase conserva una sesión revocable; las identidades no se unen automáticamente por
+tener el mismo mail: el enlace con Discord es una acción explícita desde una sesión ya iniciada.
 
 ### El dominio propio
 
