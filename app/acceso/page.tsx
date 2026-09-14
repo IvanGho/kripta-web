@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { auth } from "../../auth";
 import { Cabecera } from "../componentes/cabecera";
 import { Pie } from "../componentes/pie";
 import { ACCESO_LISTO, PROVEEDORES_DISPONIBLES } from "../lib/identidad";
+import { crearClienteServidor } from "../lib/supabase/server";
 import { iniciarSesion } from "./acciones";
 
 export const metadata: Metadata = {
@@ -14,11 +14,20 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function Acceso() {
-  if (ACCESO_LISTO && (await auth())) redirect("/mi-kripta");
+export default async function Acceso({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  if (ACCESO_LISTO) {
+    const supabase = await crearClienteServidor();
+    const { data } = await supabase.auth.getUser();
+    if (data.user) redirect("/mi-kripta");
+  }
 
   const discord = ACCESO_LISTO && PROVEEDORES_DISPONIBLES.includes("discord");
   const google = ACCESO_LISTO && PROVEEDORES_DISPONIBLES.includes("google");
+  const huboError = Boolean((await searchParams).error);
 
   return (
     <>
@@ -55,9 +64,15 @@ export default async function Acceso() {
             </form>
           </div>
 
+          {huboError && (
+            <p className="acceso-error" role="alert">
+              No pudimos completar el acceso. Probá otra vez; si sigue pasando, entrá por Discord.
+            </p>
+          )}
+
           {ACCESO_LISTO ? (
             <p className="acceso-nota">
-              Discord te identifica para la comunidad. Google sólo simplifica el acceso. Nunca publicamos ni leemos tus mensajes.
+              Discord te identifica para competir. Google simplifica el acceso, pero antes de anotarte te pediremos vincular Discord.
             </p>
           ) : (
             <p className="acceso-pendiente" role="status">
