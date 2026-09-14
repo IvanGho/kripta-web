@@ -13,7 +13,14 @@ import {
 import { enviarDocumento, enviarTexto, enviarTextoHtml, responderCallback, usuarioAutorizado } from "@/app/lib/automatizacion/telegram";
 import { iniciarVideoVeo } from "@/app/lib/automatizacion/veo";
 import { revisarVideosPendientes } from "@/app/lib/automatizacion/poll";
-import { crearGuiaCapCut, crearPromptCapCut, crearTarjetaCapCut } from "@/app/lib/automatizacion/capcut";
+import {
+  crearGuiaCapCut,
+  crearPromptCapCut,
+  crearPromptImagenCapCut,
+  crearTarjetaImagenCapCut,
+  crearTarjetaPipelineCapCut,
+  crearTarjetaVideoCapCut,
+} from "@/app/lib/automatizacion/capcut";
 import { normalizarTema, type TrabajoEscena } from "@/app/lib/automatizacion/tipos";
 
 export const runtime = "nodejs";
@@ -51,25 +58,56 @@ function resumenPrompt(prompt: string): string {
   return prompt.length <= 2700 ? prompt : `${prompt.slice(0, 2690)}…`;
 }
 
-function botonesCapCut(id: string) {
+function botonesPipelineCapCut(id: string) {
   return [
     [
-      { text: "📋 Prompt limpio", callback_data: `escena:capcutcopy:${id}` },
-      { text: "🖼️ Enviar lobo", callback_data: `escena:capcutfile:${id}` },
+      { text: "🖼️ 1. Crear imagen", callback_data: `escena:capcutimage:${id}` },
+      { text: "🐺 Ver lobo", callback_data: `escena:capcutfile:${id}` },
     ],
-    [{ text: "🧭 Guia CapCut", callback_data: `escena:capcutguide:${id}` }],
+    [
+      { text: "✅ 2. Imagen aprobada", callback_data: `escena:capcutapprove:${id}` },
+      { text: "🧭 Guia", callback_data: `escena:capcutguide:${id}` },
+    ],
   ];
 }
 
-async function enviarTarjetaCapCut(chatId: string, trabajo: TrabajoEscena): Promise<void> {
-  await enviarTextoHtml(chatId, crearTarjetaCapCut(trabajo.especificacion), botonesCapCut(trabajo.id));
+function botonesImagenCapCut(id: string) {
+  return [
+    [{ text: "📋 Prompt imagen", callback_data: `escena:capcutimagecopy:${id}` }],
+    [
+      { text: "✅ Imagen aprobada", callback_data: `escena:capcutapprove:${id}` },
+      { text: "↩️ Pipeline", callback_data: `escena:capcut:${id}` },
+    ],
+  ];
+}
+
+function botonesVideoCapCut(id: string) {
+  return [
+    [{ text: "📋 Prompt video", callback_data: `escena:capcutcopy:${id}` }],
+    [
+      { text: "↩️ Cambiar imagen", callback_data: `escena:capcutimage:${id}` },
+      { text: "🧭 Guia", callback_data: `escena:capcutguide:${id}` },
+    ],
+  ];
+}
+
+async function enviarPanelCapCut(chatId: string, trabajo: TrabajoEscena): Promise<void> {
+  await enviarTextoHtml(chatId, crearTarjetaPipelineCapCut(trabajo.especificacion), botonesPipelineCapCut(trabajo.id));
+}
+
+async function enviarTarjetaImagenCapCut(chatId: string, trabajo: TrabajoEscena): Promise<void> {
+  await enviarTextoHtml(chatId, crearTarjetaImagenCapCut(trabajo.especificacion), botonesImagenCapCut(trabajo.id));
+}
+
+async function enviarTarjetaVideoCapCut(chatId: string, trabajo: TrabajoEscena): Promise<void> {
+  await enviarTextoHtml(chatId, crearTarjetaVideoCapCut(trabajo.especificacion), botonesVideoCapCut(trabajo.id));
 }
 
 async function enviarArchivoLobo(chatId: string): Promise<void> {
   const lobo = await readFile(join(process.cwd(), "public", "marca", "kripta-lobo.png"));
   const contenido = new ArrayBuffer(lobo.byteLength);
   new Uint8Array(contenido).set(lobo);
-  await enviarDocumento(chatId, contenido, "kripta-lobo-referencia.png", "Referencia oficial: subi este PNG en CapCut como Image to Video.");
+  await enviarDocumento(chatId, contenido, "kripta-lobo-identidad.png", "Identidad del lobo: usa este PNG solo para verificar ojos y cicatrices. No lo uses como fuente directa de imagen/video en el paso 1.");
 }
 
 async function reintentarGeneracion(trabajo: TrabajoEscena): Promise<void> {
@@ -124,7 +162,7 @@ async function procesarMensaje(mensaje: MensajeTelegram): Promise<void> {
       await enviarTexto(chatId, "Todavia no hay una escena. Usa /escena <tema> primero.");
       return;
     }
-    await enviarTarjetaCapCut(chatId, trabajo);
+    await enviarPanelCapCut(chatId, trabajo);
     return;
   }
 
@@ -167,7 +205,7 @@ async function procesarCallback(callback: CallbackTelegram): Promise<void> {
   const chatId = String(callback.message?.chat?.id ?? "");
   if (!callbackId || !usuarioAutorizado(usuarioId) || !chatId) return;
 
-  const coincidencia = /^escena:(generar|capcut|capcutcopy|capcutfile|capcutguide|aprobar|rechazar):([0-9a-f-]{36})$/.exec(callback.data ?? "");
+  const coincidencia = /^escena:(generar|capcut|capcutimage|capcutimagecopy|capcutapprove|capcutcopy|capcutfile|capcutguide|aprobar|rechazar):([0-9a-f-]{36})$/.exec(callback.data ?? "");
   if (!coincidencia) {
     await responderCallback(callbackId, "Acción inválida.");
     return;
@@ -180,14 +218,32 @@ async function procesarCallback(callback: CallbackTelegram): Promise<void> {
   }
 
   if (accion === "capcut") {
-    await responderCallback(callbackId, "Prompt CapCut enviado.");
-    await enviarTarjetaCapCut(chatId, trabajo);
+    await responderCallback(callbackId, "Pipeline CapCut enviado.");
+    await enviarPanelCapCut(chatId, trabajo);
+    return;
+  }
+
+  if (accion === "capcutimage") {
+    await responderCallback(callbackId, "Prompt de imagen enviado.");
+    await enviarTarjetaImagenCapCut(chatId, trabajo);
+    return;
+  }
+
+  if (accion === "capcutimagecopy") {
+    await responderCallback(callbackId, "Prompt de imagen limpio enviado.");
+    await enviarTextoHtml(chatId, `<b>PROMPT IMAGEN - COPIAR</b>\n\n<pre>${crearPromptImagenCapCut(trabajo.especificacion).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</pre>`);
+    return;
+  }
+
+  if (accion === "capcutapprove") {
+    await responderCallback(callbackId, "Prompt para animar imagen enviado.");
+    await enviarTarjetaVideoCapCut(chatId, trabajo);
     return;
   }
 
   if (accion === "capcutcopy") {
     await responderCallback(callbackId, "Prompt limpio enviado.");
-    await enviarTextoHtml(chatId, `<b>PROMPT CAPCUT - COPIAR</b>\n\n<pre>${crearPromptCapCut(trabajo.especificacion).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</pre>`);
+    await enviarTextoHtml(chatId, `<b>PROMPT VIDEO - COPIAR</b>\n\n<pre>${crearPromptCapCut(trabajo.especificacion).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</pre>`);
     return;
   }
 
