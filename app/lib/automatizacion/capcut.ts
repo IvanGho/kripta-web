@@ -22,12 +22,14 @@ export function crearPromptImagenCapCut(escena: EspecificacionEscena): string {
 
 export function crearPromptCapCut(escena: EspecificacionEscena): string {
   return [
-    "Animate the uploaded approved cinematic wolf key-art image into an 8-second seamless website hero loop.",
+    "Create an 8-second loop-ready cinematic website hero from the uploaded approved wolf key art.",
     `Scene theme: ${escena.tema}.`,
-    "Preserve the exact approved photoreal wolf identity, individual fur, face, three red scars, composition, moonlit chiaroscuro lighting and dark left-side negative space. Do not redesign the character or turn it into a logo or sticker.",
-    "Motion: a subtle chest breath, one slow controlled blink, a barely perceptible eye focus shift, faint green rim energy pulsing once along the silhouette, thin fog and rain crossing the depth of frame. Locked anamorphic cinematic camera with only minimal parallax. Calm, restrained and intimidating trailer-quality movement.",
-    "Loop: first and final frame must feel visually equivalent for a smooth infinite loop.",
-    "Avoid: text, subtitles, logos, watermark, game brands, recognizable characters, fast zoom, shaky camera, facial distortion, extra scars, open roaring mouth, exaggerated teeth, cartoon style, anime style, or excessive particles.",
+    "IMMUTABLE SOURCE: preserve the exact approved wolf identity, individual charcoal fur, three thin red scars on the right side of the face, green eyes, moonlit environment, right-third framing, and clean dark negative space on the left. Do not redesign, reframe, crop, or add objects.",
+    "CAMERA: locked-off medium-wide 35mm shot. Absolutely no zoom, dolly, pan, tilt, orbit, handheld shake, rack focus, or parallax. The frame must remain pixel-stable.",
+    "ONE MAIN MOTION: a single slow breathing cycle. From 0.0 to 3.0 seconds the wolf slowly inhales; from 3.0 to 6.0 seconds it slowly exhales; from 6.0 to 8.0 seconds it settles back into the exact initial chest height and poised stance. One controlled blink happens between 3.8 and 4.3 seconds and the eyes return to their exact opening state.",
+    "SECONDARY MOTION: only faint fog drifting slowly sideways and a subtle green rim-light pulse that fades back to its starting intensity by 8.0 seconds. Rain, moon, rocks, forest, light direction, and background stay fixed. No new particles enter the foreground.",
+    "LOOP CLOSURE: at 8.0 seconds the wolf pose, eye direction, chest height, lighting, fog density, green glow, and composition must closely match frame 0.0 so the cut from final frame to first frame is invisible.",
+    "Avoid: text, subtitles, logos, watermark, game brands, recognizable characters, walking, attacking, roaring, head turns, camera motion, facial distortion, extra scars, open exaggerated mouth, cartoon style, anime style, flicker, sudden lighting changes, excessive fog, or particle bursts.",
   ].join("\n\n");
 }
 
@@ -68,6 +70,7 @@ export function crearGuiaCapCut(): string {
     "<b>2.</b> Elegi una imagen con lobo fotorrealista a la derecha, tres cicatrices rojas y espacio oscuro a la izquierda.",
     "<b>3.</b> Toca Imagen aprobada en el bot. Luego, en AI Video &gt; Image to Video, subi esa nueva imagen.",
     "<b>4.</b> Pega el prompt de video. En Sora usa 16:9, 8 segundos, 720p y audio apagado.",
-    "<b>5.</b> Exporta MP4 a 24 fps. Cuando lo tengas, me pasas el archivo para publicarlo en la web.",
+    "<b>5.</b> Antes de exportar, compara segundo 0 y segundo 8: pose, ojos, luz y encuadre deben coincidir. Si hay salto, regenera cambiando solo el movimiento que fallo.",
+    "<b>6.</b> Exporta MP4 a 24 fps. Cuando lo tengas, me pasas el archivo para publicarlo en la web.",
   ].join("\n\n");
 }
