@@ -14,7 +14,7 @@ export default function Pagina() {
       titulo="Política de"
       resaltado="privacidad"
       bajada="Qué datos se recolectan, quién los ve y cómo pedir que se borren."
-      actualizado="2026-09-13"
+      actualizado="2026-09-14"
     >
       <h2>Lo corto</h2>
       <p>
@@ -24,7 +24,8 @@ export default function Pagina() {
       </p>
       <p>
         La cuenta sirve para construir una agenda y un perfil personal. Discord es obligatorio para
-        competir; la confirmación de mayoría de edad y de pagos sigue en manos del staff.
+        competir; la mayoría de edad sigue siendo revisada por el staff y los pagos de Checkout Pro
+        se confirman automáticamente contra Mercado Pago.
       </p>
 
       <h2>Información de visita</h2>
@@ -75,11 +76,20 @@ export default function Pagina() {
         sistema de administración.
       </p>
 
+      <h2>Datos de pago</h2>
+      <p>
+        Al pagar una inscripción, Mercado Pago procesa el medio de pago en su propio checkout. Kripta
+        y Monsterland no reciben ni guardan el número de tarjeta, código de seguridad ni credenciales
+        de tu cuenta. El panel conserva la referencia de la operación, importe, moneda, estado y fechas
+        necesarias para confirmar la inscripción, conciliar la caja y gestionar un reembolso o reclamo.
+      </p>
+
       <h2>Quién accede</h2>
       <p>
         La administración y la moderación de torneos acceden a la información operativa necesaria.
         Vercel aloja el sitio y Supabase presta la base de datos y autenticación. Si elegís entrar,
-        Discord o Google también procesan el acceso según sus políticas. No vendemos ni cedemos datos.
+        Discord o Google también procesan el acceso según sus políticas. Mercado Pago procesa los
+        cobros cuando elegís una inscripción paga. No vendemos ni cedemos datos.
       </p>
 
       <h2>Conservación y eliminación</h2>

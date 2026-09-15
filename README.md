@@ -27,6 +27,7 @@ Después, en **Settings → Environment Variables**, cargá las variables de aba
 | `NEXT_PUBLIC_SUPABASE_URL` | La URL del proyecto Supabase que autentica a los jugadores. |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Clave pública de Supabase para crear la sesión del navegador. |
 | `KRIPTA_SYNC_SECRET` | Secreto privado, igual al del panel, para vincular jugadores después de verificar Discord. |
+| `KRIPTA_CHECKOUT_SECRET` | Secreto privado distinto, igual al del panel, para iniciar Checkout Pro sin exponer credenciales ni importes. |
 
 Después de cargarlas hay que hacer **Redeploy**: las variables se leen al compilar.
 
@@ -52,6 +53,24 @@ entrar rápido y luego Kripta ofrece vincular Discord desde una sesión ya inici
 Discord se pide solamente con el alcance `identify`. Google se usa para identidad y no para leer el
 calendario. Supabase conserva una sesión revocable; las identidades no se unen automáticamente por
 tener el mismo mail: el enlace con Discord es una acción explícita desde una sesión ya iniciada.
+
+### Cobros de inscripciones
+
+La web no recibe la credencial de Mercado Pago. El botón de pago exige sesión con Discord,
+presenta un resumen y llama de servidor a servidor al panel usando `KRIPTA_CHECKOUT_SECRET`. El
+panel comprueba que la inscripción existe, que el staff confirmó 18+, que el torneo sigue abierto
+y que falta pagar; recién entonces calcula el importe y crea Checkout Pro.
+
+Para activarlo:
+
+1. Generá un secreto nuevo y cargalo como `KRIPTA_CHECKOUT_SECRET` en ambos proyectos de Vercel.
+2. Configurá las credenciales, webhook y URLs de Mercado Pago en `monsterland-panel` siguiendo su
+   README. El access token y la firma del webhook van solamente allí.
+3. Hacé redeploy de los dos proyectos y completá una compra con cuentas de prueba antes de usar
+   credenciales de producción.
+
+La vuelta desde Mercado Pago es informativa: jamás acredita una inscripción. Sólo el webhook
+firmado, seguido de una consulta del pago real desde el panel, puede hacerlo.
 
 ### El dominio propio
 

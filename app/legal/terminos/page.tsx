@@ -14,7 +14,7 @@ export default function Pagina() {
       titulo="Términos y"
       resaltado="condiciones"
       bajada="Cómo funciona la comunidad, qué podés esperar y qué se espera de vos."
-      actualizado="2026-09-13"
+      actualizado="2026-09-14"
     >
       <h2>Qué es Kripta</h2>
       <p>
@@ -52,6 +52,29 @@ export default function Pagina() {
       <p>
         Las instancias Pista Libre son gratuitas y están abiertas a todo el servidor. Los puntos se
         ganan jugando y forman parte del ranking de temporada.
+      </p>
+
+      <h2>Inscripciones pagas</h2>
+      <p>
+        El precio total se muestra antes de salir de Kripta y el cobro se completa en Checkout Pro
+        de Mercado Pago. La inscripción se considera paga únicamente cuando Mercado Pago informa la
+        aprobación y nuestro servidor la verifica; una pantalla o captura no reemplaza esa confirmación.
+      </p>
+      <p>
+        Si un pago aparece pendiente, no lo repitas: esperá la acreditación o hablá con el staff. Si
+        detectás un cobro duplicado, informalo de inmediato con el comprobante de Mercado Pago.
+      </p>
+
+      <h2>Cancelaciones y reembolsos</h2>
+      <p>
+        Si Monsterland cancela el torneo o no alcanza el mínimo anunciado y no se acuerda una nueva
+        fecha, se devuelve la inscripción. También podés pedir la cancelación antes del inicio por
+        mensaje directo a la administración en Discord. Una vez iniciado el torneo, el abandono o la
+        falta de check-in no generan devolución, salvo que la normativa aplicable disponga otra cosa.
+      </p>
+      <p>
+        Los reembolsos se realizan sobre el pago original de Mercado Pago. El tiempo en que el dinero
+        vuelve a verse depende del medio de pago y de la entidad emisora.
       </p>
 
       <h2>Conducta</h2>

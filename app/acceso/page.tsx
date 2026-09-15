@@ -6,6 +6,7 @@ import { Pie } from "../componentes/pie";
 import { ACCESO_LISTO, PROVEEDORES_DISPONIBLES } from "../lib/identidad";
 import { crearClienteServidor } from "../lib/supabase/server";
 import { iniciarSesion } from "./acciones";
+import { destinoCuentaSeguro } from "../lib/destino-cuenta";
 
 export const metadata: Metadata = {
   title: "Entrar a tu Kripta",
@@ -17,17 +18,19 @@ export const metadata: Metadata = {
 export default async function Acceso({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; next?: string }>;
 }) {
+  const parametros = await searchParams;
+  const destino = destinoCuentaSeguro(parametros.next);
   if (ACCESO_LISTO) {
     const supabase = await crearClienteServidor();
     const { data } = await supabase.auth.getUser();
-    if (data.user) redirect("/mi-kripta");
+    if (data.user) redirect(destino);
   }
 
   const discord = ACCESO_LISTO && PROVEEDORES_DISPONIBLES.includes("discord");
   const google = ACCESO_LISTO && PROVEEDORES_DISPONIBLES.includes("google");
-  const huboError = Boolean((await searchParams).error);
+  const huboError = Boolean(parametros.error);
 
   return (
     <>
@@ -48,6 +51,7 @@ export default async function Acceso({
           <div className="proveedores-acceso" aria-label="Métodos para iniciar sesión">
             <form action={iniciarSesion}>
               <input type="hidden" name="proveedor" value="discord" />
+              <input type="hidden" name="next" value={destino} />
               <button type="submit" className="proveedor-boton proveedor-discord" disabled={!discord}>
                 <span className="proveedor-marca" aria-hidden="true">◉</span>
                 Continuar con Discord
@@ -56,6 +60,7 @@ export default async function Acceso({
             </form>
             <form action={iniciarSesion}>
               <input type="hidden" name="proveedor" value="google" />
+              <input type="hidden" name="next" value={destino} />
               <button type="submit" className="proveedor-boton" disabled={!google}>
                 <span className="proveedor-google" aria-hidden="true">G</span>
                 Continuar con Google

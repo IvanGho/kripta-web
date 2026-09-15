@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ACCESO_LISTO, proveedorDisponible } from "../lib/identidad";
+import { destinoCuentaSeguro } from "../lib/destino-cuenta";
 import { URL_SITIO } from "../lib/sitio";
 import { crearClienteServidor } from "../lib/supabase/server";
 
@@ -21,11 +22,14 @@ async function origenActual() {
 
 export async function iniciarSesion(formData: FormData) {
   const proveedor = String(formData.get("proveedor") ?? "");
+  const destino = destinoCuentaSeguro(String(formData.get("next") ?? ""));
   if (!ACCESO_LISTO || !proveedorDisponible(proveedor)) return;
   const supabase = await crearClienteServidor();
+  const callback = new URL("/auth/callback", await origenActual());
+  callback.searchParams.set("next", destino);
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: proveedor,
-    options: { redirectTo: `${await origenActual()}/auth/callback?next=/mi-kripta` },
+    options: { redirectTo: callback.toString() },
   });
   if (error || !data.url) redirect("/acceso?error=oauth");
   redirect(data.url);

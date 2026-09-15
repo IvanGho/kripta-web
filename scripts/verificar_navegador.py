@@ -45,7 +45,7 @@ RUTAS_INDEXABLE = [
 ]
 
 # Pantallas propias que no se indexan, pero igual necesitan pasar carga, estructura y accesibilidad.
-RUTAS = [*RUTAS_INDEXABLE, "/acceso"]
+RUTAS = [*RUTAS_INDEXABLE, "/acceso", "/pago/resultado?estado=aprobado"]
 
 # Las paginas que declaran datos estructurados para Google. Las dos legales no estan y no deberian:
 # no hay ningun tipo de schema.org que corresponda a una politica de privacidad, y declarar uno

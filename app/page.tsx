@@ -108,7 +108,7 @@ export default async function Inicio() {
                   <span aria-hidden="true" /> Todo empieza en Discord
                 </li>
                 <li>
-                  <span aria-hidden="true" /> Sin cuenta ni formulario en la web
+                  <span aria-hidden="true" /> Cuenta sólo cuando querés competir
                 </li>
                 <li>
                   <span aria-hidden="true" /> 18+ sólo para instancias con plata
@@ -368,14 +368,29 @@ export default async function Inicio() {
                         />
                       </div>
                     </div>
-                    <BotonDiscord
-                      ubicacion="tarjeta-torneo"
-                      variante="secundario"
-                      className="mt-5 w-full text-sm"
-                    >
-                      {lleno ? "Anotarme a la lista de espera" : "Anotarme"}
-                      <span aria-hidden="true">↗</span>
-                    </BotonDiscord>
+                    <div className="pago-torneo-acciones">
+                      <BotonDiscord
+                        ubicacion="tarjeta-torneo"
+                        variante="secundario"
+                        className="w-full text-sm"
+                      >
+                        {lleno
+                          ? "Lista de espera en Discord"
+                          : gratis
+                            ? "Anotarme en Discord"
+                            : "1. Anotarme en Discord"}
+                        <span aria-hidden="true">↗</span>
+                      </BotonDiscord>
+                      {!gratis && !esEjemplo && (
+                        <Link
+                          href={`/pago/iniciar?torneo=${t.id}`}
+                          className="boton w-full text-sm"
+                        >
+                          {lleno ? "Si ya estás anotado · pagar" : "2. Pagar inscripción"}{" "}
+                          <span aria-hidden="true">→</span>
+                        </Link>
+                      )}
+                    </div>
                     <AccionesAgendaTorneo
                       torneo={{
                         id: t.id,
@@ -402,8 +417,8 @@ export default async function Inicio() {
               <p className="sobre-titulo">Tu primer torneo</p>
               <h3 id="titulo-empezar">Sabé qué hacer antes de que arranque.</h3>
               <p>
-                La inscripción, los avisos y el check-in viven en Discord. La web te muestra
-                dónde está la acción; el servidor es donde jugás.
+                La inscripción, los avisos y el check-in viven en Discord. Si el torneo es pago,
+                revisás el importe acá y completás el checkout seguro en Mercado Pago.
               </p>
             </div>
             <ol className="ruta-pasos">
@@ -424,7 +439,7 @@ export default async function Inicio() {
               <li>
                 <span>03</span>
                 <div>
-                  <strong>Anotate y hacé check-in</strong>
+                  <strong>Anotate, pagá si corresponde y hacé check-in</strong>
                   <p>Seguí las indicaciones del torneo y entrá a jugar.</p>
                 </div>
               </li>
